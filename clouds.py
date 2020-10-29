@@ -836,10 +836,13 @@ class FractalCube:
             ext = osp.splitext(fname)[1]
             base = osp.splitext(fname)[0]
 
-            fname = (f'{base}_k{self.kmin:0>2d}_n{self.ni:0>4d}' +
-                     (f'x{self.nj:0>4d}' if self.ndim > 1 else '') +
-                     (f'x{self.nk:0>4d}' if self.ndim > 2 else '') +
-                     f'_s{self.sigma:0>4d}' + ext)
+            fname  = 'ni_'    + str(self.ni)
+            fname += '_nj_'   + str(self.nj)
+            fname += '_nk_'   + str(self.nk)
+            fname += '_kmin_' + str(self.kmin)
+            fname += '_mean_' + str(self.mean)
+            fname += '_sigma_'+ str(self.sigma)
+            fname += '_beta_' + str(self.beta)
 
         fname = pt.unique_fname(fname, '-', '[0-9][0-9]')
 
