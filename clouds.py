@@ -26,6 +26,7 @@ import scipy.stats as sps
 import scipy.special as spf
 
 import DumpHDF5 as hdf5
+import DumpFile as dump
 
 # TODO Ensure that the routine works in 2D and 1D (Allow n{ijk}=1)
 # TODO Parallelize (with mpi4py?).
@@ -848,7 +849,8 @@ class FractalCube:
         fname = pt.unique_fname(fname, '-', '[0-9][0-9]')
 
         #out.T.tofile(fname)
-        hdf5._HDF5(out)
+        #hdf5._HDF5(out)
+        dump._DumpFile(out)
 
         return 1
 
