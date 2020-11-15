@@ -1,39 +1,39 @@
 import numpy as np
 import h5py
 
-def _HDF5(self, out):
+def _HDF5(out):
 
     # Number of cells along x/y/z
-    Nx = self.ni
-    Ny = self.nj
-    Nz = self.nk
+    Nx = out.shape[0] 
+    Ny = out.shape[1] 
+    Nz = out.shape[2] 
 
     # Number of cells along each dimension of the input grid.
-    ddims = np.array([Nx, Ny, Nz], dtype='int')
+    ddims = np.array([Nx, Ny, Nz], dtype='int') # [128 128 128]
     
     # Left edge and right edge coordinates of the desired
     # simulation domain which will be used in GAMER.
-    le = np.zeros(3)
-    re = np.ones(3)
+    le = np.zeros(3) # [0 0 0]
+    re = np.ones(3)  # [1 1 1]
     
     # Cell spacing
-    delta = (re-le)/ddims
+    delta = (re-le)/ddims  # [1/128 1/128 1/128]
     
     # Construct the grid cell edge coordinates
-    x = np.linspace(le[0], re[0], ddims[0]+1)
-    y = np.linspace(le[1], re[1], ddims[1]+1)
-    z = np.linspace(le[2], re[2], ddims[2]+1)
+    x = np.linspace(le[0], re[0], num=ddims[0]+1) 
+    y = np.linspace(le[1], re[1], num=ddims[1]+1)
+    z = np.linspace(le[2], re[2], num=ddims[2]+1)
     
     # Find the grid cell midpoints
     x = 0.5*(x[1:]+x[:-1])
     y = 0.5*(y[1:]+y[:-1])
     z = 0.5*(z[1:]+z[:-1])
-    print(Nx, Ny, Nz)
-    #  Use the 1-D coordinate arrays to consruct 3D coordinate arrays                                                                        
+    
+    # Use the 1-D coordinate arrays to consruct 3D coordinate arrays                                                                        
     # that we will use to compute an analytic vector potential
-    xx, yy, zz = np.meshgrid(x, y, z, sparse=False, indexing='ij')
+    #xx, yy, zz = np.meshgrid(x, y, z, sparse=False, indexing='ij')
 
-    Rho  = out.T
+    Rho  = out
     Ux   = np.full_like( Rho, 0.0 )
     Uy   = np.full_like( Rho, 0.0 )
     Uz   = np.full_like( Rho, 0.0 )
@@ -41,10 +41,12 @@ def _HDF5(self, out):
     Pres = Temp*Rho
 
     Dens, MomX, MomY, MomZ, Engy = Pri2Con( Rho, Ux, Uy, Uz, Pres )
-
+  
     filename = "Hydro_IC"
 
     f = h5py.File(filename,"w")
+
+    #Dens = np.arange(100*100*100).reshape((100,100,100))
 
     f.create_dataset('Dens', data=Dens)
     f.create_dataset('MomX', data=MomX)

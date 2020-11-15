@@ -848,7 +848,7 @@ class FractalCube:
         fname = pt.unique_fname(fname, '-', '[0-9][0-9]')
 
         #out.T.tofile(fname)
-        hdf5._HDF5(self, out)
+        hdf5._HDF5(out)
 
         return 1
 
