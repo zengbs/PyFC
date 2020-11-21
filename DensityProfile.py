@@ -8,11 +8,11 @@ NEWTON_G = 1.0
 def f(y, r, params):
     Psi, Phi = y      # unpack current values of y
     CsSqr, PhiOrigin, Rho0_g, Rho0_DM, ScaleRadius = params  # unpack parameters
-    derivs = [ -2*Psi/r + 4*np.pi*NEWTON_G*( GasProfile( Phi, PhiOrigin, CsSqr ) + NFWProfile( r, ScaleRadius, Rho0_DM ) ) , Psi ]
+    derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*( GasProfile( Phi, PhiOrigin, Rho0_g, CsSqr ) 
+               + NFWProfile( r, ScaleRadius, Rho0_DM ) ) , Psi ]
     return derivs
 
 
-NPoints = 5000
 
 
 def NFWProfile( r, ScaleRadius, Rho0_DM ):
@@ -24,32 +24,34 @@ def NFWProfile( r, ScaleRadius, Rho0_DM ):
     return NFWDensityProfile1D
 
 
-def GasProfile( Phi, PhiOrigin, CsSqr ):
-    Rho0_g = 1.0
+def GasProfile( Phi, PhiOrigin, Rho0_g, CsSqr ):
 
     GasProfile = Rho0_g * np.exp( -1.0/CsSqr * ( Phi - PhiOrigin ) )
 
     return GasProfile
 
 
-def DensityProfile( L ):
+def DensityProfile( Radius ):
 
-    Radius = 0.5*np.sqrt(L[0]**2 + L[1]**2 + L[2]**2)
+    dr = 5e-4
+    r = np.arange(1e-4, Radius, dr)
 
-    #r = np.logspace(-3, np.log(Radius), 500)
-    r = np.arange(1e-3, Radius, 5e-3)
-    print(r)
 
-    # Parameters
-    CsSqr       = 0.2
-    PhiOrigin   = 0.0
-    Rho0_g      = 0.0
-    Rho0_DM     = 1.0
+    # Parameters for DM
+    Rho0_DM     = 1e-3
     ScaleRadius = 1.0
 
-    # Boundary values at the center of sphere
-    Phi0        = 0
+    # Exat NFW potential
+    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r
+
+    # The potential value at the center of sphere
+    Phi0        = Exact[0]
     Psi0        = 0
+
+    # Parameters for gas
+    CsSqr       = 0.2
+    PhiOrigin   = Exact[0]
+    Rho0_g      = 0
 
     # Bundle Parameters
     params = [ CsSqr, PhiOrigin, Rho0_g, Rho0_DM, ScaleRadius ]
@@ -57,14 +59,19 @@ def DensityProfile( L ):
     # Bundle boundary values
     y0     = [ Psi0, Phi0 ]
 
-    DensityProfile = odeint( f, y0, r, args=(params,) )
+    Potential = odeint( f, y0, r, args=(params,) )
 
     fig, ax = plt.subplots( 1, 1, sharex=False, sharey=False )
     fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             
     fig.set_size_inches( 10, 5 )
 
-    ax.plot(r, DensityProfile[:,0], 'o')
-    ax.plot(r, DensityProfile[:,1], 'o')
+    #ax.plot(r, Potential[:,0], 'o')
+    ax.plot(r, np.absolute(Potential[:,1]), 'x')
+    #ax.plot(r, NFWProfile( r, ScaleRadius, Rho0_DM ), '^')
+
+
+    ax.plot(r, np.absolute(Exact), '>')
+    
 
 
     ax.set_xscale('log')
@@ -75,6 +82,6 @@ def DensityProfile( L ):
     return DensityProfile
 
 
-LSize = 1e3
+Radius = 1e1
 
-DensityProfile([LSize]*3)
+DensityProfile(Radius)
