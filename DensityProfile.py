@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt 
 from scipy.integrate import odeint
 
 NEWTON_G = 1.0
@@ -8,124 +7,62 @@ NEWTON_G = 1.0
 def f(y, r, params):
     Psi, Phi = y      # unpack current values of y
     CsSqr, PhiGasOrigin, Rho0_g, Rho0_DM, ScaleRadius = params  # unpack parameters
-    derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*( GetGasDensityProfile( Phi, PhiGasOrigin, Rho0_g, CsSqr ) 
-               + NFWDensityProfile( r, ScaleRadius, Rho0_DM ) ) , Psi ]
+    # Assuming the self-gravity of gases is minor compared to that of DM
+    #derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*ExactNFWDensity( r, ScaleRadius, Rho0_DM ) , Psi ]
+
+    # Consider the self-gravity of gases as well
+    derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*( IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ) 
+               + ExactNFWDensity( r, ScaleRadius, Rho0_DM ) ) , Psi ]
     return derivs
 
 
-
-
-def NFWDensityProfile( r, ScaleRadius, Rho0_DM ):
+# Exat NFW density
+def ExactNFWDensity( r, ScaleRadius, Rho0_DM ):
     a = r / ScaleRadius   
     NFWDensityProfile1D = Rho0_DM / ( a * np.square( 1 + a ) )
     return NFWDensityProfile1D
 
+# Exat NFW potential
+def ExactNFWPotential(r, Rho0_DM, ScaleRadius):
+    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r
+    return Exact
 
-def GetGasDensityProfile( Phi, PhiGasOrigin, Rho0_g, CsSqr ):
+# Density of isothermal sphere as a function of total potential
+def IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ):
     GasDensityProfile = Rho0_g * np.exp(  -( Phi - PhiGasOrigin ) / CsSqr )
     return GasDensityProfile
 
 
-    # Exat NFW potential
-def GetExactNFWPotential(r, Rho0_DM, ScaleRadius):
-    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r
-    return Exact
 
-def Plot( Radius ):
-    # Parameters for DM
-    Rho0_DM      = 1   # 
-    ScaleRadius  = 1.0   # scale radius
-    
-    # Parameters for gas
-    Rho0_g       = 1     # Peak density
-    CsSqr        = 1     # The square of sound speed
+def NumericalGasDensity( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
+    PhiGasOrigin = 0
+    TotalPotential = NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr )
+    GasDensity     = IsothermalDensity( TotalPotential, [PhiGasOrigin]*TotalPotential.shape[0], Rho0_g, CsSqr )
+    return GasDensity
+  
 
-
-
-    fig, ax = plt.subplots( 1, 2, sharex=False, sharey=False )
-    fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             
-    fig.set_size_inches( 15, 5 )
-    handles0=[]
-    handles1=[]
-
-    dr = 1e-4  # cell spacing
-    r = np.arange(1e-4, Radius, dr)
-
-
-    # Plot exact NFW potential profile in the absence of gases
-    if ( Rho0_DM > 0 ):
-         ExactNFWPotential = GetExactNFWPotential(r, Rho0_DM, ScaleRadius)
-         A,=ax[1].plot(r, ExactNFWPotential, ls='-', color='k', label='Exact NFW potential without gases', zorder=10)
-         handles1.append(A)
-         Phi0         = ExactNFWPotential[0] # The total potential value at the center of sphere
+def NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
+    # Psi0: The derivative of potential at the center of sphere
+    # Phi0: The               potential at the center of sphere
+    if ( Rho0_g == 0 ):
+         Psi0 = 0.5*ScaleRadius**-2
+         Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
+    elif( Rho0_DM == 0 ):
+         Psi0 = 0
+         Phi0 = 1
     else:
-         Phi0         = 1e-3
- 
+         Psi0 = 0
+         Phi0 = 0
 
-    Psi0         = 0.5     # The derivative of potential at the center of sphere
-
-    PhiGasOrigin = Phi0  # Assuming gas potential and DM potential have the same value at the center of sphere
+    # Assuming gas potential and total potential have the same value at the center of sphere
+    PhiGasOrigin = Phi0
 
     # Bundle Parameters
     params = [ CsSqr, PhiGasOrigin, Rho0_g, Rho0_DM, ScaleRadius ]
-    
+                      
     # Bundle boundary values
     y0     = [ Psi0, Phi0 ]
-
-    # Solve ODE
+                      
+    # Solve ODE       
     TotalPotential = odeint( f, y0, r, args=(params,) )
-
-
-    # Plot numerical NFW denisty profile in the absence of gases
-    if ( Rho0_DM > 0 ):
-         B,=ax[0].plot(r, NFWDensityProfile( r, ScaleRadius, Rho0_DM ), ls='-', color='g', label='Exact NFW denisty profile without gases', zorder=9)
-         handles0.append(B)
-
-    # Plot total (gas+DM) potential profile
-    if ( Rho0_g == 0 ):
-         label='Numerical NFW potential solving from the Poisson solver'
-    elif ( Rho0_DM == 0 ):
-         label='Numerical gas potential solving from the Poisson solver'
-    else:
-         label='Numerical total potential solving from the Poisson solver'
-
-    C,=ax[1].plot(r, TotalPotential[:,1], 'x', label=label, zorder=8, color='r')
-    handles1.append(C)
-
-    # Plot numerical gas density profile in the presence of DM
-    if ( Rho0_g > 0 and Rho0_DM > 0 ):
-         GasDensityProfile = GetGasDensityProfile( TotalPotential[:,1], [PhiGasOrigin]*TotalPotential[:,1].shape[0], Rho0_g, CsSqr )
-         D,=ax[0].plot(r, GasDensityProfile, '*', label='Numerical gas denisty profile with DM', zorder=7 )
-         handles0.append(D)
-
-
-
-    ## Plot numerical gas density profile in the absence of DM ##
-    # Bundle Parameters
-    Rho0_DM = 0
-    params  = [ CsSqr, PhiGasOrigin, Rho0_g, Rho0_DM, ScaleRadius ]
-    
-    # Bundle boundary values
-    y0             = [ Psi0, Phi0 ]
-    TotalPotential = odeint( f, y0, r, args=(params,) )
-
-    if ( Rho0_g > 0 ):
-         GasDensityProfile = GetGasDensityProfile( TotalPotential[:,1], [PhiGasOrigin]*TotalPotential[:,1].shape[0], Rho0_g, CsSqr )
-         E,=ax[0].plot(r, GasDensityProfile, 'o', label='Numerical gas denisty profile without DM', zorder=6 )
-         handles0.append(E)
-
-
-    ax[0].set_xscale('log')
-    ax[0].set_yscale('log')
-
-    ax[1].set_xscale('log')
-
-    ax[0].legend(handles=handles0,loc='lower left', fontsize=16)
-    ax[1].legend(handles=handles1,loc='upper left', fontsize=16)
-    plt.show()
-
-
-
-Radius = 1e1
-
-Plot(Radius)
+    return TotalPotential[:,1]

@@ -1,6 +1,6 @@
 import numpy as np
 from coordinate import *
-
+from DensityProfile import *
 
 
 def SphericalSymmetricSphere( Fluid, L, N, Radius, InsideSphere, OutsideSphere ):
