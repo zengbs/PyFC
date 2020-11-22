@@ -33,7 +33,7 @@ def GetExactNFWPotential(r, Rho0_DM, ScaleRadius):
 
 def Plot( Radius ):
     # Parameters for DM
-    Rho0_DM      = 0   # 
+    Rho0_DM      = 1   # 
     ScaleRadius  = 1.0   # scale radius
     
     # Parameters for gas
@@ -42,26 +42,27 @@ def Plot( Radius ):
 
 
 
-    fig, ax = plt.subplots( 1, 1, sharex=False, sharey=False )
+    fig, ax = plt.subplots( 1, 2, sharex=False, sharey=False )
     fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             
-    fig.set_size_inches( 10, 5 )
-    handles=[]
+    fig.set_size_inches( 15, 5 )
+    handles0=[]
+    handles1=[]
 
-    dr = 1e-3  # cell spacing
-    r = np.arange(1e-2, Radius, dr)
+    dr = 1e-4  # cell spacing
+    r = np.arange(1e-4, Radius, dr)
 
 
     # Plot exact NFW potential profile in the absence of gases
     if ( Rho0_DM > 0 ):
          ExactNFWPotential = GetExactNFWPotential(r, Rho0_DM, ScaleRadius)
-         A,=ax.plot(r, np.absolute(ExactNFWPotential), ls='-', color='k', label='Exact NFW potential without gases', zorder=10)
-         handles.append(A)
+         A,=ax[1].plot(r, ExactNFWPotential, ls='-', color='k', label='Exact NFW potential without gases', zorder=10)
+         handles1.append(A)
          Phi0         = ExactNFWPotential[0] # The total potential value at the center of sphere
     else:
          Phi0         = 1e-3
  
 
-    Psi0         = 0     # The derivative of potential at the center of sphere
+    Psi0         = 0.5     # The derivative of potential at the center of sphere
 
     PhiGasOrigin = Phi0  # Assuming gas potential and DM potential have the same value at the center of sphere
 
@@ -77,8 +78,8 @@ def Plot( Radius ):
 
     # Plot numerical NFW denisty profile in the absence of gases
     if ( Rho0_DM > 0 ):
-         B,=ax.plot(r, NFWDensityProfile( r, ScaleRadius, Rho0_DM ), ls='-', color='g', label='Exact NFW denisty profile without gases', zorder=9)
-         handles.append(B)
+         B,=ax[0].plot(r, NFWDensityProfile( r, ScaleRadius, Rho0_DM ), ls='-', color='g', label='Exact NFW denisty profile without gases', zorder=9)
+         handles0.append(B)
 
     # Plot total (gas+DM) potential profile
     if ( Rho0_g == 0 ):
@@ -88,14 +89,14 @@ def Plot( Radius ):
     else:
          label='Numerical total potential solving from the Poisson solver'
 
-    C,=ax.plot(r, np.absolute(TotalPotential[:,1]), 'x', label=label, zorder=8, color='r')
-    handles.append(C)
+    C,=ax[1].plot(r, TotalPotential[:,1], 'x', label=label, zorder=8, color='r')
+    handles1.append(C)
 
     # Plot numerical gas density profile in the presence of DM
     if ( Rho0_g > 0 and Rho0_DM > 0 ):
          GasDensityProfile = GetGasDensityProfile( TotalPotential[:,1], [PhiGasOrigin]*TotalPotential[:,1].shape[0], Rho0_g, CsSqr )
-         D,=ax.plot(r, GasDensityProfile, '*', label='Numerical gas denisty profile with DM', zorder=7 )
-         handles.append(D)
+         D,=ax[0].plot(r, GasDensityProfile, '*', label='Numerical gas denisty profile with DM', zorder=7 )
+         handles0.append(D)
 
 
 
@@ -110,18 +111,21 @@ def Plot( Radius ):
 
     if ( Rho0_g > 0 ):
          GasDensityProfile = GetGasDensityProfile( TotalPotential[:,1], [PhiGasOrigin]*TotalPotential[:,1].shape[0], Rho0_g, CsSqr )
-         E,=ax.plot(r, GasDensityProfile, 'o', label='Numerical gas denisty profile without DM', zorder=6 )
-         handles.append(E)
+         E,=ax[0].plot(r, GasDensityProfile, 'o', label='Numerical gas denisty profile without DM', zorder=6 )
+         handles0.append(E)
 
 
-    ax.set_xscale('log')
-    ax.set_yscale('log')
+    ax[0].set_xscale('log')
+    ax[0].set_yscale('log')
 
-    ax.legend(handles=handles,loc='lower left', fontsize=16)
+    ax[1].set_xscale('log')
+
+    ax[0].legend(handles=handles0,loc='lower left', fontsize=16)
+    ax[1].legend(handles=handles1,loc='upper left', fontsize=16)
     plt.show()
 
 
 
-Radius = 1e2
+Radius = 1e1
 
 Plot(Radius)
