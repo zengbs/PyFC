@@ -24,7 +24,7 @@ def ExactNFWDensity( r, ScaleRadius, Rho0_DM ):
 
 # Exat NFW potential
 def ExactNFWPotential(r, Rho0_DM, ScaleRadius):
-    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r
+    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r - -4*np.pi*NEWTON_G*Rho0_DM*ScaleRadius**2
     return Exact
 
 # Density of isothermal sphere as a function of total potential
@@ -35,7 +35,7 @@ def IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ):
 
 
 def NumericalGasDensity( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
-    PhiGasOrigin = 0
+    PhiGasOrigin   = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
     TotalPotential = NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr )
     GasDensity     = IsothermalDensity( TotalPotential, [PhiGasOrigin]*TotalPotential.shape[0], Rho0_g, CsSqr )
     return GasDensity
@@ -46,10 +46,12 @@ def NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
     # Phi0: The               potential at the center of sphere
     if ( Rho0_g == 0 ):
          Psi0 = 0.5*ScaleRadius**-2
-         Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
+         #Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
+         Phi0 = 0
     elif( Rho0_DM == 0 ):
          Psi0 = 0
-         Phi0 = 1
+         #Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
+         Phi0 = 0
     else:
          Psi0 = 0
          Phi0 = 0
