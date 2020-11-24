@@ -1,12 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 from scipy.integrate import odeint
-from DensityProfile import *
+from density_profile import *
 
 
 def Plot( Radius ):
     # Parameters for DM
-    ScaleRadius  = 0.5   # scale radius
+    ScaleRadius  = 1   # scale radius
     
     # Parameters for gas
     CsSqr        = 0.2     # The square of sound speed
@@ -64,7 +64,7 @@ def Plot( Radius ):
 
 
 
-Radius = 1e1
+Radius = 1e2
 
 Plot(Radius)
 

@@ -32,25 +32,20 @@ def IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ):
     GasDensityProfile = Rho0_g * np.exp(  -( Phi - PhiGasOrigin ) / CsSqr )
     return GasDensityProfile
 
-
-
 def NumericalGasDensity( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
     PhiGasOrigin   = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
     TotalPotential = NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr )
     GasDensity     = IsothermalDensity( TotalPotential, [PhiGasOrigin]*TotalPotential.shape[0], Rho0_g, CsSqr )
     return GasDensity
   
-
 def NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
     # Psi0: The derivative of potential at the center of sphere
     # Phi0: The               potential at the center of sphere
     if ( Rho0_g == 0 ):
          Psi0 = 0.5*ScaleRadius**-2
-         #Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
          Phi0 = 0
     elif( Rho0_DM == 0 ):
          Psi0 = 0
-         #Phi0 = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
          Phi0 = 0
     else:
          Psi0 = 0

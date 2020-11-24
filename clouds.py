@@ -804,7 +804,7 @@ class FractalCube:
 
         return self._returner(cube, out)
 
-    def write_cube(self, fc=None, fname='data.dbl', app=True, prec='double'):
+    def write_cube(self, fc=None, fname='UM_IC', app=True, prec='double'):
         """
         Writes out a fractal cube data file in little endian, 
         double precision. Care is taken not to overwrite existing files.
@@ -846,7 +846,7 @@ class FractalCube:
             fname += '_sigma_'+ str(self.sigma)
             fname += '_beta_' + str(self.beta)
 
-        fname = pt.unique_fname(fname, '-', '[0-9][0-9]')
+        fname = pt.unique_fname(fname)
 
         #out.T.tofile(fname)
         #hdf5._HDF5(out)

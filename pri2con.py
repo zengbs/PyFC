@@ -1,3 +1,5 @@
+import numpy as np
+
 def Pri2Con( Rho, Ux, Uy, Uz, Pres ):
 
     LorentzFactor = np.sqrt( 1.0 + np.square(Ux) + np.square(Uy) + np.square(Uz) );
