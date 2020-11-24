@@ -41,5 +41,5 @@ def _DumpFile(out):
 
     FluidInBox.tofile(filename)
 
-out=np.zeros((1024,1024,1024))
+out=np.zeros((256,256,256))
 _DumpFile(out)

@@ -49,7 +49,7 @@ def SphericalSphere( L, N, Radius, Rho0_g, CsSqr, Rho0_DM, ScaleRadius ):
     # Cell spacing
     delta = (re-le)/N  # [1/128 1/128 1/128]
     
-    FluidInBox = np.zeros((5, Nx, Ny, Nz), dtype=np.float32)
+    FluidInBox = np.zeros((6, Nx, Ny, Nz), dtype=np.float32)
 
     for i in range(Nx):
         for j in range(Ny):
@@ -68,12 +68,14 @@ def SphericalSphere( L, N, Radius, Rho0_g, CsSqr, Rho0_DM, ScaleRadius ):
                      FluidInBox[2][i][j][k] = np.interp( r, Coarse_r, InMomY ) 
                      FluidInBox[3][i][j][k] = np.interp( r, Coarse_r, InMomZ ) 
                      FluidInBox[4][i][j][k] = CsSqr*FluidInBox[0][i][j][k]
+                     FluidInBox[5][i][j][k] = CsSqr
                 else:
                      FluidInBox[0][i][j][k] = OutDens
                      FluidInBox[1][i][j][k] = OutMomX
                      FluidInBox[2][i][j][k] = OutMomY
                      FluidInBox[3][i][j][k] = OutMomZ
                      FluidInBox[4][i][j][k] = OutEngy
+                     FluidInBox[5][i][j][k] = CsSqr
                  
                 
     return FluidInBox
