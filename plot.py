@@ -37,19 +37,19 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
 
     # DM-only
     Rho0_g_Temp  = 0
-    DMOnlyPotential       = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    Nothing, ExactDensity = ExactNFWDensity( rPrime, ParaPhy )
+    DMOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
+    Nothing, DMOnlyDensity = NumericalDensity( rPrime, ParaPhy )
     DMOnlyPotential       *= Sigma_D*Sigma_D
-    C,=ax[0].plot( r, DMOnlyPotential, 'o', label='DM density without Gas'   )
+    C,=ax[0].plot( r, DMOnlyDensity  , 'o', label='DM density without Gas'   )
     D,=ax[1].plot( r, DMOnlyPotential, 'x', label='DM potential without Gas' )
     
     # DM and gas
     TotalPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    GasDensity, DMDensity = NumericalGasDensity( rPrime, ParaPhy )
+    GasDensity, DMDensity = NumericalDensity( rPrime, ParaPhy )
     TotalPotential       *= Sigma_D*Sigma_D
     E,=ax[0].plot( r, GasDensity,    '>', label='Gas density with DM' )
     F,=ax[0].plot( r, DMDensity,     '<', label='DM density with Gas' )
-    G,=ax[1].plot( r, TotalPotential,'#', label='Gas+DM potential' )
+    G,=ax[1].plot( r, TotalPotential,'-', label='Gas+DM potential' )
     
 
 
@@ -60,8 +60,8 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
     ax[1].set_yscale('linear')
 
 
-    ax[0].legend(handles=[C,A,F],loc='lower left', fontsize=12)
-    ax[1].legend(handles=[D,E,B,G],loc='upper left', fontsize=12)
+    ax[0].legend(handles=[C,A,F,E],loc='lower left', fontsize=12)
+    ax[1].legend(handles=[D,B,G],loc='upper left', fontsize=12)
     plt.show()
 
 ##########################

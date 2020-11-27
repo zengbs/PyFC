@@ -6,7 +6,7 @@ from scipy.integrate import odeint
  
 def f(y, rPrime, params):
     Psi, DevPsi = y      # unpack current values of y
-    rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 = params  # unpack parameters
+    Kappa, Lambda, Constant, Psi0, DevPsi0 = params  # unpack parameters
 
     derivs = [ DevPsi, -2*DevPsi/rPrime + Constant*( np.exp(-Psi) + Lambda*Lambda/Kappa/Kappa*np.exp(-Kappa*Kappa*Psi) ) ]
     return derivs
@@ -56,17 +56,16 @@ def NumericalDensity( r, ParaPhy ):
     Psi            = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     Phi            = Psi * Sigma_D * Sigma_D
 
-    GasDensity     = IsothermalGasDensity( Phi, [Phi0]*TotalPotential.shape[0], Rho0_g, Sigma_g )
-    DMDensity      = IsothermalDMDensity ( Phi, [Phi0]*TotalPotential.shape[0], Rho0_D, Sigma_D )
+    GasDensity     = IsothermalGasDensity( Phi, [Phi0]*Phi.shape[0], Rho0_g, Sigma_g )
+    DMDensity      = IsothermalDMDensity ( Phi, [Phi0]*Phi.shape[0], Rho0_D, Sigma_D )
     return GasDensity, DMDensity
   
 def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ):
     # Bundle Parameters
-    params = [ rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ]
+    params = [ Kappa, Lambda, Constant, Psi0, DevPsi0 ]
 
     # Bundle boundary values
     y0     = [ Psi0, DevPsi0 ]
-    print(rPrime)
     # Solve ODE       
     TotalPotential = odeint( f, y0, rPrime, args=(params,) )
     return TotalPotential[:,0]
