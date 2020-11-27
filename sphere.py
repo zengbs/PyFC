@@ -3,21 +3,21 @@ from density_profile import *
 from pri2con import Pri2Con
 
 
-def SphericalSphere( L, N, Para ):
+def SphericalSphere( L, N, ParaPhy, ParaNum ):
 
     Nx, Ny, Nz = N
     Lx, Ly, Lz = L
 
     # Center of sphere
     Center = np.array([Lx,Ly,Lz])*0.5
-
-    # Coarse cell-spacing
-    Coarse_dr = 1e-4
+ 
+    # Unbundle numerical parameters
+    BPoint, CoarseDr = ParaNum   
 
     # Coarse grid
-    Coarse_r = np.arange(1e-4, 0.5*Lx, Coarse_dr)
+    Coarse_r = np.arange(BPoint, 0.5*Lx, CoarseDr)
 
-    InRho   = NumericalGasDensity( Coarse_r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr )
+    InRho   = NumericalDensity( Coarse_r, ParaPhy )
     InUX    = 0 
     InUy    = 0
     InUz    = 0

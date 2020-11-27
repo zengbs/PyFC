@@ -41,32 +41,44 @@ def _DumpFile(out):
 
     # Temperature of gas (K)
     Temp_g = 1e7
-  
+ 
+    # The potential at the center of sphere
+    Phi0 = 0
+
+    # The spatial derivative of potential at the center of sphere
+    DevPhi0 = 0
+
+    ##########################
+    ### Numerical parameters ###
+    ##########################
+
+    # The boundary point for integration
+    BPoint   = 1e-4
+
+    # The integration step
+    CoarseDr = 1e-4
+ 
     ##########################
     ### Derived parameters ###
     ##########################
 
-    # Peak density of DM     
-    Rho0_D = Rho0_g * Kappa * Kappa / Lambda / Lambda
-
-    # Core radius of DM
-    Radius_D = Lambda*Radius_g
-
-    # Velocity dispersion of DM
-    Sigma_D = Kappa * Sigma_g
+    Rho0_D, Sigma_D, Radius_D 
+    = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
 
 
     ############################
     ###   Bundle paramters   ###
     ############################
-    Para = [ Radius_g, Rho0_g, Sigma_g, Temp_g, Radius_D, Rho0_D, Sigma_D, Lambda, Kappa, Constant ]
+    ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
+    ParaNum = [ BPoint, CoarseDr ]
+    
 
 
     # Number of cells along each dimension of the input grid.
     N = np.array([Nx, Ny, Nz], dtype='int')
     L = np.array([Lx, Ly, Lz], dtype='float64') 
 
-    FluidInBox = SphericalSphere( L, N, Para )
+    FluidInBox = SphericalSphere( L, N, ParaPhy, ParaNum )
 
     FluidInBox.tofile(filename)
 
