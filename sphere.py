@@ -1,20 +1,12 @@
 import numpy as np
 from density_profile import *
 from pri2con import Pri2Con
-import multiprocessing
 
 
-def SphericalSphere( L, N, Radius, Rho0_g, CsSqr, Rho0_DM, ScaleRadius ):
+def SphericalSphere( L, N, Para ):
 
-    a_pool = multiprocessing.Pool()
-
-    Nx = N[0]
-    Ny = N[1]
-    Nz = N[2]
-
-    Lx = L[0]
-    Ly = L[1]
-    Lz = L[2]
+    Nx, Ny, Nz = N
+    Lx, Ly, Lz = L
 
     # Center of sphere
     Center = np.array([Lx,Ly,Lz])*0.5

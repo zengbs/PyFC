@@ -18,26 +18,55 @@ def _DumpFile(out):
     Ly = 100
     Lz = 100
 
-    # Radius of sphere
-    Radius = 40
+    ##########################
+    ###  Free parameters   ###
+    ##########################
+    # The eq(2) in Sutherland & Bicknell (2007)
+    Constant = 9
 
-    # Peak gas density
-    Rho0_g = 1
+    # Core radius of gas sphere (kpc)
+    Radius_g = 1
 
-    # Square of sound speed inside the isotheraml sphere
-    CsSqr = 0.2
+    # Peak gas density (1/cm^3)
+    Rho0_g = 0.5
+
+    # Velocity dispersion of gas (km/s)
+    Sigma_g = 250  
+
+    # Lambda = r_{D}/r_{g}
+    Lambda = 5
+
+    # Kappa = \sigma_{D}/\sigma_{g}
+    Kappa = 2
+
+    # Temperature of gas (K)
+    Temp_g = 1e7
   
-    #
-    Rho0_DM = 1
+    ##########################
+    ### Derived parameters ###
+    ##########################
 
-    # Scale radius of NFW profile
-    ScaleRadius = 1
+    # Peak density of DM     
+    Rho0_D = Rho0_g * Kappa * Kappa / Lambda / Lambda
+
+    # Core radius of DM
+    Radius_D = Lambda*Radius_g
+
+    # Velocity dispersion of DM
+    Sigma_D = Kappa * Sigma_g
+
+
+    ############################
+    ###   Bundle paramters   ###
+    ############################
+    Para = [ Radius_g, Rho0_g, Sigma_g, Temp_g, Radius_D, Rho0_D, Sigma_D, Lambda, Kappa, Constant ]
+
 
     # Number of cells along each dimension of the input grid.
     N = np.array([Nx, Ny, Nz], dtype='int')
     L = np.array([Lx, Ly, Lz], dtype='float64') 
 
-    FluidInBox = SphericalSphere( L, N, Radius, Rho0_g, CsSqr, Rho0_DM, ScaleRadius )
+    FluidInBox = SphericalSphere( L, N, Para )
 
     FluidInBox.tofile(filename)
 

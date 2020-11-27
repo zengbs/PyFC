@@ -5,14 +5,10 @@ NEWTON_G = 1.0
 
  
 def f(y, r, params):
-    Psi, Phi = y      # unpack current values of y
-    CsSqr, PhiGasOrigin, Rho0_g, Rho0_DM, ScaleRadius = params  # unpack parameters
-    # Assuming the self-gravity of gases is minor compared to that of DM
-    #derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*ExactNFWDensity( r, ScaleRadius, Rho0_DM ) , Psi ]
+    Psi, Omega = y      # unpack current values of y
+    rPrime, Kappa, Lambda, Constant = params  # unpack parameters
 
-    # Consider the self-gravity of gases as well
-    derivs = [ - 2*Psi/r + 4*np.pi*NEWTON_G*( IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ) 
-               + ExactNFWDensity( r, ScaleRadius, Rho0_DM ) ) , Psi ]
+    derivs = [ Omega, - 2*Omega/rPrime + Constant*( np.exp(-Psi) + Lambda*Lambda/Kappa/Kappa*np.exp(-Kappa*Kappa*Psi) ) ]
     return derivs
 
 
@@ -27,35 +23,28 @@ def ExactNFWPotential(r, Rho0_DM, ScaleRadius):
     Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r - -4*np.pi*NEWTON_G*Rho0_DM*ScaleRadius**2
     return Exact
 
-# Density of isothermal sphere as a function of total potential
-def IsothermalDensity( Phi, PhiGasOrigin, Rho0_g, CsSqr ):
-    GasDensityProfile = Rho0_g * np.exp(  -( Phi - PhiGasOrigin ) / CsSqr )
+# Density of isothermal gas sphere as a function of total potential
+def IsothermalGasDensity( Phi, PhiOrigin, Rho0_g, Sigma_g ):
+    GasDensityProfile = Rho0_g * np.exp(  -( Phi - PhiOrigin ) / Sigma_g / Sigma_g )
     return GasDensityProfile
 
-def NumericalGasDensity( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
-    PhiGasOrigin   = ExactNFWPotential(r[0], Rho0_DM, ScaleRadius)
-    TotalPotential = NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr )
-    GasDensity     = IsothermalDensity( TotalPotential, [PhiGasOrigin]*TotalPotential.shape[0], Rho0_g, CsSqr )
-    return GasDensity
+# Density of isothermal DM sphere as a function of total potential
+def IsothermalDMDensity( Phi, PhiOrigin, Rho0_D, Sigma_D ):
+    DMDensityProfile = Rho0_D * np.exp(  -( Phi - PhiOrigin ) / Sigma_D / Sigma_D )
+    return DMDensityProfile
+
+def NumericalDensity( rPrime, Kappa, Lambda, Constant, Sigma_g, Rho0_g, PhiOrigin ):
+    Psi            = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, PhiOrigin )
+    Rho0_D         = Rho0_g * Kappa * Kappa / Lambda / Lambda
+    Sigma_D        = Kappa * Sigma_g
+
+    GasDensity     = IsothermalGasDensity( Psi, [PhiOrigin]*TotalPotential.shape[0], Rho0_g, Sigma_g )
+    DMDensity      = IsothermalDMDensity ( Psi, [PhiOrigin]*TotalPotential.shape[0], Rho0_D, Sigma_D )
+    return GasDensity, DMDensity
   
-def NumericalTotalPotential( r, Rho0_DM, ScaleRadius, Rho0_g, CsSqr ):
-    # Psi0: The derivative of potential at the center of sphere
-    # Phi0: The               potential at the center of sphere
-    if ( Rho0_g == 0 ):
-         Psi0 = 0.5*ScaleRadius**-2
-         Phi0 = 0
-    elif( Rho0_DM == 0 ):
-         Psi0 = 0
-         Phi0 = 0
-    else:
-         Psi0 = 0
-         Phi0 = 0
-
-    # Assuming gas potential and total potential have the same value at the center of sphere
-    PhiGasOrigin = Phi0
-
+def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, PhiOrigin ):
     # Bundle Parameters
-    params = [ CsSqr, PhiGasOrigin, Rho0_g, Rho0_DM, ScaleRadius ]
+    params = [ rPrime, Kappa, Lambda, Constant ]
                       
     # Bundle boundary values
     y0     = [ Psi0, Phi0 ]
