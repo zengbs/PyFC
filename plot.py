@@ -9,7 +9,7 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
     Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
 
     # Unbundle numerical parameters
-    BPoint, CoarseDr = ParaNum   
+    BPoint, CoarseDr, PlotRadius = ParaNum   
 
     # Get derived parameters
     Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
@@ -25,31 +25,29 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
 
     rPrime = np.arange(BPoint, PlotRadius, CoarseDr)
 
-    r = rPrime*Radius_D
  
-    # Gas-only
-    Rho0_D_Temp = 0
-    GasOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    GasOnlyDensity, Nothing = NumericalDensity( rPrime, ParaPhy )
-    GasOnlyPotential       *= Sigma_D*Sigma_D
-    A,=ax[0].plot( r, GasOnlyDensity  , '*', label='Gas density without DM'   )
-    B,=ax[1].plot( r, GasOnlyPotential, '^', label='Gas potential without DM' )
+    ## Gas-only
+    #ParaPhy[4]              = 0 # Kappa = 0
+    #GasOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
+    #GasOnlyDensity, Nothing = NumericalDensity( rPrime, ParaPhy )
+    #A,=ax[0].plot( rPrime, GasOnlyDensity  , '*', label='Gas density without DM'   )
+    #B,=ax[1].plot( rPrime, GasOnlyPotential, '^', label='Gas potential without DM' )
 
-    # DM-only
-    Rho0_g_Temp  = 0
-    DMOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    Nothing, DMOnlyDensity = NumericalDensity( rPrime, ParaPhy )
-    DMOnlyPotential       *= Sigma_D*Sigma_D
-    C,=ax[0].plot( r, DMOnlyDensity  , 'o', label='DM density without Gas'   )
-    D,=ax[1].plot( r, DMOnlyPotential, 'x', label='DM potential without Gas' )
+    ## DM-only
+    #ParaPhy[1]             = 0 # Rho0_g = 0
+    #DMOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
+    #Nothing, DMOnlyDensity = NumericalDensity( rPrime, ParaPhy )
+    #C,=ax[0].plot( rPrime, DMOnlyDensity  , 'o', label='DM density without Gas'   )
+    #D,=ax[1].plot( rPrime, DMOnlyPotential, 'x', label='DM potential without Gas' )
     
     # DM and gas
+    #ParaPhy[1]            = Rho0_g
+    #ParaPhy[4]            = Kappa
     TotalPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     GasDensity, DMDensity = NumericalDensity( rPrime, ParaPhy )
-    TotalPotential       *= Sigma_D*Sigma_D
-    E,=ax[0].plot( r, GasDensity,    '>', label='Gas density with DM' )
-    F,=ax[0].plot( r, DMDensity,     '<', label='DM density with Gas' )
-    G,=ax[1].plot( r, TotalPotential,'-', label='Gas+DM potential' )
+    E,=ax[0].plot( rPrime, GasDensity,    '>', label='Gas density with DM' )
+    F,=ax[0].plot( rPrime, DMDensity,     '<', label='DM density with Gas' )
+    G,=ax[1].plot( rPrime, TotalPotential,'-', label='Gas+DM potential' )
     
 
 
@@ -59,9 +57,15 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
     ax[1].set_xscale('log')
     ax[1].set_yscale('linear')
 
+    ax[0].set_xlabel(r'$r/r_{D}$'          , size=20)
+    ax[1].set_xlabel(r'$r/r_{D}$'          , size=20)
+    ax[0].set_ylabel(r'$\rho$'             , size=20)
+    ax[1].set_ylabel(r'$\Phi/\sigma_{D}^2$', size=20)
 
-    ax[0].legend(handles=[C,A,F,E],loc='lower left', fontsize=12)
-    ax[1].legend(handles=[D,B,G],loc='upper left', fontsize=12)
+    #ax[0].legend(handles=[C,A,F,E],loc='lower left', fontsize=12)
+    #ax[1].legend(handles=[D,B,G],loc='upper left', fontsize=12)
+    ax[0].legend(handles=[F,E],loc='lower left', fontsize=12)
+    ax[1].legend(handles=[G],loc='upper left', fontsize=12)
     plt.show()
 
 ##########################
@@ -77,7 +81,7 @@ Radius_g = 1
 Rho0_g = 0.5
 
 # Velocity dispersion of gas (km/s)
-Sigma_g = 250  
+Sigma_g  = 250
 
 # Lambda = r_{D}/r_{g}
 Lambda = 5
@@ -114,9 +118,10 @@ Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda,
 ############################
 ###   Bundle paramters   ###
 ############################
-ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
-ParaNum = [ BPoint, CoarseDr ]
+# plot radius in unit of Radius_D (core radius of DM)
+PlotRadius = 6.9
 
-PlotRadius = 10
+ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
+ParaNum = [ BPoint, CoarseDr, PlotRadius ]
 
 Plot( ParaPhy, ParaNum, PlotRadius )

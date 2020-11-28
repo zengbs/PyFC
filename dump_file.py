@@ -1,6 +1,7 @@
 import numpy as np
 from pri2con import Pri2Con
 from sphere import SphericalSphere
+from density_profile import Free2DerivedPara
 
 def _DumpFile(out):
 
@@ -14,9 +15,9 @@ def _DumpFile(out):
     Nz = out.shape[2] 
 
     # Box size
-    Lx = 100
-    Ly = 100
-    Lz = 100
+    Lx = 10
+    Ly = 10
+    Lz = 10
 
     ##########################
     ###  Free parameters   ###
@@ -57,20 +58,21 @@ def _DumpFile(out):
 
     # The integration step
     CoarseDr = 1e-4
+
+    # Plot radius
+    PlotRadius = 0.4*Lx**0.5
  
     ##########################
     ### Derived parameters ###
     ##########################
-
-    Rho0_D, Sigma_D, Radius_D 
-    = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
+    Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
 
 
     ############################
     ###   Bundle paramters   ###
     ############################
     ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
-    ParaNum = [ BPoint, CoarseDr ]
+    ParaNum = [ BPoint, CoarseDr, PlotRadius ]
     
 
 

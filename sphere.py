@@ -12,22 +12,25 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
     Center = np.array([Lx,Ly,Lz])*0.5
  
     # Unbundle numerical parameters
-    BPoint, CoarseDr = ParaNum   
+    BPoint, CoarseDr, PlotRadius = ParaNum   
+
+    # Unbundle physical parameters
+    Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
 
     # Coarse grid
     Coarse_r = np.arange(BPoint, 0.5*Lx, CoarseDr)
 
-    InRho   = NumericalDensity( Coarse_r, ParaPhy )
+    InRho, Nothing   = NumericalDensity( Coarse_r, ParaPhy )
     InUX    = 0 
     InUy    = 0
     InUz    = 0
-    InPres  = CsSqr*InRho
+    InPres  = Sigma_g*InRho
 
-    OutRho  = 1e-3*np.interp( Radius, Coarse_r, InRho )
+    OutRho  = 1e-3*np.interp( PlotRadius, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
-    OutPres = 1e3*CsSqr*OutRho
+    OutPres = 1e3*Sigma_g*OutRho
 
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
@@ -41,9 +44,10 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
     # Cell spacing
     delta = (re-le)/N  # [1/128 1/128 1/128]
     
-    FluidInBox = np.zeros((6, Nx, Ny, Nz), dtype=np.float32)
+    FluidInBox = np.zeros((5, Nx, Ny, Nz), dtype=np.float32)
 
     for i in range(Nx):
+        print("i=%d" % i)
         for j in range(Ny):
             for k in range(Nz):
 
@@ -54,20 +58,18 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
 
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
-                if ( r < Radius ):
+                if ( r < PlotRadius ):
                      FluidInBox[0][i][j][k] = np.interp( r, Coarse_r, InDens )
                      FluidInBox[1][i][j][k] = np.interp( r, Coarse_r, InMomX ) 
                      FluidInBox[2][i][j][k] = np.interp( r, Coarse_r, InMomY ) 
                      FluidInBox[3][i][j][k] = np.interp( r, Coarse_r, InMomZ ) 
-                     FluidInBox[4][i][j][k] = CsSqr*FluidInBox[0][i][j][k]
-                     FluidInBox[5][i][j][k] = CsSqr
+                     FluidInBox[4][i][j][k] = Sigma_g*FluidInBox[0][i][j][k]
                 else:
                      FluidInBox[0][i][j][k] = OutDens
                      FluidInBox[1][i][j][k] = OutMomX
                      FluidInBox[2][i][j][k] = OutMomY
                      FluidInBox[3][i][j][k] = OutMomZ
                      FluidInBox[4][i][j][k] = OutEngy
-                     FluidInBox[5][i][j][k] = CsSqr
                  
                 
     return FluidInBox

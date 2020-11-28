@@ -44,14 +44,13 @@ def IsothermalDMDensity( Phi, Phi0, Rho0_D, Sigma_D ):
     DMDensityProfile = Rho0_D * np.exp(  -( Phi - Phi0 ) / Sigma_D / Sigma_D )
     return DMDensityProfile
 
-def NumericalDensity( r, ParaPhy ):
+def NumericalDensity( rPrime, ParaPhy ):
     # Unbundle parameters
     Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
     Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
 
     Psi0           = Phi0    / Sigma_D / Sigma_D
     DevPsi0        = DevPhi0 / Sigma_D / Sigma_D
-    rPrime         = r / Radius_D
    
     Psi            = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     Phi            = Psi * Sigma_D * Sigma_D
