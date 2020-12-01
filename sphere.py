@@ -58,7 +58,8 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     ####################################
     ##########   Potential  ############
     ####################################
-    PotInBox   = np.zeros((Nx, Ny, Nz), dtype=Precision)
+    GRA_GHOST_SIZE = 2
+    PotInBox   = np.zeros((Nx+2*GRA_GHOST_SIZE, Ny+2*GRA_GHOST_SIZE, Nz+2*GRA_GHOST_SIZE), dtype=Precision)
 
     Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
     Psi0       = Phi0      / Sigma_D / Sigma_D
@@ -69,28 +70,33 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
 
 
 
-    for i in range(Nx):
-        print("i=%d" % i)
-        for j in range(Ny):
-            for k in range(Nz):
+    for i in range(Nx+2*GRA_GHOST_SIZE):
+        for j in range(Ny+2*GRA_GHOST_SIZE):
+            for k in range(Nz+2*GRA_GHOST_SIZE):
+
+                ii = i - GRA_GHOST_SIZE                     
+                jj = j - GRA_GHOST_SIZE                     
+                kk = k - GRA_GHOST_SIZE                     
 
                 x = (i+0.5)*delta[0] 
                 y = (j+0.5)*delta[1]
                 z = (k+0.5)*delta[2]
+
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
-                if ( r < PlotRadius ):
-                     FluidInBox[0][i][j][k] = np.interp( r, Coarse_r, InDens )
-                     FluidInBox[1][i][j][k] = np.interp( r, Coarse_r, InMomX ) 
-                     FluidInBox[2][i][j][k] = np.interp( r, Coarse_r, InMomY ) 
-                     FluidInBox[3][i][j][k] = np.interp( r, Coarse_r, InMomZ ) 
-                     FluidInBox[4][i][j][k] = Sigma_g*FluidInBox[0][i][j][k]
-                else:
-                     FluidInBox[0][i][j][k] = OutDens
-                     FluidInBox[1][i][j][k] = OutMomX
-                     FluidInBox[2][i][j][k] = OutMomY
-                     FluidInBox[3][i][j][k] = OutMomZ
-                     FluidInBox[4][i][j][k] = OutEngy
+                if ( 0<=ii<Nx and 0<=jj<Ny and 0<=kk<Nz ):
+                     if ( r < PlotRadius ):
+                          FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
+                          FluidInBox[1][ii][jj][kk] = np.interp( r, Coarse_r, InMomX ) 
+                          FluidInBox[2][ii][jj][kk] = np.interp( r, Coarse_r, InMomY ) 
+                          FluidInBox[3][ii][jj][kk] = np.interp( r, Coarse_r, InMomZ ) 
+                          FluidInBox[4][ii][jj][kk] = FluidInBox[0][ii][jj][kk]*Sigma_g**2
+                     else:
+                          FluidInBox[0][ii][jj][kk] = OutDens
+                          FluidInBox[1][ii][jj][kk] = OutMomX
+                          FluidInBox[2][ii][jj][kk] = OutMomY
+                          FluidInBox[3][ii][jj][kk] = OutMomZ
+                          FluidInBox[4][ii][jj][kk] = OutEngy
 
                 PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
                  
