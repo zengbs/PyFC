@@ -3,7 +3,7 @@ from density_profile import *
 from pri2con import Pri2Con
 
 
-def SphericalSphere( L, N, ParaPhy, ParaNum ):
+def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
 
     Nx, Ny, Nz = N
     Lx, Ly, Lz = L
@@ -52,20 +52,20 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
 
     
-    FluidInBox = np.zeros((5, Nx, Ny, Nz), dtype=np.float32)
+    FluidInBox = np.zeros((5, Nx, Ny, Nz), dtype=Precision)
 
 
     ####################################
     ##########   Potential  ############
     ####################################
-    PotInBox   = np.zeros((Nx, Ny, Nz), dtype=np.float32)
+    PotInBox   = np.zeros((Nx, Ny, Nz), dtype=Precision)
 
     Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
-    Psi0       = Phi0      * Sigma_D * Sigma_D
-    DevPsi0    = DevPhi0   * Sigma_D * Sigma_D
+    Psi0       = Phi0      / Sigma_D / Sigma_D
+    DevPsi0    = DevPhi0   / Sigma_D / Sigma_D
 
     Potential = NumericalTotalPotential( Coarse_r, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-
+    Potential *= Sigma_D*Sigma_D
 
 
 
@@ -91,17 +91,8 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
                      FluidInBox[2][i][j][k] = OutMomY
                      FluidInBox[3][i][j][k] = OutMomZ
                      FluidInBox[4][i][j][k] = OutEngy
-                 
-    for i in range(Nx):
-        print("i=%d" % i)
-        for j in range(Ny):
-            for k in range(Nz):
-
-                x = (i+0.5)*delta[0] 
-                y = (j+0.5)*delta[1]
-                z = (k+0.5)*delta[2]
-                r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
+                 
 
     return FluidInBox, PotInBox

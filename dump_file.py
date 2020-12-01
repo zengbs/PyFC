@@ -59,6 +59,9 @@ def _DumpFile(out):
     # Plot radius
     PlotRadius = 0.4*Lx
  
+    # Floating-point precision
+    Precision = 'float64'
+
     ##########################
     ### Derived parameters ###
     ##########################
@@ -68,6 +71,7 @@ def _DumpFile(out):
     ############################
     ###   Bundle paramters   ###
     ############################
+
     ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
     ParaNum = [ BPoint, CoarseDr, PlotRadius ]
     
@@ -76,11 +80,13 @@ def _DumpFile(out):
     ############################
     ###     Dump density    ####
     ############################
+
     # Number of cells along each dimension of the input grid.
     N = np.array([Nx, Ny, Nz], dtype='int')
-    L = np.array([Lx, Ly, Lz], dtype='float64') 
+    L = np.array([Lx, Ly, Lz], dtype=Precision) 
 
-    FluidInBox, PotInBox = SphericalSphere( L, N, ParaPhy, ParaNum )
+
+    FluidInBox, PotInBox = SphericalSphere( L, N, ParaPhy, ParaNum, Precision )
 
     FluidInBox.tofile("UM_IC")
 
