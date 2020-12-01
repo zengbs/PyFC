@@ -6,9 +6,6 @@ from density_profile import Free2DerivedPara
 def _DumpFile(out):
 
 
-    # Output file name
-    filename = "UM_IC"
-
     # Number of cells along x/y/z
     Nx = out.shape[0] 
     Ny = out.shape[1] 
@@ -49,9 +46,9 @@ def _DumpFile(out):
     # The spatial derivative of potential at the center of sphere
     DevPhi0 = 0
 
-    ##########################
+    ############################
     ### Numerical parameters ###
-    ##########################
+    ############################
 
     # The boundary point for integration
     BPoint   = 1e-4
@@ -60,7 +57,7 @@ def _DumpFile(out):
     CoarseDr = 1e-4
 
     # Plot radius
-    PlotRadius = 0.4*Lx**0.5
+    PlotRadius = 0.4*Lx
  
     ##########################
     ### Derived parameters ###
@@ -76,13 +73,22 @@ def _DumpFile(out):
     
 
 
+    ############################
+    ###     Dump density    ####
+    ############################
     # Number of cells along each dimension of the input grid.
     N = np.array([Nx, Ny, Nz], dtype='int')
     L = np.array([Lx, Ly, Lz], dtype='float64') 
 
-    FluidInBox = SphericalSphere( L, N, ParaPhy, ParaNum )
+    FluidInBox, PotInBox = SphericalSphere( L, N, ParaPhy, ParaNum )
 
-    FluidInBox.tofile(filename)
+    FluidInBox.tofile("UM_IC")
+
+    ############################
+    ###     Dump potential   ###
+    ############################
+
+    PotInBox.tofile("ExtPotTable")
 
 out=np.zeros((512,512,512))
 _DumpFile(out)

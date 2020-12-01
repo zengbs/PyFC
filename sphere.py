@@ -20,21 +20,6 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
     # Coarse grid
     Coarse_r = np.arange(BPoint, 0.5*Lx, CoarseDr)
 
-    InRho, Nothing   = NumericalDensity( Coarse_r, ParaPhy )
-    InUX    = 0 
-    InUy    = 0
-    InUz    = 0
-    InPres  = Sigma_g*InRho
-
-    OutRho  = 1e-3*np.interp( PlotRadius, Coarse_r, InRho )
-    OutUX   = 0 
-    OutUy   = 0
-    OutUz   = 0
-    OutPres = 1e3*Sigma_g*OutRho
-
-    InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
-    OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
-
 
     # Left edge and right edge coordinates of the desired
     # simulation domain which will be used in GAMER.
@@ -43,8 +28,46 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
     
     # Cell spacing
     delta = (re-le)/N  # [1/128 1/128 1/128]
+
+    ####################################
+    ############   Fluid  ##############
+    ####################################
+
+    # Fluid inside box
+    InRho, Nothing   = NumericalDensity( Coarse_r, ParaPhy )
+    InUX    = 0 
+    InUy    = 0
+    InUz    = 0
+    InPres  = Sigma_g*InRho
+
+    # Fluid outside box
+    OutRho  = 1e-3*np.interp( PlotRadius, Coarse_r, InRho )
+    OutUX   = 0 
+    OutUy   = 0
+    OutUz   = 0
+    OutPres = 1e3*Sigma_g*OutRho
+
+    # Conversion
+    InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
+    OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
+
     
     FluidInBox = np.zeros((5, Nx, Ny, Nz), dtype=np.float32)
+
+
+    ####################################
+    ##########   Potential  ############
+    ####################################
+    PotInBox   = np.zeros((Nx, Ny, Nz), dtype=np.float32)
+
+    Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
+    Psi0       = Phi0      * Sigma_D * Sigma_D
+    DevPsi0    = DevPhi0   * Sigma_D * Sigma_D
+
+    Potential = NumericalTotalPotential( Coarse_r, Kappa, Lambda, Constant, Psi0, DevPsi0 )
+
+
+
 
     for i in range(Nx):
         print("i=%d" % i)
@@ -54,8 +77,6 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
                 x = (i+0.5)*delta[0] 
                 y = (j+0.5)*delta[1]
                 z = (k+0.5)*delta[2]
-
-
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 if ( r < PlotRadius ):
@@ -71,5 +92,16 @@ def SphericalSphere( L, N, ParaPhy, ParaNum ):
                      FluidInBox[3][i][j][k] = OutMomZ
                      FluidInBox[4][i][j][k] = OutEngy
                  
-                
-    return FluidInBox
+    for i in range(Nx):
+        print("i=%d" % i)
+        for j in range(Ny):
+            for k in range(Nz):
+
+                x = (i+0.5)*delta[0] 
+                y = (j+0.5)*delta[1]
+                z = (k+0.5)*delta[2]
+                r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
+
+                PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
+
+    return FluidInBox, PotInBox
