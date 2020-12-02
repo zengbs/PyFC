@@ -22,9 +22,6 @@ def _DumpFile(out):
     # The Boltzmann constant (eV/K)
     kB = 8.6173303e-5
  
-    # Speed of light (km/s)
-    C = 299792.458
-
     ##########################
     ###  Free parameters   ###
     ##########################

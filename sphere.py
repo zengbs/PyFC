@@ -5,6 +5,9 @@ from pri2con import Pri2Con
 
 def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
 
+    # Speed of light (km/s)
+    C = 299792.458
+
     Nx, Ny, Nz = N
     Lx, Ly, Lz = L
 
