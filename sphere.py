@@ -69,7 +69,7 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     DevPsi0    = DevPhi0   / Sigma_D / Sigma_D
 
     Potential = NumericalTotalPotential( Coarse_r, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    Potential *= Sigma_D*Sigma_D
+    Potential *= (Sigma_D/C)**2
 
 
 
