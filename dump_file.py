@@ -17,6 +17,15 @@ def _DumpFile(out):
     Lz = 10
 
     ##########################
+    ### Boltzmann constant ###
+    ##########################
+    # The Boltzmann constant (eV/K)
+    kB = 8.6173303e-5
+ 
+    # Speed of light (km/s)
+    C = 299792.458
+
+    ##########################
     ###  Free parameters   ###
     ##########################
     # The eq(2) in Sutherland & Bicknell (2007)
@@ -46,6 +55,12 @@ def _DumpFile(out):
     # The spatial derivative of potential at the center of sphere
     DevPhi0 = 0
 
+    # Atomic mass unit (g)
+    Ma = 1.66e-24
+
+    # Mean molecular weight
+    Mu = 0.6
+
     ############################
     ### Numerical parameters ###
     ############################
@@ -66,7 +81,6 @@ def _DumpFile(out):
     ### Derived parameters ###
     ##########################
     Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
-
 
     ############################
     ###   Bundle paramters   ###
