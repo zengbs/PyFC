@@ -38,14 +38,14 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     InUX    = 0 
     InUy    = 0
     InUz    = 0
-    InPres  = Sigma_g*InRho
+    InPres  = InRho*Sigma_g**2
 
     # Fluid outside box
     OutRho  = 1e-3*np.interp( PlotRadius, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
-    OutPres = 1e3*Sigma_g*OutRho
+    OutPres = 1e3*OutRho*Sigma_g**2
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
@@ -90,7 +90,7 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
                           FluidInBox[1][ii][jj][kk] = np.interp( r, Coarse_r, InMomX ) 
                           FluidInBox[2][ii][jj][kk] = np.interp( r, Coarse_r, InMomY ) 
                           FluidInBox[3][ii][jj][kk] = np.interp( r, Coarse_r, InMomZ ) 
-                          FluidInBox[4][ii][jj][kk] = FluidInBox[0][ii][jj][kk]*Sigma_g**2
+                          FluidInBox[4][ii][jj][kk] = np.interp( r, Coarse_r, InEngy )
                      else:
                           FluidInBox[0][ii][jj][kk] = OutDens
                           FluidInBox[1][ii][jj][kk] = OutMomX

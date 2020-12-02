@@ -60,7 +60,7 @@ def _DumpFile(out):
     PlotRadius = 0.4*Lx
  
     # Floating-point precision
-    Precision = 'float64'
+    Precision = 'float32'
 
     ##########################
     ### Derived parameters ###
