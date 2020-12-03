@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
 
-#NEWTON_G = 1.0
 
  
 def f(y, rPrime, params):

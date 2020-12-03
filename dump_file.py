@@ -12,9 +12,9 @@ def _DumpFile(out):
     Nz = out.shape[2] 
 
     # Box size
-    Lx = 10
-    Ly = 10
-    Lz = 10
+    Lx = 3
+    Ly = 3
+    Lz = 3
 
     ##########################
     ### Boltzmann constant ###
@@ -63,16 +63,16 @@ def _DumpFile(out):
     ############################
 
     # The boundary point for integration
-    BPoint   = 1e-4
+    BPoint   = 1e-5
 
     # The integration step
-    CoarseDr = 1e-4
+    CoarseDr = 1e-5
 
     # Plot radius
-    PlotRadius = 0.4*Lx
+    Radius = 0.4*Lx
  
     # Floating-point precision
-    Precision = 'float32'
+    Precision = 'float64'
 
     ##########################
     ### Derived parameters ###
@@ -84,7 +84,7 @@ def _DumpFile(out):
     ############################
 
     ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
-    ParaNum = [ BPoint, CoarseDr, PlotRadius ]
+    ParaNum = [ BPoint, CoarseDr, Radius ]
     
 
 
@@ -107,5 +107,5 @@ def _DumpFile(out):
 
     PotInBox.tofile("ExtPotTable")
 
-out=np.zeros((512,512,512))
+out=np.zeros((256,256,256))
 _DumpFile(out)

@@ -4,12 +4,12 @@ from scipy.integrate import odeint
 from density_profile import *
 
 
-def Plot( ParaPhy, ParaNum, PlotRadius ):
+def Plot( ParaPhy, ParaNum, Radius ):
     # Unbundle physical parameters
     Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
 
     # Unbundle numerical parameters
-    BPoint, CoarseDr, PlotRadius = ParaNum   
+    BPoint, CoarseDr, Radius = ParaNum   
 
     # Get derived parameters
     Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
@@ -23,7 +23,7 @@ def Plot( ParaPhy, ParaNum, PlotRadius ):
     handles0=[]
     handles1=[]
 
-    rPrime = np.arange(BPoint, PlotRadius, CoarseDr)
+    rPrime = np.arange(BPoint, Radius, CoarseDr)
 
  
     ## Gas-only
@@ -119,9 +119,9 @@ Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda,
 ###   Bundle paramters   ###
 ############################
 # plot radius in unit of Radius_D (core radius of DM)
-PlotRadius = 6.9
+Radius = 6.9
 
 ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
-ParaNum = [ BPoint, CoarseDr, PlotRadius ]
+ParaNum = [ BPoint, CoarseDr, Radius ]
 
-Plot( ParaPhy, ParaNum, PlotRadius )
+Plot( ParaPhy, ParaNum, Radius )

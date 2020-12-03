@@ -8,6 +8,9 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     # Speed of light (km/s)
     C = 299792.458
 
+    # Gravitational constant
+    NEWTON_G = 1.0
+
     Nx, Ny, Nz = N
     Lx, Ly, Lz = L
 
@@ -15,7 +18,7 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     Center = np.array([Lx,Ly,Lz])*0.5
  
     # Unbundle numerical parameters
-    BPoint, CoarseDr, PlotRadius = ParaNum   
+    BPoint, CoarseDr, Radius = ParaNum   
 
     # Unbundle physical parameters
     Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
@@ -44,7 +47,7 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     InPres  = InRho*(Sigma_g/C)**2
 
     # Fluid outside box
-    OutRho  = 1e-3*np.interp( PlotRadius, Coarse_r, InRho )
+    OutRho  = 1e-3*np.interp( Radius, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
@@ -71,6 +74,7 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
     Potential = NumericalTotalPotential( Coarse_r, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     Potential *= (Sigma_D/C)**2
 
+    EnclosedMass = 0.0
 
 
     for i in range(Nx+2*GRA_GHOST_SIZE):
@@ -88,12 +92,13 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 if ( 0<=ii<Nx and 0<=jj<Ny and 0<=kk<Nz ):
-                     if ( r < PlotRadius ):
+                     if ( r < Radius ):
                           FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
                           FluidInBox[1][ii][jj][kk] = np.interp( r, Coarse_r, InMomX ) 
                           FluidInBox[2][ii][jj][kk] = np.interp( r, Coarse_r, InMomY ) 
                           FluidInBox[3][ii][jj][kk] = np.interp( r, Coarse_r, InMomZ ) 
                           FluidInBox[4][ii][jj][kk] = np.interp( r, Coarse_r, InEngy )
+                          EnclosedMass += np.interp( r, Coarse_r, InRho )
                      else:
                           FluidInBox[0][ii][jj][kk] = OutDens
                           FluidInBox[1][ii][jj][kk] = OutMomX
@@ -102,6 +107,12 @@ def SphericalSphere( L, N, ParaPhy, ParaNum, Precision ):
                           FluidInBox[4][ii][jj][kk] = OutEngy
 
                 PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
-                 
 
-    return FluidInBox, PotInBox
+
+    MeanRho         = 3*EnclosedMass/( 4*np.pi*Radius**3 )
+    FreeFallingTime = 0.5427*( NEWTON_G * MeanRho )**-0.5 
+
+    print("Encloed mass = %e\n" %(EnclosedMass))
+    print("Free falling time = %e\n" % (FreeFallingTime))
+
+    return FluidInBox, PotInBo
