@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
+import parameters as par
 
 
  
@@ -43,19 +44,15 @@ def IsothermalDMDensity( Phi, Phi0, Rho0_D, Sigma_D ):
     DMDensityProfile = Rho0_D * np.exp(  -( Phi - Phi0 ) / Sigma_D / Sigma_D )
     return DMDensityProfile
 
-def NumericalDensity( rPrime, ParaPhy ):
-    # Unbundle parameters
-    Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
-    Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
-
-    Psi0           = Phi0    / Sigma_D / Sigma_D
-    DevPsi0        = DevPhi0 / Sigma_D / Sigma_D
+def NumericalDensity( rPrime ):
+    Psi0           = par.Phi0    / par.Sigma_D / par.Sigma_D
+    DevPsi0        = par.DevPhi0 / par.Sigma_D / par.Sigma_D
    
-    Psi            = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    Phi            = Psi * Sigma_D * Sigma_D
+    Psi            = NumericalTotalPotential( rPrime, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
+    Phi            = Psi * par.Sigma_D * par.Sigma_D
 
-    GasDensity     = IsothermalGasDensity( Phi, [Phi0]*Phi.shape[0], Rho0_g, Sigma_g )
-    DMDensity      = IsothermalDMDensity ( Phi, [Phi0]*Phi.shape[0], Rho0_D, Sigma_D )
+    GasDensity     = IsothermalGasDensity( Phi, [par.Phi0]*Phi.shape[0], par.Rho0_g, par.Sigma_g )
+    DMDensity      = IsothermalDMDensity ( Phi, [par.Phi0]*Phi.shape[0], par.Rho0_D, par.Sigma_D )
     return GasDensity, DMDensity
   
 def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ):

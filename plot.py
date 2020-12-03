@@ -2,20 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from scipy.integrate import odeint
 from density_profile import *
+import parameters as par
 
 
-def Plot( ParaPhy, ParaNum, Radius ):
-    # Unbundle physical parameters
-    Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 = ParaPhy
+def Plot( ):
+    par.Parameters()
 
-    # Unbundle numerical parameters
-    BPoint, CoarseDr, Radius = ParaNum   
-
-    # Get derived parameters
-    Rho0_D, Sigma_D, Radius_D  = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
-
-    Psi0           = Phi0    / Sigma_D / Sigma_D
-    DevPsi0        = DevPhi0 / Sigma_D / Sigma_D
+    Psi0           = par.Phi0    / par.Sigma_D / par.Sigma_D
+    DevPsi0        = par.DevPhi0 / par.Sigma_D / par.Sigma_D
 
     fig, ax = plt.subplots( 1, 2, sharex=False, sharey=False )
     fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             
@@ -23,7 +17,7 @@ def Plot( ParaPhy, ParaNum, Radius ):
     handles0=[]
     handles1=[]
 
-    rPrime = np.arange(BPoint, Radius, CoarseDr)
+    rPrime = np.arange(par.BPoint, par.Radius, par.CoarseDr)
 
  
     ## Gas-only
@@ -43,8 +37,8 @@ def Plot( ParaPhy, ParaNum, Radius ):
     # DM and gas
     #ParaPhy[1]            = Rho0_g
     #ParaPhy[4]            = Kappa
-    TotalPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
-    GasDensity, DMDensity = NumericalDensity( rPrime, ParaPhy )
+    TotalPotential        = NumericalTotalPotential( rPrime, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
+    GasDensity, DMDensity = NumericalDensity( rPrime )
     E,=ax[0].plot( rPrime, GasDensity,    '>', label='Gas density with DM' )
     F,=ax[0].plot( rPrime, DMDensity,     '<', label='DM density with Gas' )
     G,=ax[1].plot( rPrime, TotalPotential,'-', label='Gas+DM potential' )
@@ -68,60 +62,5 @@ def Plot( ParaPhy, ParaNum, Radius ):
     ax[1].legend(handles=[G],loc='upper left', fontsize=12)
     plt.show()
 
-##########################
-###  Free parameters   ###
-##########################
-# The eq(2) in Sutherland & Bicknell (2007)
-Constant = 9
 
-# Core radius of gas sphere (kpc)
-Radius_g = 1
-
-# Peak gas density (1/cm^3)
-Rho0_g = 0.5
-
-# Velocity dispersion of gas (km/s)
-Sigma_g  = 250
-
-# Lambda = r_{D}/r_{g}
-Lambda = 5
-
-# Kappa = \sigma_{D}/\sigma_{g}
-Kappa = 2
-
-# Temperature of gas (K)
-Temp_g = 1e7
-
-# The potential at the center of sphere
-Phi0 = 0
-
-# The spatial derivative of potential at the center of sphere
-DevPhi0 = 0
-
-##########################
-### Numerical parameters ###
-##########################
-
-# The boundary point for integration
-BPoint   = 1e-4
-
-# The integration step
-CoarseDr = 1e-4
-
-##########################
-### Derived parameters ###
-##########################
-
-Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
-
-
-############################
-###   Bundle paramters   ###
-############################
-# plot radius in unit of Radius_D (core radius of DM)
-Radius = 6.9
-
-ParaPhy = [ Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Temp_g, Constant, Phi0, DevPhi0 ]
-ParaNum = [ BPoint, CoarseDr, Radius ]
-
-Plot( ParaPhy, ParaNum, Radius )
+Plot( )
