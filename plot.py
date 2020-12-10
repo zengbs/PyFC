@@ -17,7 +17,7 @@ def Plot( ):
     handles0=[]
     handles1=[]
 
-    rPrime = np.arange(par.BPoint, par.Radius, par.CoarseDr)
+    rPrime = np.arange(par.BPoint, par.Radius/par.Radius_D, par.CoarseDr)
 
  
     ## Gas-only
@@ -37,11 +37,12 @@ def Plot( ):
     # DM and gas
     #ParaPhy[1]            = Rho0_g
     #ParaPhy[4]            = Kappa
+
     TotalPotential        = NumericalTotalPotential( rPrime, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
     GasDensity, DMDensity = NumericalDensity( rPrime )
-    E,=ax[0].plot( rPrime, GasDensity,    '>', label='Gas density with DM' )
-    F,=ax[0].plot( rPrime, DMDensity,     '<', label='DM density with Gas' )
-    G,=ax[1].plot( rPrime, TotalPotential,'-', label='Gas+DM potential' )
+    E,=ax[0].plot( rPrime*par.Radius_D, GasDensity,    '>', label='Gas density with DM' )
+    F,=ax[0].plot( rPrime*par.Radius_D, DMDensity,     '<', label='DM density with Gas' )
+    G,=ax[1].plot( rPrime*par.Radius_D, TotalPotential*(par.Sigma_D/par.C)**2,'-', label='Gas+DM potential' )
     
 
 
@@ -51,10 +52,10 @@ def Plot( ):
     ax[1].set_xscale('log')
     ax[1].set_yscale('linear')
 
-    ax[0].set_xlabel(r'$r/r_{D}$'          , size=20)
-    ax[1].set_xlabel(r'$r/r_{D}$'          , size=20)
-    ax[0].set_ylabel(r'$\rho$'             , size=20)
-    ax[1].set_ylabel(r'$\Phi/\sigma_{D}^2$', size=20)
+    ax[0].set_xlabel(r'$r$'   , size=20)
+    ax[1].set_xlabel(r'$r$'   , size=20)
+    ax[0].set_ylabel(r'$\rho$', size=20)
+    ax[1].set_ylabel(r'$\Phi$', size=20)
 
     #ax[0].legend(handles=[C,A,F,E],loc='lower left', fontsize=12)
     #ax[1].legend(handles=[D,B,G],loc='upper left', fontsize=12)

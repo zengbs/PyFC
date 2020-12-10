@@ -9,19 +9,19 @@ def SphericalSphere( ):
     par.Parameters() 
 
     # Center of sphere
-    Center = np.array([par.Lx,par.Ly,par.Lz])*0.5
+    Center = np.array([par.Lx,par.Ly,par.Lz])*0.5/par.Radius_D
  
-    # Coarse grid
-    Coarse_r = np.arange(par.BPoint, 0.5*par.Lx, par.CoarseDr)
+    # Coarse grid (Normalized by Radius_D)
+    Coarse_r = np.arange(par.BPoint, 0.5*par.Lx/par.Radius_D, par.CoarseDr)
 
     # Left edge and right edge coordinates of the desired
-    # simulation domain which will be used in GAMER.
+    # simulation domain which will be used in GAMER. (Normalized by Radius_D)
     le = np.array([ 0,  0,  0])
-    re = np.array([par.Lx, par.Ly, par.Lz])
+    re = np.array([par.Lx, par.Ly, par.Lz]) / par.Radius_D
     
-    # Cell spacing
+    # Cell spacing (Normalized by Radius_D)
     N = [par.Nx, par.Ny, par.Nz ]
-    delta = (re-le)/N  # [1/128 1/128 1/128]
+    delta = (re-le)/N
 
     ####################################
     ############   Fluid  ##############
@@ -35,7 +35,7 @@ def SphericalSphere( ):
     InPres  = InRho*(par.Sigma_g/par.C)**2
 
     # Fluid outside box
-    OutRho  = 1e-3*np.interp( par.Radius, Coarse_r, InRho )
+    OutRho  = 1e-3*np.interp( par.Radius/par.Radius_D, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
@@ -67,7 +67,6 @@ def SphericalSphere( ):
     for i in range(par.Nx+2*GRA_GHOST_SIZE):
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
             for k in range(par.Nz+2*GRA_GHOST_SIZE):
-
                 ii = i - GRA_GHOST_SIZE                     
                 jj = j - GRA_GHOST_SIZE                     
                 kk = k - GRA_GHOST_SIZE                     
@@ -79,7 +78,7 @@ def SphericalSphere( ):
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
-                     if ( r < par.Radius ):
+                     if ( r < par.Radius/par.Radius_D ):
                           FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
                           FluidInBox[1][ii][jj][kk] = np.interp( r, Coarse_r, InMomX ) 
                           FluidInBox[2][ii][jj][kk] = np.interp( r, Coarse_r, InMomY ) 
@@ -97,7 +96,7 @@ def SphericalSphere( ):
 
 
     MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
-    FreeFallingTime = 0.5427*( par.NEWTON_G * MeanRho )**-0.5 
+    FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
 
     print("Encloed mass = %e\n" %(EnclosedMass))
     print("Free falling time = %e\n" % (FreeFallingTime))
