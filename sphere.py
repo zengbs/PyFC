@@ -88,6 +88,16 @@ def SphericalSphere( ):
     FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
 
 
+    Idx = np.indices((par.Nx,par.Ny,par.Nz))[0]
+    Jdx = np.indices((par.Nx,par.Ny,par.Nz))[1]
+    Kdx = np.indices((par.Nx,par.Ny,par.Nz))[2]
+
+    X   = (Idx+0.5)*delta[0]-Center[0]
+    Y   = (Jdx+0.5)*delta[1]-Center[1]
+    Z   = (Kdx+0.5)*delta[2]-Center[2]
+    R   = np.sqrt( X**2 + Y**2 + Z**2 )
+
+
     for i in range(par.Nx+2*GRA_GHOST_SIZE):
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
             for k in range(par.Nz+2*GRA_GHOST_SIZE):
@@ -102,7 +112,7 @@ def SphericalSphere( ):
 
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
-                # filling `FluidInBox` with fluid variables
+                #filling `FluidInBox` with fluid variables
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
                      if ( r < par.Radius/par.Radius_D ):
                           FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
