@@ -1,6 +1,6 @@
 
 def Parameters():
-  from density_profile import Free2DerivedPara
+  from density_profile import FreePara2DerivedPara
 
   global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
   global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa
@@ -72,7 +72,7 @@ def Parameters():
   Mu = 0.6
 
   # Derived parameters
-  Rho0_D, Sigma_D, Radius_D = Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
+  Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
 
   ############################
   ### Numerical parameters ###

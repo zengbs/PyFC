@@ -11,7 +11,7 @@ def f(y, rPrime, params):
     derivs = [ DevPsi, -2*DevPsi/rPrime + Constant*( np.exp(-Psi) + Lambda*Lambda/Kappa/Kappa*np.exp(-Kappa*Kappa*Psi) ) ]
     return derivs
 
-def Free2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa ):
+def FreePara2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa ):
     # Peak density of DM     
     Rho0_D = Rho0_g * Kappa * Kappa / Lambda / Lambda
 
@@ -64,3 +64,7 @@ def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ):
     # Solve ODE       
     TotalPotential = odeint( f, y0, rPrime, args=(params,) )
     return TotalPotential[:,0]
+
+
+#def NumericalISMDens():
+#    Phi = NumericalTotalPotential()

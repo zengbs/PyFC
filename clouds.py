@@ -850,7 +850,7 @@ class FractalCube:
 
         #out.T.tofile(fname)
         #hdf5._HDF5(out)
-        dump._DumpFile(out)
+        dump.DumpFile(out)
 
         return 1
 

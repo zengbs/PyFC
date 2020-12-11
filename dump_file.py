@@ -1,10 +1,10 @@
 import numpy as np
 from pri2con import Pri2Con
 from sphere import SphericalSphere
-from density_profile import Free2DerivedPara
+from density_profile import FreePara2DerivedPara
 import parameters as par
 
-def _DumpFile():
+def DumpFile():
     par.Parameters()
 
     ############################
@@ -20,7 +20,7 @@ def _DumpFile():
 
 par.Parameters()
 out=np.zeros((par.Nx, par.Ny, par.Nz))
-_DumpFile()
+DumpFile()
 
 print("Nx        = %d" % par.Nx        )
 print("Ny        = %d" % par.Ny        )
