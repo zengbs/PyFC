@@ -70,10 +70,32 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     return TotalPotential[:,0]
 
 """
-input: Phi: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
+input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
 """
 def NumericalISM( PotInBox ):
 
-    ISM = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
-  
-   
+    # create an array stored ISM
+    ISM             = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+
+    # unnormalized by `par.C**2`
+    PotInBox       *= par.C**2
+
+    # remove ghost zone inside `PotInBox`
+    PotInBox        = PotInBox[:, :, par.GRA_GHOST_SIZE:par.Nz-par.GRA_GHOST_SIZE]
+    PotInBox        = PotInBox[:, par.GRA_GHOST_SIZE:par.Ny-par.GRA_GHOST_SIZE, :]
+    PotInBox        = PotInBox[par.GRA_GHOST_SIZE:par.Nx-par.GRA_GHOST_SIZE, :, :]
+
+    # extract the potential on the equator
+    if par.Nz%2 == 0:
+       PotOnEquator = 0.5*( PotInBox[:,:,par.Nz/2-1] + PotInBox[:,:,par.Nz/2] )
+    else:
+       PotOnEquator = PotInBox[:,:,(par.Nz-1)*0.5]
+
+
+    a = par.a0 * np.exp(-z/par.z0)
+
+
+    # expression below assume the potential at the center of sphere is zero
+    ISM = par.Rho0_g * np.exp( -( PotInBox -  PotInBox_Z*a**2 )/par.Sigma_g**2 ) 
+
+    return ISM

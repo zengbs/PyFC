@@ -32,7 +32,7 @@ def SphericalSphere( ):
     InUX    = 0 
     InUy    = 0
     InUz    = 0
-    # unnormalized by `par.Sigma_g` and normalized by `par.C`
+    # unnormalized by `par.Sigma_g` but normalized by `par.C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     InPres  = InRho*(par.Sigma_g/par.C)**2
 
@@ -41,7 +41,7 @@ def SphericalSphere( ):
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
-    # unnormalized by `par.Sigma_g` and normalized by `par.C`
+    # unnormalized by `par.Sigma_g` but normalized by `par.C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     OutPres = 1e3*OutRho*(par.Sigma_g/par.C)**2
 
@@ -55,7 +55,8 @@ def SphericalSphere( ):
     ####################################
     ##########   Potential  ############
     ####################################
-    GRA_GHOST_SIZE = 2
+    GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
+
     PotInBox   = np.zeros((par.Nx+2*GRA_GHOST_SIZE, par.Ny+2*GRA_GHOST_SIZE, par.Nz+2*GRA_GHOST_SIZE), dtype=par.Precision)
 
     Psi0       = par.Phi0    / par.Sigma_D**2 
@@ -63,7 +64,7 @@ def SphericalSphere( ):
 
     Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
 
-    # unnormalized by `par.Sigma_D` and normalized by `par.C`
+    # unnormalized by `par.Sigma_D` but normalized by `par.C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     Potential *= (par.Sigma_D/par.C)**2
 
