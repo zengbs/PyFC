@@ -38,7 +38,7 @@ def Plot( ):
     #ParaPhy[1]            = Rho0_g
     #ParaPhy[4]            = Kappa
 
-    TotalPotential        = NumericalTotalPotential( rPrime, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
+    TotalPotential        = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )
     GasDensity, DMDensity = NumericalDensity( rPrime )
     E,=ax[0].plot( rPrime*par.Radius_D, GasDensity,    '>', label='Gas density with DM' )
     F,=ax[0].plot( rPrime*par.Radius_D, DMDensity,     '<', label='DM density with Gas' )

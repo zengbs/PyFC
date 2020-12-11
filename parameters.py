@@ -72,7 +72,7 @@ def Parameters():
   Mu = 0.6
 
   # Derived parameters
-  Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa )
+  Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( )
 
   ############################
   ### Numerical parameters ###

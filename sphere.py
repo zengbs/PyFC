@@ -46,7 +46,11 @@ def SphericalSphere( ):
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
 
     
-    FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+    ####################################
+    ########### Fractal ISM ############
+    ####################################
+
+    
 
 
     ####################################
@@ -58,10 +62,16 @@ def SphericalSphere( ):
     Psi0       = par.Phi0     / par.Sigma_D / par.Sigma_D
     DevPsi0    = par.DevPhi0  / par.Sigma_D / par.Sigma_D
 
-    Potential = NumericalTotalPotential( Coarse_r, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
+    Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
     Potential *= (par.Sigma_D/par.C)**2
 
+
+    ######################################
+    ## Filling box with fluid variables ##
+    ######################################
+
     EnclosedMass = 0.0
+    FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
 
 
     for i in range(par.Nx+2*GRA_GHOST_SIZE):

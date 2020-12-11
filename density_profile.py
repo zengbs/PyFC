@@ -11,15 +11,15 @@ def f(y, rPrime, params):
     derivs = [ DevPsi, -2*DevPsi/rPrime + Constant*( np.exp(-Psi) + Lambda*Lambda/Kappa/Kappa*np.exp(-Kappa*Kappa*Psi) ) ]
     return derivs
 
-def FreePara2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa ):
+def FreePara2DerivedPara( ):
     # Peak density of DM     
-    Rho0_D = Rho0_g * Kappa * Kappa / Lambda / Lambda
+    Rho0_D = par.Rho0_g * par.Kappa * par.Kappa / par.Lambda / par.Lambda
 
     # Core radius of DM
-    Radius_D = Lambda*Radius_g
+    Radius_D = par.Lambda*par.Radius_g
 
     # Velocity dispersion of DM
-    Sigma_D = Kappa * Sigma_g
+    Sigma_D = par.Kappa * par.Sigma_g
     return Rho0_D, Sigma_D, Radius_D
 
 
@@ -35,29 +35,33 @@ def FreePara2DerivedPara( Rho0_g, Sigma_g, Radius_g, Lambda, Kappa ):
 #    return Exact
 
 # Density of isothermal gas sphere as a function of total potential
-def IsothermalGasDensity( Phi, Phi0, Rho0_g, Sigma_g ):
-    GasDensityProfile = Rho0_g * np.exp(  -( Phi - Phi0 ) / Sigma_g / Sigma_g )
+def IsothermalGasDensity( Phi ):
+    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g / par.Sigma_g )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
-def IsothermalDMDensity( Phi, Phi0, Rho0_D, Sigma_D ):
-    DMDensityProfile = Rho0_D * np.exp(  -( Phi - Phi0 ) / Sigma_D / Sigma_D )
+def IsothermalDMDensity( Phi ):
+    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_D / par.Sigma_D )
     return DMDensityProfile
 
 def NumericalDensity( rPrime ):
-    Psi0           = par.Phi0    / par.Sigma_D / par.Sigma_D
-    DevPsi0        = par.DevPhi0 / par.Sigma_D / par.Sigma_D
+    Psi0           = par.Phi0    / par.Sigma_D**2
+    DevPsi0        = par.DevPhi0 / par.Sigma_D**2
    
-    Psi            = NumericalTotalPotential( rPrime, par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 )
-    Phi            = Psi * par.Sigma_D * par.Sigma_D
+    Psi            = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )
+    Phi            = Psi         * par.Sigma_D**2
 
-    GasDensity     = IsothermalGasDensity( Phi, [par.Phi0]*Phi.shape[0], par.Rho0_g, par.Sigma_g )
-    DMDensity      = IsothermalDMDensity ( Phi, [par.Phi0]*Phi.shape[0], par.Rho0_D, par.Sigma_D )
+    GasDensity     = IsothermalGasDensity( Phi )
+    DMDensity      = IsothermalDMDensity ( Phi )
     return GasDensity, DMDensity
-  
-def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ):
+
+"""
+return: the gravitational potential normalized by par.Sigma_D**2 (i.e. Psi)
+"""
+def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     # Bundle Parameters
-    params = [ Kappa, Lambda, Constant, Psi0, DevPsi0 ]
+    params = [ par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 ]
+
 
     # Bundle boundary values
     y0     = [ Psi0, DevPsi0 ]
@@ -67,4 +71,6 @@ def NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 ):
 
 
 #def NumericalISMDens():
-#    Phi = NumericalTotalPotential()
+#    Psi = NumericalTotalPotential()
+#    Phi = Psi * par.Sigma_D**2
+#    
