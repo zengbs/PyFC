@@ -32,6 +32,8 @@ def SphericalSphere( ):
     InUX    = 0 
     InUy    = 0
     InUz    = 0
+    # unnormalized by `par.Sigma_g` and normalized by `par.C`
+    # --> since the speed of light is hard-coded in GAMER
     InPres  = InRho*(par.Sigma_g/par.C)**2
 
     # Fluid outside box
@@ -39,6 +41,8 @@ def SphericalSphere( ):
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
+    # unnormalized by `par.Sigma_g` and normalized by `par.C`
+    # --> since the speed of light is hard-coded in GAMER
     OutPres = 1e3*OutRho*(par.Sigma_g/par.C)**2
 
     # Conversion
@@ -46,12 +50,6 @@ def SphericalSphere( ):
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
 
     
-    ####################################
-    ########### Fractal ISM ############
-    ####################################
-
-    
-
 
     ####################################
     ##########   Potential  ############
@@ -59,10 +57,13 @@ def SphericalSphere( ):
     GRA_GHOST_SIZE = 2
     PotInBox   = np.zeros((par.Nx+2*GRA_GHOST_SIZE, par.Ny+2*GRA_GHOST_SIZE, par.Nz+2*GRA_GHOST_SIZE), dtype=par.Precision)
 
-    Psi0       = par.Phi0     / par.Sigma_D / par.Sigma_D
-    DevPsi0    = par.DevPhi0  / par.Sigma_D / par.Sigma_D
+    Psi0       = par.Phi0    / par.Sigma_D**2 
+    DevPsi0    = par.DevPhi0 / par.Sigma_D**2
 
     Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
+
+    # unnormalized by `par.Sigma_D` and normalized by `par.C`
+    # --> since the speed of light is hard-coded in GAMER
     Potential *= (par.Sigma_D/par.C)**2
 
 
@@ -77,6 +78,7 @@ def SphericalSphere( ):
     for i in range(par.Nx+2*GRA_GHOST_SIZE):
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
             for k in range(par.Nz+2*GRA_GHOST_SIZE):
+                # indices for non-ghost zone
                 ii = i - GRA_GHOST_SIZE                     
                 jj = j - GRA_GHOST_SIZE                     
                 kk = k - GRA_GHOST_SIZE                     
@@ -87,6 +89,7 @@ def SphericalSphere( ):
 
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
+                # filling `FluidInBox` with fluid variables
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
                      if ( r < par.Radius/par.Radius_D ):
                           FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
@@ -101,7 +104,12 @@ def SphericalSphere( ):
                           FluidInBox[2][ii][jj][kk] = OutMomY
                           FluidInBox[3][ii][jj][kk] = OutMomZ
                           FluidInBox[4][ii][jj][kk] = OutEngy
+ 
+                # adding fractal ISM in `FluidInBox`
+                if ():
 
+
+                # filling `PotInBox` with Potential
                 PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
 
 
