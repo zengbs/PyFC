@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -rf UM_IC ExtPotTable
 mv parameters.py parameters_temp.py
 cp regression_test/parameters_example.py parameters.py
 python dump_file.py

@@ -4,8 +4,8 @@ def Parameters():
 
   global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
   global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa
-  global Temp_g, Phi0, DevPhi0, Matom, Mu 
-  global BPoint, CoarseDr, Radius, Precision
+  global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
+  global BPoint, CoarseDr, Radius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, Radius_D
 
   
@@ -71,6 +71,12 @@ def Parameters():
   # Mean molecular weight
   Mu = 0.6
 
+  # Scale height of ISM disk
+  z0   = 1
+
+  # Rotational coefficient
+  a0   = 1
+
   # Derived parameters
   Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( )
 
@@ -83,6 +89,9 @@ def Parameters():
 
   # The integration step
   CoarseDr = 1e-5
+
+  # ghost zone size for potential
+  GRA_GHOST_SIZE = 2
 
   # Floating-point precision
   Precision = 'float32'
