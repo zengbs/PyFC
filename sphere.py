@@ -87,7 +87,7 @@ def SphericalSphere( ):
     EnclosedMass = 0.0
     FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
 
-
+"""
     Idx = np.indices((par.Nx,par.Ny,par.Nz))[0]
     Jdx = np.indices((par.Nx,par.Ny,par.Nz))[1]
     Kdx = np.indices((par.Nx,par.Ny,par.Nz))[2]
@@ -96,7 +96,7 @@ def SphericalSphere( ):
     Y   = (Jdx+0.5)*delta[1]-Center[1]
     Z   = (Kdx+0.5)*delta[2]-Center[2]
     R   = np.sqrt( X**2 + Y**2 + Z**2 )
-
+"""
 
     for i in range(par.Nx+2*GRA_GHOST_SIZE):
         for j in range(par.Ny+2*GRA_GHOST_SIZE):

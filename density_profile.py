@@ -92,10 +92,15 @@ def NumericalISM( PotInBox ):
        PotOnEquator = PotInBox[:,:,(par.Nz-1)*0.5]
 
 
-    a = par.a0 * np.exp(-z/par.z0)
+    PotInBoxExtendZ = np.tile(PotOnEquator,(par.Nz,1,1))
 
+
+    Kdx = np.indices((par.Nx,par.Ny,par.Nz))[2]
+    Z   = (Kdx+0.5)*delta[2]-Center[2]
+
+    a = par.a0 * np.exp(-Z/par.z0)
 
     # expression below assume the potential at the center of sphere is zero
-    ISM = par.Rho0_g * np.exp( -( PotInBox -  PotInBox_Z*a**2 )/par.Sigma_g**2 ) 
+    ISM = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_g**2 ) 
 
     return ISM
