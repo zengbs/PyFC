@@ -117,10 +117,6 @@ def SphericalSphere( ):
                           FluidInBox[3][ii][jj][kk] = OutMomZ
                           FluidInBox[4][ii][jj][kk] = OutEngy
  
-                # adding fractal ISM in `FluidInBox`
-                if ():
-
-
                 # filling `PotInBox` with Potential
                 PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
 
