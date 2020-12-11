@@ -56,7 +56,7 @@ def NumericalDensity( rPrime ):
     return GasDensity, DMDensity
 
 """
-return: the gravitational potential normalized by par.Sigma_D**2 (i.e. Psi)
+return: gravitational potential normalized by par.Sigma_D**2 but unnormalized by `par.C**2`
 """
 def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     # Bundle Parameters
@@ -69,8 +69,11 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     TotalPotential = odeint( f, y0, rPrime, args=(params,) )
     return TotalPotential[:,0]
 
-
-#def NumericalISMDens():
-#    Psi = NumericalTotalPotential()
-#    Phi = Psi * par.Sigma_D**2
-#    
+"""
+input: Phi: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
+"""
+#def NumericalISM( PotInBox ):
+#
+#    ISM = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+  
+   

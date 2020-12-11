@@ -33,7 +33,7 @@ def SphericalSphere( ):
     InUy    = 0
     InUz    = 0
     # unnormalized by `par.Sigma_g` and normalized by `par.C`
-    # --> since the speed of light is hard-coded in GAMER
+    # --> since the speed of light is hard-coded to 1 in GAMER
     InPres  = InRho*(par.Sigma_g/par.C)**2
 
     # Fluid outside box
@@ -42,12 +42,13 @@ def SphericalSphere( ):
     OutUy   = 0
     OutUz   = 0
     # unnormalized by `par.Sigma_g` and normalized by `par.C`
-    # --> since the speed of light is hard-coded in GAMER
+    # --> since the speed of light is hard-coded to 1 in GAMER
     OutPres = 1e3*OutRho*(par.Sigma_g/par.C)**2
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy = Pri2Con( OutRho, OutUX, OutUy, OutUz, OutPres )
+
 
     
 
@@ -63,8 +64,19 @@ def SphericalSphere( ):
     Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
 
     # unnormalized by `par.Sigma_D` and normalized by `par.C`
-    # --> since the speed of light is hard-coded in GAMER
+    # --> since the speed of light is hard-coded to 1 in GAMER
     Potential *= (par.Sigma_D/par.C)**2
+
+
+    ####################################
+    ##########      ISM     ############
+    ####################################
+
+
+    
+
+
+
 
 
     ######################################
