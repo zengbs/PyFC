@@ -8,8 +8,8 @@ import parameters as par
 def Plot( ):
     par.Parameters()
 
-    Psi0           = par.Phi0    / par.Sigma_D / par.Sigma_D
-    DevPsi0        = par.DevPhi0 / par.Sigma_D / par.Sigma_D
+    Psi0           = par.Phi0    / par.Sigma_D**2
+    DevPsi0        = par.DevPhi0 / par.Sigma_D**2
 
     fig, ax = plt.subplots( 1, 2, sharex=False, sharey=False )
     fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             

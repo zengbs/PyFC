@@ -36,12 +36,12 @@ def FreePara2DerivedPara( ):
 
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
-    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g / par.Sigma_g )
+    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
 def IsothermalDMDensity( Phi ):
-    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_D / par.Sigma_D )
+    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_D**2 )
     return DMDensityProfile
 
 def NumericalDensity( rPrime ):
@@ -72,8 +72,8 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
 """
 input: Phi: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
 """
-#def NumericalISM( PotInBox ):
-#
-#    ISM = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+def NumericalISM( PotInBox ):
+
+    ISM = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
   
    
