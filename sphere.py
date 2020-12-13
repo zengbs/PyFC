@@ -8,19 +8,19 @@ def SphericalSphere( ):
 
     par.Parameters() 
 
-    # Center of sphere
-    Center = np.array([par.Lx,par.Ly,par.Lz])*0.5/par.Radius_D
+    # Center of sphere (normalized by `par.Radius_D`)
+    Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.Radius_D
  
     # Coarse grid (Normalized by Radius_D)
-    Coarse_r = np.arange(par.BPoint, 0.5*par.Lx/par.Radius_D, par.CoarseDr)
+    Coarse_r = np.arange(par.BPoint, np.sqrt(2)*par.Lx/par.Radius_D, par.CoarseDr)
 
     # Left edge and right edge coordinates of the desired
     # simulation domain which will be used in GAMER. (Normalized by Radius_D)
     le = np.array([ 0,  0,  0])
-    re = np.array([par.Lx, par.Ly, par.Lz]) / par.Radius_D
+    re = np.array([par.Lz, par.Ly, par.Lx]) / par.Radius_D
     
-    # Cell spacing (Normalized by Radius_D)
-    N = [par.Nx, par.Ny, par.Nz ]
+    # Cell spacing (normalized by Radius_D)
+    N = [par.Nz, par.Ny, par.Nx ]
     delta = (re-le)/N
 
     ####################################
@@ -57,7 +57,7 @@ def SphericalSphere( ):
     ####################################
     GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
 
-    PotInBox   = np.zeros((par.Nx+2*GRA_GHOST_SIZE, par.Ny+2*GRA_GHOST_SIZE, par.Nz+2*GRA_GHOST_SIZE), dtype=par.Precision)
+    PotInBox   = np.zeros((par.Nz+2*GRA_GHOST_SIZE, par.Ny+2*GRA_GHOST_SIZE, par.Nx+2*GRA_GHOST_SIZE), dtype=par.Precision)
 
     Psi0       = par.Phi0    / par.Sigma_D**2 
     DevPsi0    = par.DevPhi0 / par.Sigma_D**2
@@ -69,38 +69,19 @@ def SphericalSphere( ):
     Potential *= (par.Sigma_D/par.C)**2
 
 
-    ####################################
-    ##########      ISM     ############
-    ####################################
-
-
     
-
-
-
-
 
     ######################################
     ## Filling box with fluid variables ##
     ######################################
 
     EnclosedMass = 0.0
-    FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+    FluidInBox = np.zeros((6, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
 
-"""
-    Idx = np.indices((par.Nx,par.Ny,par.Nz))[0]
-    Jdx = np.indices((par.Nx,par.Ny,par.Nz))[1]
-    Kdx = np.indices((par.Nx,par.Ny,par.Nz))[2]
 
-    X   = (Idx+0.5)*delta[0]-Center[0]
-    Y   = (Jdx+0.5)*delta[1]-Center[1]
-    Z   = (Kdx+0.5)*delta[2]-Center[2]
-    R   = np.sqrt( X**2 + Y**2 + Z**2 )
-"""
-
-    for i in range(par.Nx+2*GRA_GHOST_SIZE):
+    for k in range(par.Nz+2*GRA_GHOST_SIZE):
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
-            for k in range(par.Nz+2*GRA_GHOST_SIZE):
+            for i in range(par.Nx+2*GRA_GHOST_SIZE):
                 # indices for non-ghost zone
                 ii = i - GRA_GHOST_SIZE                     
                 jj = j - GRA_GHOST_SIZE                     
@@ -115,27 +96,40 @@ def SphericalSphere( ):
                 #filling `FluidInBox` with fluid variables
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
                      if ( r < par.Radius/par.Radius_D ):
-                          FluidInBox[0][ii][jj][kk] = np.interp( r, Coarse_r, InDens )
-                          FluidInBox[1][ii][jj][kk] = np.interp( r, Coarse_r, InMomX ) 
-                          FluidInBox[2][ii][jj][kk] = np.interp( r, Coarse_r, InMomY ) 
-                          FluidInBox[3][ii][jj][kk] = np.interp( r, Coarse_r, InMomZ ) 
-                          FluidInBox[4][ii][jj][kk] = np.interp( r, Coarse_r, InEngy )
-                          EnclosedMass += np.interp( r, Coarse_r, InRho )
+                          #FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
+                          #FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
+                          #FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
+                          #FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
+                          #FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
+                          FluidInBox[5][kk][jj][ii] = np.interp( r, Coarse_r, InPres )
+                          #EnclosedMass += np.interp( r, Coarse_r, InRho )
                      else:
-                          FluidInBox[0][ii][jj][kk] = OutDens
-                          FluidInBox[1][ii][jj][kk] = OutMomX
-                          FluidInBox[2][ii][jj][kk] = OutMomY
-                          FluidInBox[3][ii][jj][kk] = OutMomZ
-                          FluidInBox[4][ii][jj][kk] = OutEngy
+                          #FluidInBox[0][kk][jj][ii] = OutDens
+                          #FluidInBox[1][kk][jj][ii] = OutMomX
+                          #FluidInBox[2][kk][jj][ii] = OutMomY
+                          #FluidInBox[3][kk][jj][ii] = OutMomZ
+                          #FluidInBox[4][kk][jj][ii] = OutEngy
+                          FluidInBox[5][kk][jj][ii] = OutPres
  
+      
+
                 # filling `PotInBox` with Potential
-                PotInBox [i][j][k] = np.interp( r, Coarse_r, Potential )
+                PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
+    
+
+    ####################################
+    ##########      ISM     ############
+    ####################################
+    PotInBoxCopy    = np.copy(PotInBox)
+    FluidInBoxCopy  = np.copy(FluidInBox)
+    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, delta, Center )
+    ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
 
-    MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
-    FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
+    #MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
+    #FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
 
-    print("Encloed mass = %e\n" %(EnclosedMass))
-    print("Free falling time = %e\n" % (FreeFallingTime))
-
-    return FluidInBox, PotInBox
+    #print("Encloed mass = %e\n" %(EnclosedMass))
+    #print("Free falling time = %e\n" % (FreeFallingTime))
+    #return FluidInBox[0:5,:,:,:], PotInBox
+    return ISM, PotInBox

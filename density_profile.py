@@ -1,8 +1,11 @@
+import sys
 import numpy as np
 from scipy.integrate import odeint
 import parameters as par
+import matplotlib.pyplot as plt
 
 
+np.set_printoptions(threshold=sys.maxsize)
  
 def f(y, rPrime, params):
     Psi, DevPsi = y      # unpack current values of y
@@ -72,35 +75,79 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
 """
 input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
 """
-def NumericalISM( PotInBox ):
+def NumericalISM( PotInBox, FluidInBox, delta, Center ):
 
     # create an array stored ISM
-    ISM             = np.zeros((5, par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+    ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
 
     # unnormalized by `par.C**2`
-    PotInBox       *= par.C**2
+    PotInBox *= par.C**2
+
+    # the box storing potential includes ghost zone
+    PotNz     = par.Nz + 2*par.GRA_GHOST_SIZE
+    PotNy     = par.Ny + 2*par.GRA_GHOST_SIZE
+    PotNx     = par.Nx + 2*par.GRA_GHOST_SIZE
 
     # remove ghost zone inside `PotInBox`
-    PotInBox        = PotInBox[:, :, par.GRA_GHOST_SIZE:par.Nz-par.GRA_GHOST_SIZE]
-    PotInBox        = PotInBox[:, par.GRA_GHOST_SIZE:par.Ny-par.GRA_GHOST_SIZE, :]
-    PotInBox        = PotInBox[par.GRA_GHOST_SIZE:par.Nx-par.GRA_GHOST_SIZE, :, :]
+    PotInBox  = PotInBox[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
+    PotInBox  = PotInBox[:, par.GRA_GHOST_SIZE:PotNy-par.GRA_GHOST_SIZE, :]
+    PotInBox  = PotInBox[:, :, par.GRA_GHOST_SIZE:PotNz-par.GRA_GHOST_SIZE]
 
-    # extract the potential on the equator
+    # extract the potential values on the equator
     if par.Nz%2 == 0:
-       PotOnEquator = 0.5*( PotInBox[:,:,par.Nz/2-1] + PotInBox[:,:,par.Nz/2] )
+       PotOnEquator = 0.5*( PotInBox[:,:,int(par.Nz/2-1)] + PotInBox[:,:,int(par.Nz/2)] )
     else:
-       PotOnEquator = PotInBox[:,:,(par.Nz-1)*0.5]
+       PotOnEquator = PotInBox[:,:,int((par.Nz-1)*0.5)]
 
-
+    # Construct an array by repeating `PotOnEquator` along z-direction
     PotInBoxExtendZ = np.tile(PotOnEquator,(par.Nz,1,1))
 
+    # Construct indices array
+    Idx = np.indices((par.Nz, par.Ny, par.Nx))[2]
+    Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
+    Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
 
-    Kdx = np.indices((par.Nx,par.Ny,par.Nz))[2]
-    Z   = (Kdx+0.5)*delta[2]-Center[2]
+    X   = (Idx+0.5)*delta[2]-Center[2]
+    Y   = (Jdx+0.5)*delta[1]-Center[1]
+    Z   = (Kdx+0.5)*delta[0]-Center[0] 
+    R   = np.sqrt(X**2+Y**2)
 
-    a = par.a0 * np.exp(-Z/par.z0)
 
-    # expression below assume the potential at the center of sphere is zero
-    ISM = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_g**2 ) 
+    a = par.a0 * np.exp(-np.abs(Z)/par.z0)
+
+    # expression below have assumed that the potential at the center of sphere is zero
+    ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_g**2 )
+  
+#####################
+    CosTheta = X/R
+    SinTheta = Y/R
+    fig, ax = plt.subplots(4,1)
+    #ax[0].imshow(np.flipud(X[int(par.Nz/2),:,:]), interpolation="None")
+    #ax[1].imshow(np.flipud(Y[int(par.Nz/2),:,:]), interpolation="None")
+    #ax[2].imshow(np.flipud(CosTheta[int(par.Nz/2),:,:]), interpolation="None")
+    ax[0].imshow(X[int(par.Nz/2),:,:], interpolation="None")
+    ax[1].imshow(Y[int(par.Nz/2),:,:], interpolation="None")
+    ax[2].imshow(CosTheta[int(par.Nz/2),:,:], interpolation="None")
+    cbr=ax[3].imshow(np.flipud(SinTheta[int(par.Nz/2),:,:]), interpolation="None")
+    fig.colorbar(cbr)
+    plt.show() 
+#####################
+
+
+
+    # In cylindrical coordinate:
+    #  ∂Φ     ∂Φ   ∂R     ∂Φ   ∂R     ∂Φ   x     ∂Φ   y
+    # ---- = ---- ---- + ---- ---- = ---- --- + ---- ---, where R = ( x**2 + y**2 )**0.5, and Φ=Φ(x, y, z)
+    #  ∂R     ∂x   ∂x     ∂y   ∂y     ∂x   R     ∂y   R
+
+    Diff_Phi_R       = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
+    VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
+    VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0)
+
+
+    ISM[1] = VelocityPhi_ExpZ * CosTheta / par.C
+    ISM[2] = VelocityPhi_ExpZ * SinTheta / par.C
+    ISM[3] = 0
+    ISM[4] = FluidInBox[5] / ISM[0]
 
     return ISM
