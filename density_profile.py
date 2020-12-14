@@ -144,6 +144,9 @@ def NumericalISM( PotInBox, FluidInBox, delta, Center ):
     VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
     VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0)
 
+    # Vx = Vr * cosθ
+    # Vy = Vr * sinθ
+
     # Vx = Vφ * sinθ
     # Vy = Vφ * cosθ
     CosTheta = X/R

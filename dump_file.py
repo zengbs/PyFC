@@ -10,10 +10,10 @@ def DumpFile():
     ############################
     ###     Dump density    ####
     ############################
-    #FluidInBox, PotInBox = SphericalSphere()
-    #FluidInBox.tofile("UM_IC")
-    ISM, PotInBox = SphericalSphere()
-    ISM.tofile("UM_IC")
+    FluidInBox, PotInBox = SphericalSphere()
+    FluidInBox.tofile("UM_IC")
+    #ISM, PotInBox = SphericalSphere()
+    #ISM.tofile("UM_IC")
 
     ############################
     ###     Dump potential   ###

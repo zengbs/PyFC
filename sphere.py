@@ -96,19 +96,19 @@ def SphericalSphere( ):
                 #filling `FluidInBox` with fluid variables
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
                      if ( r < par.Radius/par.Radius_D ):
-                          #FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
-                          #FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
-                          #FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
-                          #FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
-                          #FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
+                          FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
+                          FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
+                          FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
+                          FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
+                          FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
                           FluidInBox[5][kk][jj][ii] = np.interp( r, Coarse_r, InPres )
-                          #EnclosedMass += np.interp( r, Coarse_r, InRho )
+                          EnclosedMass += np.interp( r, Coarse_r, InRho )
                      else:
-                          #FluidInBox[0][kk][jj][ii] = OutDens
-                          #FluidInBox[1][kk][jj][ii] = OutMomX
-                          #FluidInBox[2][kk][jj][ii] = OutMomY
-                          #FluidInBox[3][kk][jj][ii] = OutMomZ
-                          #FluidInBox[4][kk][jj][ii] = OutEngy
+                          FluidInBox[0][kk][jj][ii] = OutDens
+                          FluidInBox[1][kk][jj][ii] = OutMomX
+                          FluidInBox[2][kk][jj][ii] = OutMomY
+                          FluidInBox[3][kk][jj][ii] = OutMomZ
+                          FluidInBox[4][kk][jj][ii] = OutEngy
                           FluidInBox[5][kk][jj][ii] = OutPres
  
       
@@ -126,10 +126,10 @@ def SphericalSphere( ):
     ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
 
-    #MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
-    #FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
+    MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
+    FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
 
-    #print("Encloed mass = %e\n" %(EnclosedMass))
-    #print("Free falling time = %e\n" % (FreeFallingTime))
-    #return FluidInBox[0:5,:,:,:], PotInBox
-    return ISM, PotInBox
+    print("Encloed mass = %e\n" %(EnclosedMass))
+    print("Free falling time = %e\n" % (FreeFallingTime))
+    return FluidInBox[0:5,:,:,:], PotInBox
+    #return ISM, PotInBox
