@@ -26,7 +26,7 @@ def Parameters():
   Matom = 1.66e-24
 
   # Mean molecular weight
-  Mu = 0.6
+  Mu    = 0.6
 
   # The Boltzmann constant (eV/K)
   kB       = 8.6173303e-5
