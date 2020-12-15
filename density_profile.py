@@ -43,7 +43,7 @@ def IsothermalGasDensity( Phi ):
        SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
        SoubdSpeedSqr /= 1e10 # (km/cm)**2
        GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
-    if par.Case == "Stable":
+    if par.Case == "Standard":
        GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     return GasDensityProfile
 
@@ -119,8 +119,12 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
 
 
     # expression below have assumed that the potential at the center of sphere is zero
-    ISM[0] = par.ISM0 *  np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
-  
+    if par.Case == "Mukherjee":
+       ISM[0] = par.ISM0   * np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
+    if par.Case == "Standard":
+       a = par.a0 * np.exp(-np.abs(Z)/par.z0)
+       ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_t**2 )  
+
 #####################
 #    CosTheta = X/R
 #    SinTheta = Y/R
@@ -143,8 +147,12 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     # ---- = ---- ---- + ---- ---- = ---- --- + ---- ---, where R = ( x**2 + y**2 )**0.5, and Φ=Φ(x, y, z)
     #  ∂R     ∂x   ∂x     ∂y   ∂y     ∂x   R     ∂y   R
 
-    Diff_Phi_R       = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
-    VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
+    Diff_Phi_R          = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
+    if par.Case == "Mukherjee":
+       VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
+    if par.Case == "Standard":
+       VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
+       VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) # Vφ(R,z) = Vφ(R)*exp[-z/z0]
 
     # Vx = Vr * cosθ
     # Vy = Vr * sinθ
@@ -154,8 +162,13 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     CosTheta = X/R
     SinTheta = Y/R
 
-    ISM[1] = VelocityPhi * SinTheta / par.Const_C
-    ISM[2] = VelocityPhi * CosTheta / par.Const_C
+    if par.Case == "Mukherjee":
+       ISM[1] = VelocityPhi * SinTheta / par.Const_C
+       ISM[2] = VelocityPhi * CosTheta / par.Const_C
+    if par.Case == "Standard":
+       ISM[1] = VelocityPhi_ExpZ * SinTheta / par.Const_C
+       ISM[2] = VelocityPhi_ExpZ * CosTheta / par.Const_C
+
     ISM[3] = 0
     ISM[4] = PresInBox
 

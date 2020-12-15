@@ -36,7 +36,7 @@ def SphericalSphere( ):
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
        InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C*1e5)**2
-    if par.Case == "Stable":
+    if par.Case == "Standard":
        InPres  = InRho*(par.Sigma_g/par.Const_C)**2
 
 
@@ -144,7 +144,7 @@ def SphericalSphere( ):
     Z   = (Kdx+0.5)*delta[0]-Center[0] 
     R   = np.sqrt(X**2+Y**2+Z**2) 
 
-    KT_mcSqr  = par.CriticalTemp*par.Const_kB          # K* (erg/K)
+    KT_mcSqr  = par.CriticalTemp*par.Const_kB                                          # K* (erg/K)
     KT_mcSqr /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C*1e5)**2  # erg
     KT_mcSqr /= par.Const_Erg2eV
 
@@ -161,9 +161,9 @@ def SphericalSphere( ):
     FluidInBox[3] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[3], FluidInBox[3] ) 
     FluidInBox[4] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[4], FluidInBox[4] ) 
 
-    ####################################
-    #######     
-    ####################################
+    #####################################################
+    ### Calculate enclosed mass and free-falling time ###
+    #####################################################
 
     MeanRho         = 3*EnclosedMass/( 4*np.pi*par.SphereRadius**3 )
     FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5

@@ -90,8 +90,8 @@ def Parameters():
   ############################
   ###         Case         ###
   ############################
-  #Case = "Mukherjee"  # Mukherjee, Stable
-  Case = "Stable"  # Mukherjee, Stable
+  #Case = "Mukherjee"  # Mukherjee, Standard
+  Case = "Standard"  # Mukherjee, Standard
 
   ############################
   ### Numerical parameters ###
