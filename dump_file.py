@@ -12,8 +12,6 @@ def DumpFile():
     ############################
     FluidInBox, PotInBox = SphericalSphere()
     FluidInBox.tofile("UM_IC")
-    #ISM, PotInBox = SphericalSphere()
-    #ISM.tofile("UM_IC")
 
     ############################
     ###     Dump potential   ###

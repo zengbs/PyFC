@@ -88,9 +88,9 @@ def SphericalSphere( ):
                 jj = j - GRA_GHOST_SIZE                     
                 kk = k - GRA_GHOST_SIZE                     
 
-                x = (i+0.5)*delta[0] 
-                y = (j+0.5)*delta[1]
-                z = (k+0.5)*delta[2]
+                x = (ii+0.5)*delta[0] 
+                y = (jj+0.5)*delta[1]
+                z = (kk+0.5)*delta[2]
 
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
@@ -167,4 +167,3 @@ def SphericalSphere( ):
     print("Encloed mass = %e\n"      % (EnclosedMass)   )
     print("Free falling time = %e\n" % (FreeFallingTime))
     return FluidInBox, PotInBox
-    #return ISM, PotInBox

@@ -39,7 +39,6 @@ def FreePara2DerivedPara( ):
 
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
-    #GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     SoubdSpeedSqr  = par.kB*par.Temp_g/(par.Mu*par.Matom*par.Const_Erg2eV)
     SoubdSpeedSqr /= 1e10 # (km/cm)**2
     GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
