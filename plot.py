@@ -17,7 +17,7 @@ def Plot( ):
     handles0=[]
     handles1=[]
 
-    rPrime = np.arange(par.BPoint, par.Radius/par.Radius_D, par.CoarseDr)
+    rPrime = np.arange(par.BPoint, par.Radius/par.CoreRadius_D, par.CoarseDr)
 
  
     ## Gas-only
@@ -40,9 +40,9 @@ def Plot( ):
 
     TotalPotential        = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )
     GasDensity, DMDensity = NumericalDensity( rPrime )
-    E,=ax[0].plot( rPrime*par.Radius_D, GasDensity,    '>', label='Gas density with DM' )
-    F,=ax[0].plot( rPrime*par.Radius_D, DMDensity,     '<', label='DM density with Gas' )
-    G,=ax[1].plot( rPrime*par.Radius_D, TotalPotential*(par.Sigma_D/par.C)**2,'-', label='Gas+DM potential' )
+    E,=ax[0].plot( rPrime*par.CoreRadius_D, GasDensity,    '>', label='Gas density with DM' )
+    F,=ax[0].plot( rPrime*par.CoreRadius_D, DMDensity,     '<', label='DM density with Gas' )
+    G,=ax[1].plot( rPrime*par.CoreRadius_D, TotalPotential*(par.Sigma_D/par.C)**2,'-', label='Gas+DM potential' )
     
 
 

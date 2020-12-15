@@ -3,10 +3,10 @@ def Parameters():
   from density_profile import FreePara2DerivedPara
 
   global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
-  global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa
+  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa
   global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
   global BPoint, CoarseDr, Radius, Precision, GRA_GHOST_SIZE
-  global Rho0_D, Sigma_D, Radius_D, CriticalTemp, Const_Erg2eV
+  global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV
 
   
   # Number of cells along x/y/z
@@ -43,7 +43,7 @@ def Parameters():
   Constant = 9
 
   # Core radius of gas sphere (kpc)
-  Radius_g = 1
+  CoreRadius_g = 1
 
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
@@ -83,7 +83,7 @@ def Parameters():
   CriticalTemp = 3e4
 
   # Derived parameters
-  Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( )
+  Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
 
   ############################
   ### Numerical parameters ###

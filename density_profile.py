@@ -19,11 +19,11 @@ def FreePara2DerivedPara( ):
     Rho0_D = par.Rho0_g * par.Kappa * par.Kappa / par.Lambda / par.Lambda
 
     # Core radius of DM
-    Radius_D = par.Lambda*par.Radius_g
+    CoreRadius_D = par.Lambda*par.CoreRadius_g
 
     # Velocity dispersion of DM
     Sigma_D = par.Kappa * par.Sigma_g
-    return Rho0_D, Sigma_D, Radius_D
+    return Rho0_D, Sigma_D, CoreRadius_D
 
 
 ## Exat NFW density

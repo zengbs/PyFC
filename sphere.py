@@ -143,7 +143,6 @@ def SphericalSphere( ):
     KT_mcSqr  = par.CriticalTemp*par.kB          # K* (erg/K)
     KT_mcSqr /= par.Mu*par.Matom*(par.C*1e5)**2  # erg
     KT_mcSqr /= par.Const_Erg2eV
-    print(KT_mcSqr)
 
     ISM[0] = np.where( ISM_Temp < KT_mcSqr, ISM[0], FluidInBox[0] )
     ISM[1] = np.where( ISM_Temp < KT_mcSqr, ISM[1], FluidInBox[1] )
