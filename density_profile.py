@@ -75,7 +75,7 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
 """
 input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
 """
-def NumericalISM( PotInBox, FluidInBox, delta, Center ):
+def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
 
     # create an array stored ISM
     ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
@@ -121,14 +121,14 @@ def NumericalISM( PotInBox, FluidInBox, delta, Center ):
 #####################
 #    CosTheta = X/R
 #    SinTheta = Y/R
-#    fig, ax = plt.subplots(4,1)
+#    fig, ax = plt.subplots(1,1)
 #    #ax[0].imshow(np.flipud(X[int(par.Nz/2),:,:]), interpolation="None")
 #    #ax[1].imshow(np.flipud(Y[int(par.Nz/2),:,:]), interpolation="None")
 #    #ax[2].imshow(np.flipud(CosTheta[int(par.Nz/2),:,:]), interpolation="None")
-#    ax[0].imshow(X[int(par.Nz/2),:,:], interpolation="None")
-#    ax[1].imshow(Y[int(par.Nz/2),:,:], interpolation="None")
-#    ax[2].imshow(CosTheta[int(par.Nz/2),:,:], interpolation="None")
-#    cbr=ax[3].imshow(np.flipud(SinTheta[int(par.Nz/2),:,:]), interpolation="None")
+#    cbr=ax.imshow(PresInBox[int(par.Nz/2),:,:], interpolation="None")
+#    #ax[1].imshow(Y[int(par.Nz/2),:,:], interpolation="None")
+#    #ax[2].imshow(CosTheta[int(par.Nz/2),:,:], interpolation="None")
+#    #cbr=ax[3].imshow(np.flipud(SinTheta[int(par.Nz/2),:,:]), interpolation="None")
 #    fig.colorbar(cbr)
 #    plt.show() 
 #####################
@@ -155,6 +155,6 @@ def NumericalISM( PotInBox, FluidInBox, delta, Center ):
     ISM[1] = VelocityPhi_ExpZ * SinTheta / par.C
     ISM[2] = VelocityPhi_ExpZ * CosTheta / par.C
     ISM[3] = 0
-    ISM[4] = FluidInBox[5] / ISM[0]
+    ISM[4] = PresInBox
 
     return ISM
