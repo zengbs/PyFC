@@ -126,15 +126,6 @@ def SphericalSphere( ):
     ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center )
     ISM_Temp        = ISM[4]/ISM[0]
 
-    fig, ax = plt.subplots(6,1)
-    cbr=ax[0].imshow(ISM[0][int(par.Nz/2),:,:], interpolation="None")
-    cbr=ax[1].imshow(ISM[1][int(par.Nz/2),:,:], interpolation="None")
-    cbr=ax[2].imshow(ISM[2][int(par.Nz/2),:,:], interpolation="None")
-    cbr=ax[3].imshow(ISM[3][int(par.Nz/2),:,:], interpolation="None")
-    cbr=ax[4].imshow(ISM[4][int(par.Nz/2),:,:], interpolation="None")
-    cbr=ax[5].imshow(ISM_Temp[int(par.Nz/2),:,:], interpolation="None")
-    fig.colorbar(cbr)
-    plt.show()
     ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
     ####################################
@@ -175,4 +166,3 @@ def SphericalSphere( ):
     print("Encloed mass = %e\n"      % (EnclosedMass)   )
     print("Free falling time = %e\n" % (FreeFallingTime))
     return FluidInBox, PotInBox
-    #return ISM, PotInBox

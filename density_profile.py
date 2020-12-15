@@ -142,7 +142,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
 
     Diff_Phi_R       = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
     VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
-    VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0)
+    VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) # Vφ(R,z) = Vφ(R)*exp[-z/z0]
 
     # Vx = Vr * cosθ
     # Vy = Vr * sinθ

@@ -6,7 +6,7 @@ def Parameters():
   global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa
   global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
   global BPoint, CoarseDr, Radius, Precision, GRA_GHOST_SIZE
-  global Rho0_D, Sigma_D, Radius_D
+  global Rho0_D, Sigma_D, Radius_D, CriticalTemp, Const_Erg2eV
 
   
   # Number of cells along x/y/z
@@ -23,15 +23,16 @@ def Parameters():
   ### Physical constants ###
   ##########################
   # The Boltzmann constant (eV/K)
-  kB = 8.6173303e-5
+  kB       = 8.6173303e-5
 
   # Speed of light (km/s)
-  C = 299792.458
+  C        = 299792.458
 
   # Gravitational constant
   NEWTON_G = 1.0
 
- 
+  # electron volt
+  Const_Erg2eV = 6.2415e11
   ##########################
   ###  Free parameters   ###
   ##########################
@@ -72,10 +73,14 @@ def Parameters():
   Mu = 0.6
 
   # Scale height of ISM disk
-  z0   = 1
+  z0   = 0.3
 
   # Rotational coefficient
   a0   = 1
+
+  # Critical temperature for ISM disk (K)
+  #CriticalTemp = 1e5
+  CriticalTemp = 3e4
 
   # Derived parameters
   Rho0_D, Sigma_D, Radius_D = FreePara2DerivedPara( )
