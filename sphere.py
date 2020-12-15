@@ -32,18 +32,20 @@ def SphericalSphere( ):
     InUX    = 0 
     InUy    = 0
     InUz    = 0
-    # unnormalized by `par.Sigma_g` but normalized by `par.C`
+    # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
-    InPres  = InRho * par.kB*par.Temp_g / (par.Mu*par.Matom*par.Const_Erg2eV) / (par.C*1e5)**2
+    InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C*1e5)**2
+    InPres  = InRho*(par.Sigma_g/par.Const_C)**2
+
 
     # Fluid outside box
     OutRho  = 1e-3*np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
-    # unnormalized by `par.Sigma_g` but normalized by `par.C`
+    # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
-    OutPres = 1e3*OutRho*(par.Sigma_g/par.C)**2
+    OutPres = 1e3*OutRho*(par.Sigma_g/par.Const_C)**2
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
@@ -64,9 +66,9 @@ def SphericalSphere( ):
 
     Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
 
-    # unnormalized by `par.Sigma_D` but normalized by `par.C`
+    # unnormalized by `par.Sigma_D` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
-    Potential *= (par.Sigma_D/par.C)**2
+    Potential *= (par.Sigma_D/par.Const_C)**2
 
 
     
@@ -121,41 +123,41 @@ def SphericalSphere( ):
     ####################################
     ##########      ISM     ############
     ####################################
-    PotInBoxCopy    = np.copy(PotInBox)
-    FluidInBoxCopy  = np.copy(FluidInBox)
-    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center )
-    ISM_Temp        = ISM[4]/ISM[0]
+    #PotInBoxCopy    = np.copy(PotInBox)
+    #FluidInBoxCopy  = np.copy(FluidInBox)
+    #ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center )
+    #ISM_Temp        = ISM[4]/ISM[0]
 
-    ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
+    #ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
     ####################################
     #######     
     ####################################
-    Idx = np.indices((par.Nz, par.Ny, par.Nx))[2]
-    Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
-    Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
-        
-    X   = (Idx+0.5)*delta[2]-Center[2]
-    Y   = (Jdx+0.5)*delta[1]-Center[1]
-    Z   = (Kdx+0.5)*delta[0]-Center[0] 
-    R   = np.sqrt(X**2+Y**2+Z**2) 
+    #Idx = np.indices((par.Nz, par.Ny, par.Nx))[2]
+    #Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
+    #Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
+    #    
+    #X   = (Idx+0.5)*delta[2]-Center[2]
+    #Y   = (Jdx+0.5)*delta[1]-Center[1]
+    #Z   = (Kdx+0.5)*delta[0]-Center[0] 
+    #R   = np.sqrt(X**2+Y**2+Z**2) 
 
-    KT_mcSqr  = par.CriticalTemp*par.kB          # K* (erg/K)
-    KT_mcSqr /= par.Mu*par.Matom*(par.C*1e5)**2  # erg
-    KT_mcSqr /= par.Const_Erg2eV
+    #KT_mcSqr  = par.CriticalTemp*par.Const_kB          # K* (erg/K)
+    #KT_mcSqr /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C*1e5)**2  # erg
+    #KT_mcSqr /= par.Const_Erg2eV
 
-    ISM[0] = np.where( ISM_Temp < KT_mcSqr, ISM[0], FluidInBox[0] )
-    ISM[1] = np.where( ISM_Temp < KT_mcSqr, ISM[1], FluidInBox[1] )
-    ISM[2] = np.where( ISM_Temp < KT_mcSqr, ISM[2], FluidInBox[2] )
-    ISM[3] = np.where( ISM_Temp < KT_mcSqr, ISM[3], FluidInBox[3] )
-    ISM[4] = np.where( ISM_Temp < KT_mcSqr, ISM[4], FluidInBox[4] )
+    #ISM[0] = np.where( ISM_Temp < KT_mcSqr, ISM[0], FluidInBox[0] )
+    #ISM[1] = np.where( ISM_Temp < KT_mcSqr, ISM[1], FluidInBox[1] )
+    #ISM[2] = np.where( ISM_Temp < KT_mcSqr, ISM[2], FluidInBox[2] )
+    #ISM[3] = np.where( ISM_Temp < KT_mcSqr, ISM[3], FluidInBox[3] )
+    #ISM[4] = np.where( ISM_Temp < KT_mcSqr, ISM[4], FluidInBox[4] )
 
 
-    FluidInBox[0] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[0], FluidInBox[0] ) 
-    FluidInBox[1] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[1], FluidInBox[1] ) 
-    FluidInBox[2] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[2], FluidInBox[2] ) 
-    FluidInBox[3] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[3], FluidInBox[3] ) 
-    FluidInBox[4] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[4], FluidInBox[4] ) 
+    #FluidInBox[0] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[0], FluidInBox[0] ) 
+    #FluidInBox[1] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[1], FluidInBox[1] ) 
+    #FluidInBox[2] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[2], FluidInBox[2] ) 
+    #FluidInBox[3] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[3], FluidInBox[3] ) 
+    #FluidInBox[4] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[4], FluidInBox[4] ) 
 
     ####################################
     #######     

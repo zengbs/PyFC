@@ -31,7 +31,7 @@ def Plot( ):
     #ParaPhy[1]             = 0 # Rho0_g = 0
     #DMOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     #Nothing, DMOnlyDensity = NumericalDensity( rPrime, ParaPhy )
-    #C,=ax[0].plot( rPrime, DMOnlyDensity  , 'o', label='DM density without Gas'   )
+    #Const_C,=ax[0].plot( rPrime, DMOnlyDensity  , 'o', label='DM density without Gas'   )
     #D,=ax[1].plot( rPrime, DMOnlyPotential, 'x', label='DM potential without Gas' )
     
     # DM and gas
@@ -42,7 +42,7 @@ def Plot( ):
     GasDensity, DMDensity = NumericalDensity( rPrime )
     E,=ax[0].plot( rPrime*par.CoreRadius_D, GasDensity,    '>', label='Gas density with DM' )
     F,=ax[0].plot( rPrime*par.CoreRadius_D, DMDensity,     '<', label='DM density with Gas' )
-    G,=ax[1].plot( rPrime*par.CoreRadius_D, TotalPotential*(par.Sigma_D/par.C)**2,'-', label='Gas+DM potential' )
+    G,=ax[1].plot( rPrime*par.CoreRadius_D, TotalPotential*(par.Sigma_D/par.Const_C)**2,'-', label='Gas+DM potential' )
     
 
 
@@ -57,7 +57,7 @@ def Plot( ):
     ax[0].set_ylabel(r'$\rho$', size=20)
     ax[1].set_ylabel(r'$\Phi$', size=20)
 
-    #ax[0].legend(handles=[C,A,F,E],loc='lower left', fontsize=12)
+    #ax[0].legend(handles=[Const_C,A,F,E],loc='lower left', fontsize=12)
     #ax[1].legend(handles=[D,B,G],loc='upper left', fontsize=12)
     ax[0].legend(handles=[F,E],loc='lower left', fontsize=12)
     ax[1].legend(handles=[G],loc='upper left', fontsize=12)

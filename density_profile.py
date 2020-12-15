@@ -39,9 +39,10 @@ def FreePara2DerivedPara( ):
 
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
-    SoubdSpeedSqr  = par.kB*par.Temp_g/(par.Mu*par.Matom*par.Const_Erg2eV)
+    SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
     SoubdSpeedSqr /= 1e10 # (km/cm)**2
     GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
+    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
@@ -61,7 +62,7 @@ def NumericalDensity( rPrime ):
     return GasDensity, DMDensity
 
 """
-return: gravitational potential normalized by par.Sigma_D**2 but unnormalized by `par.C**2`
+return: gravitational potential normalized by par.Sigma_D**2 but unnormalized by `par.Const_C**2`
 """
 def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     # Bundle Parameters
@@ -75,15 +76,15 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
     return TotalPotential[:,0]
 
 """
-input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.C**2`
+input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.Const_C**2`
 """
 def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
 
     # create an array stored ISM
     ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
 
-    # unnormalized by `par.C**2`
-    PotInBox *= par.C**2
+    # unnormalized by `par.Const_C**2`
+    PotInBox *= par.Const_C**2
 
     # the box storing potential includes ghost zone
     PotNz     = par.Nz + 2*par.GRA_GHOST_SIZE
@@ -151,8 +152,8 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     CosTheta = X/R
     SinTheta = Y/R
 
-    ISM[1] = VelocityPhi * SinTheta / par.C
-    ISM[2] = VelocityPhi * CosTheta / par.C
+    ISM[1] = VelocityPhi * SinTheta / par.Const_C
+    ISM[2] = VelocityPhi * CosTheta / par.Const_C
     ISM[3] = 0
     ISM[4] = PresInBox
 

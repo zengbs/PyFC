@@ -2,9 +2,9 @@
 def Parameters():
   from density_profile import FreePara2DerivedPara
 
-  global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
+  global Nx, Ny, Nz, Lx, Ly, Lz, Const_kB, Const_C, Constant, NEWTON_G
   global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon
-  global Temp_g, Phi0, DevPhi0, Matom, Mu, Sigma_t, ISM0
+  global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV
 
@@ -23,22 +23,22 @@ def Parameters():
   ### Physical constants ###
   ##########################
   # Atomic mass unit (g)
-  Matom = 1.66e-24
+  Const_AtomMass             = 1.66e-24
 
   # Mean molecular weight
-  Mu    = 0.6
+  Const_MeanMolecularWeight  = 0.6
 
   # The Boltzmann constant (eV/K)
-  kB       = 8.6173303e-5
+  Const_kB                   = 8.6173303e-5
 
   # Speed of light (km/s)
-  C        = 299792.458
+  Const_C                    = 299792.458
 
   # Gravitational constant
-  NEWTON_G = 1.0
+  NEWTON_G                   = 1.0
 
   # electron volt per erg
-  Const_Erg2eV = 6.2415e11
+  Const_Erg2eV               = 6.2415e11
   ##########################
   ###  Free parameters   ###
   ##########################
@@ -60,8 +60,8 @@ def Parameters():
   # Velocity dispersion of gas (km/s)
   Sigma_g = 250  
 
-  # Velocity dispersion of turbulence (km/s)
-  Sigma_t = 250  
+  # Turbulent velocity dispersion (km/s)
+  Sigma_t = 250
 
   # Lambda = r_{D}/r_{g}
   Lambda = 5

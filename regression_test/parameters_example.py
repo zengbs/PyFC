@@ -2,9 +2,9 @@
 def Parameters():
   from density_profile import FreePara2DerivedPara
 
-  global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
-  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa
-  global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
+  global Nx, Ny, Nz, Lx, Ly, Lz, Const_kB, Const_C, Constant, NEWTON_G
+  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon
+  global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV
 
@@ -22,17 +22,23 @@ def Parameters():
   ##########################
   ### Physical constants ###
   ##########################
+  # Atomic mass unit (g)
+  Const_AtomMass             = 1.66e-24
+
+  # Mean molecular weight
+  Const_MeanMolecularWeight  = 0.6
+
   # The Boltzmann constant (eV/K)
-  kB       = 8.6173303e-5
+  Const_kB                   = 8.6173303e-5
 
   # Speed of light (km/s)
-  C        = 299792.458
+  Const_C                    = 299792.458
 
   # Gravitational constant
-  NEWTON_G = 1.0
+  NEWTON_G                   = 1.0
 
-  # electron volt
-  Const_Erg2eV = 6.2415e11
+  # electron volt per erg
+  Const_Erg2eV               = 6.2415e11
   ##########################
   ###  Free parameters   ###
   ##########################
@@ -48,8 +54,14 @@ def Parameters():
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
 
+  # number density at the center of ISM (1/cm^3)
+  ISM0   = 200
+
   # Velocity dispersion of gas (km/s)
   Sigma_g = 250  
+
+  # Turbulent velocity dispersion (km/s)
+  Sigma_t = 250
 
   # Lambda = r_{D}/r_{g}
   Lambda = 5
@@ -66,20 +78,10 @@ def Parameters():
   # The spatial derivative of potential at the center of sphere
   DevPhi0 = 0
 
-  # Atomic mass unit (g)
-  Matom = 1.66e-24
-
-  # Mean molecular weight
-  Mu = 0.6
-
-  # Scale height of ISM disk
-  z0   = 0.3
-
   # Rotational coefficient
-  a0   = 1
+  Epsilon   = 0.93
 
   # Critical temperature for ISM disk (K)
-  #CriticalTemp = 1e5
   CriticalTemp = 3e4
 
   # Derived parameters
