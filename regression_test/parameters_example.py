@@ -6,7 +6,7 @@ def Parameters():
   global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
-  global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV
+  global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
 
   
   # Number of cells along x/y/z
@@ -86,6 +86,12 @@ def Parameters():
 
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
+
+  ############################
+  ###         Case         ###
+  ############################
+  #Case = "Mukherjee"  # Mukherjee, Stable
+  Case = "Stable"  # Mukherjee, Stable
 
   ############################
   ### Numerical parameters ###

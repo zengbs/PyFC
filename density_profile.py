@@ -39,10 +39,12 @@ def FreePara2DerivedPara( ):
 
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
-    SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
-    SoubdSpeedSqr /= 1e10 # (km/cm)**2
-    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
-    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
+    if par.Case == "Mukherjee":
+       SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
+       SoubdSpeedSqr /= 1e10 # (km/cm)**2
+       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
+    if par.Case == "Stable":
+       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
