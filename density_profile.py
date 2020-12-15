@@ -39,7 +39,10 @@ def FreePara2DerivedPara( ):
 
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
-    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
+    #GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
+    SoubdSpeedSqr  = par.kB*par.Temp_g/(par.Mu*par.Matom*par.Const_Erg2eV)
+    SoubdSpeedSqr /= 1e10 # (km/cm)**2
+    GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
@@ -113,10 +116,8 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     R   = np.sqrt(X**2+Y**2)
 
 
-    a = par.a0 * np.exp(-np.abs(Z)/par.z0)
-
     # expression below have assumed that the potential at the center of sphere is zero
-    ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_g**2 )
+    ISM[0] = par.ISM0 *  np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
   
 #####################
 #    CosTheta = X/R
@@ -141,8 +142,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     #  ∂R     ∂x   ∂x     ∂y   ∂y     ∂x   R     ∂y   R
 
     Diff_Phi_R       = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
-    VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
-    VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) # Vφ(R,z) = Vφ(R)*exp[-z/z0]
+    VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
 
     # Vx = Vr * cosθ
     # Vy = Vr * sinθ
@@ -152,8 +152,8 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     CosTheta = X/R
     SinTheta = Y/R
 
-    ISM[1] = VelocityPhi_ExpZ * SinTheta / par.C
-    ISM[2] = VelocityPhi_ExpZ * CosTheta / par.C
+    ISM[1] = VelocityPhi * SinTheta / par.C
+    ISM[2] = VelocityPhi * CosTheta / par.C
     ISM[3] = 0
     ISM[4] = PresInBox
 

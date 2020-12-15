@@ -34,7 +34,7 @@ def SphericalSphere( ):
     InUz    = 0
     # unnormalized by `par.Sigma_g` but normalized by `par.C`
     # --> since the speed of light is hard-coded to 1 in GAMER
-    InPres  = InRho*(par.Sigma_g/par.C)**2
+    InPres  = InRho * par.kB*par.Temp_g / (par.Mu*par.Matom*par.Const_Erg2eV) / (par.C*1e5)**2
 
     # Fluid outside box
     OutRho  = 1e-3*np.interp( par.Radius/par.Radius_D, Coarse_r, InRho )
@@ -141,14 +141,16 @@ def SphericalSphere( ):
     R   = np.sqrt(X**2+Y**2+Z**2) 
 
     KT_mcSqr  = par.CriticalTemp*par.kB          # K* (erg/K)
-    KT_mcSqr /= par.Mu*par.Matom*(par.C*1e4)**2  # erg
+    KT_mcSqr /= par.Mu*par.Matom*(par.C*1e5)**2  # erg
     KT_mcSqr /= par.Const_Erg2eV
+    print(KT_mcSqr)
 
     ISM[0] = np.where( ISM_Temp < KT_mcSqr, ISM[0], FluidInBox[0] )
     ISM[1] = np.where( ISM_Temp < KT_mcSqr, ISM[1], FluidInBox[1] )
     ISM[2] = np.where( ISM_Temp < KT_mcSqr, ISM[2], FluidInBox[2] )
     ISM[3] = np.where( ISM_Temp < KT_mcSqr, ISM[3], FluidInBox[3] )
     ISM[4] = np.where( ISM_Temp < KT_mcSqr, ISM[4], FluidInBox[4] )
+
 
     FluidInBox[0] = np.where( R<par.Radius/par.Radius_D, ISM[0], FluidInBox[0] ) 
     FluidInBox[1] = np.where( R<par.Radius/par.Radius_D, ISM[1], FluidInBox[1] ) 
@@ -166,3 +168,4 @@ def SphericalSphere( ):
     print("Encloed mass = %e\n"      % (EnclosedMass)   )
     print("Free falling time = %e\n" % (FreeFallingTime))
     return FluidInBox, PotInBox
+    #return ISM, PotInBox

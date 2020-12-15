@@ -12,6 +12,8 @@ def DumpFile():
     ############################
     FluidInBox, PotInBox = SphericalSphere()
     FluidInBox.tofile("UM_IC")
+    #ISM, PotInBox = SphericalSphere()
+    #ISM.tofile("UM_IC")
 
     ############################
     ###     Dump potential   ###
@@ -32,10 +34,12 @@ print("kB                   = %e" % par.kB        )
 print("C                    = %e" % par.C         )
 print("NEWTON_G             = %e" % par.NEWTON_G  )
 print("Radius               = %e" % par.Radius    )
+print("Epsilon              = %e" % par.Epsilon    )
 print("Constant             = %e" % par.Constant  )
 print("Radius_g             = %e" % par.Radius_g  )
 print("Rho0_g               = %e" % par.Rho0_g    )
 print("Sigma_g              = %e" % par.Sigma_g   )
+print("Sigma_t              = %e" % par.Sigma_t   )
 print("Lambda               = %e" % par.Lambda    )
 print("Kappa                = %e" % par.Kappa     )
 print("Temp_g               = %e" % par.Temp_g    )
@@ -50,8 +54,7 @@ print("BPoint               = %e" % par.BPoint    )
 print("CoarseDr             = %e" % par.CoarseDr  )
 print("Precision            = %s" % par.Precision )
 
-KT_mcSqr  = par.CriticalTemp*par.kB          # K* (erg/K)
-KT_mcSqr /= par.Mu*par.Matom*(par.C*1e4)**2  # erg
-KT_mcSqr /= par.Const_Erg2eV
 
-print("Critical temperature = %e" % KT_mcSqr      )
+Temp = par.CriticalTemp*par.Mu*par.Matom*(par.C*1e5)**2*par.Const_Erg2eV / par.kB
+
+print("Critical temperature = %e (K)" % Temp      )

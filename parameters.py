@@ -3,16 +3,16 @@ def Parameters():
   from density_profile import FreePara2DerivedPara
 
   global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
-  global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa
-  global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
+  global Radius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon
+  global Temp_g, Phi0, DevPhi0, Matom, Mu, Sigma_t, ISM0
   global BPoint, CoarseDr, Radius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, Radius_D, CriticalTemp, Const_Erg2eV
 
   
   # Number of cells along x/y/z
-  Nx = 64 
-  Ny = 64  
-  Nz = 64  
+  Nx = 256 
+  Ny = 256  
+  Nz = 256  
 
   # Box size
   Lx = 3
@@ -48,8 +48,14 @@ def Parameters():
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
 
+  # number density at the center of ISM (1/cm^3)
+  ISM0   = 200
+
   # Velocity dispersion of gas (km/s)
   Sigma_g = 250  
+
+  # Velocity dispersion of turbulence (km/s)
+  Sigma_t = 250  
 
   # Lambda = r_{D}/r_{g}
   Lambda = 5
@@ -72,14 +78,10 @@ def Parameters():
   # Mean molecular weight
   Mu = 0.6
 
-  # Scale height of ISM disk
-  z0   = 0.3
-
   # Rotational coefficient
-  a0   = 1
+  Epsilon   = 0.93
 
   # Critical temperature for ISM disk (K)
-  #CriticalTemp = 1e5
   CriticalTemp = 3e4
 
   # Derived parameters
