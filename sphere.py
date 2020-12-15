@@ -8,18 +8,18 @@ def SphericalSphere( ):
 
     par.Parameters() 
 
-    # Center of sphere (normalized by `par.Radius_D`)
-    Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.Radius_D
+    # Center of sphere (normalized by `par.CoreRadius_D`)
+    Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
  
-    # Coarse grid (Normalized by Radius_D)
-    Coarse_r = np.arange(par.BPoint, np.sqrt(2)*par.Lx/par.Radius_D, par.CoarseDr)
+    # Coarse grid (Normalized by CoreRadius_D)
+    Coarse_r = np.arange(par.BPoint, np.sqrt(2)*par.Lx/par.CoreRadius_D, par.CoarseDr)
 
     # Left edge and right edge coordinates of the desired
-    # simulation domain which will be used in GAMER. (Normalized by Radius_D)
+    # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)
     le = np.array([ 0,  0,  0])
-    re = np.array([par.Lz, par.Ly, par.Lx]) / par.Radius_D
+    re = np.array([par.Lz, par.Ly, par.Lx]) / par.CoreRadius_D
     
-    # Cell spacing (normalized by Radius_D)
+    # Cell spacing (normalized by CoreRadius_D)
     N = [par.Nz, par.Ny, par.Nx ]
     delta = (re-le)/N
 
@@ -37,7 +37,7 @@ def SphericalSphere( ):
     InPres  = InRho * par.kB*par.Temp_g / (par.Mu*par.Matom*par.Const_Erg2eV) / (par.C*1e5)**2
 
     # Fluid outside box
-    OutRho  = 1e-3*np.interp( par.Radius/par.Radius_D, Coarse_r, InRho )
+    OutRho  = 1e-3*np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho )
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
@@ -96,7 +96,7 @@ def SphericalSphere( ):
 
                 #filling `FluidInBox` with fluid variables
                 if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
-                     if ( r < par.Radius/par.Radius_D ):
+                     if ( r < par.SphereRadius/par.CoreRadius_D ):
                           FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
                           FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
                           FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
@@ -151,17 +151,17 @@ def SphericalSphere( ):
     ISM[4] = np.where( ISM_Temp < KT_mcSqr, ISM[4], FluidInBox[4] )
 
 
-    FluidInBox[0] = np.where( R<par.Radius/par.Radius_D, ISM[0], FluidInBox[0] ) 
-    FluidInBox[1] = np.where( R<par.Radius/par.Radius_D, ISM[1], FluidInBox[1] ) 
-    FluidInBox[2] = np.where( R<par.Radius/par.Radius_D, ISM[2], FluidInBox[2] ) 
-    FluidInBox[3] = np.where( R<par.Radius/par.Radius_D, ISM[3], FluidInBox[3] ) 
-    FluidInBox[4] = np.where( R<par.Radius/par.Radius_D, ISM[4], FluidInBox[4] ) 
+    FluidInBox[0] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[0], FluidInBox[0] ) 
+    FluidInBox[1] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[1], FluidInBox[1] ) 
+    FluidInBox[2] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[2], FluidInBox[2] ) 
+    FluidInBox[3] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[3], FluidInBox[3] ) 
+    FluidInBox[4] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[4], FluidInBox[4] ) 
 
     ####################################
     #######     
     ####################################
 
-    MeanRho         = 3*EnclosedMass/( 4*np.pi*par.Radius**3 )
+    MeanRho         = 3*EnclosedMass/( 4*np.pi*par.SphereRadius**3 )
     FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
 
     print("Encloed mass = %e\n"      % (EnclosedMass)   )

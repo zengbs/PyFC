@@ -5,7 +5,7 @@ def Parameters():
   global Nx, Ny, Nz, Lx, Ly, Lz, kB, C, Constant, NEWTON_G
   global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa
   global Temp_g, Phi0, DevPhi0, Matom, Mu, z0, a0
-  global BPoint, CoarseDr, Radius, Precision, GRA_GHOST_SIZE
+  global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV
 
   
@@ -37,7 +37,7 @@ def Parameters():
   ###  Free parameters   ###
   ##########################
   # Sphere radius
-  Radius = 0.4*Lx
+  SphereRadius = 0.4*Lx
 
   # The eq(2) in Sutherland & Bicknell (2007)
   Constant = 9

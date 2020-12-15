@@ -17,7 +17,7 @@ def Plot( ):
     handles0=[]
     handles1=[]
 
-    rPrime = np.arange(par.BPoint, par.Radius/par.CoreRadius_D, par.CoarseDr)
+    rPrime = np.arange(par.BPoint, par.SphereRadius/par.CoreRadius_D, par.CoarseDr)
 
  
     ## Gas-only
