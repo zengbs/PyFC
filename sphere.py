@@ -37,6 +37,8 @@ def SphericalSphere( ):
     if par.Case == "Mukherjee":
        InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C*1e5)**2
     if par.Case == "Standard":
+       # `InPres` is nunormalized by `Sigma_g` but normalized by `par.Const_C`
+       # --> since the speed of light is hard-coded to 1 in GAMER
        InPres  = InRho*(par.Sigma_g/par.Const_C)**2
 
 

@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 256 
-  Ny = 256  
-  Nz = 256  
+  Nx = 128 
+  Ny = 128  
+  Nz = 128  
 
   # Box size
   Lx = 3
@@ -47,12 +47,12 @@ def Parameters():
   SphereRadius = 0.4*Lx
 
   # The eq(2) in Sutherland & Bicknell (2007)
-  Constant = 9
+  Constant  = 9
 
   # Core radius of gas sphere (kpc)
   CoreRadius_g = 1
 
-  # Peak gas density (1/cm^3)
+  # Peak gas density (g/cm^3)
   Rho0_g = 0.5
 
   # Velocity dispersion of gas (km/s)
@@ -104,7 +104,8 @@ def Parameters():
   z0 = 0.1
   Sigma_t = 250
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 4e6
+  #CriticalTemp = 4e6
+  CriticalTemp = 1e-99
 
 
   ############################
