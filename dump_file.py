@@ -11,12 +11,14 @@ def DumpFile():
     ###     Dump density    ####
     ############################
     FluidInBox, PotInBox = SphericalSphere()
-    FluidInBox.tofile("UM_IC")
+    FileName = "%s" % (par.Case)+"_UM_IC"
+    FluidInBox.tofile(FileName)
 
     ############################
     ###     Dump potential   ###
     ############################
-    PotInBox.tofile("ExtPotTable")
+    FileName = "%s" % (par.Case)+"_ExtPotTable"
+    PotInBox.tofile(FileName)
 
 par.Parameters()
 out=np.zeros((par.Nx, par.Ny, par.Nz))

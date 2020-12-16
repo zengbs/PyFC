@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 64 
-  Ny = 64  
-  Nz = 64  
+  Nx = 256 
+  Ny = 256  
+  Nz = 256  
 
   # Box size
   Lx = 3
@@ -55,9 +55,6 @@ def Parameters():
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
 
-  # number density at the center of ISM (1/cm^3)
-  ISM0   = 200
-
   # Velocity dispersion of gas (km/s)
   Sigma_g = 250  
 
@@ -72,9 +69,6 @@ def Parameters():
 
   # The spatial derivative of potential at the center of sphere
   DevPhi0 = 0
-
-  # Critical temperature for ISM disk (K)
-  CriticalTemp = 1.2e-6
 
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
@@ -96,12 +90,21 @@ def Parameters():
   ## --> This parameter controls disk height
   #Sigma_t = 200
 
+  ## Critical temperature for ISM disk (K)
+  ##CriticalTemp = 3e4
+
+  ## number density at the center of ISM (1/cm^3)
+  #ISM0   = 200
+
+
 
   ### If Case = "Standard" ###
   Case = "Standard"  
   a0 = 1
   z0 = 0.1
-  Sigma_t = 150
+  Sigma_t = 250
+  # Critical temperature for ISM disk (K)
+  CriticalTemp = 4e6
 
 
   ############################

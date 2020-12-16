@@ -37,6 +37,9 @@ def FreePara2DerivedPara( ):
 #    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r - -4*np.pi*NEWTON_G*Rho0_DM*ScaleRadius**2
 #    return Exact
 
+#########################
+# return: GasDensityProfile [g/cm**3]
+#########################
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
     if par.Case == "Mukherjee":
@@ -162,6 +165,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
     CosTheta = X/R
     SinTheta = Y/R
 
+    # `PotInBox` have been unnormalized by `Const_C**2` so that we need to normalize `VelocityPhi` by `Const_C` again
     if par.Case == "Mukherjee":
        ISM[1] = VelocityPhi * SinTheta / par.Const_C
        ISM[2] = VelocityPhi * CosTheta / par.Const_C
