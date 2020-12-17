@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 128 
-  Ny = 128  
-  Nz = 128  
+  Nx = 256 
+  Ny = 256  
+  Nz = 256  
 
   # Box size
   Lx = 3

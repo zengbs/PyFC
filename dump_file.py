@@ -13,9 +13,7 @@ def DumpFile():
     FluidInBox, PotInBox = SphericalSphere()
     FileName = "%s" % (par.Case)+"_UM_IC"
 
-    # If we would like to store unormalized mass density in dataset, then we must use gamer in double precision
-    # --> since gamer do not apply the unit system on the routine reading UM_IC
-    #FluidInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox.tofile(FileName)
 
     ############################
@@ -23,9 +21,7 @@ def DumpFile():
     ############################
     FileName = "%s" % (par.Case)+"_ExtPotTable"
 
-    # If we would like to store unormalized mass density in dataset, then we must use gamer in double precision
-    # --> since gamer do not apply the unit system on the routine reading UM_IC
-    #PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight
+    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight
     PotInBox.tofile(FileName)
 
 par.Parameters()
