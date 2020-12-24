@@ -14,9 +14,9 @@ def DumpFile():
     FileName = "%s" % (par.Case)+"_UM_IC"
 
     FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[1] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[2] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[3] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[1] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[2] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[3] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight
     FluidInBox.tofile(FileName)
 
@@ -25,7 +25,7 @@ def DumpFile():
     ############################
     FileName = "%s" % (par.Case)+"_ExtPotTable"
 
-    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*(par.Const_C*1e5)**2
+    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
     PotInBox.tofile(FileName)
 
 par.Parameters()

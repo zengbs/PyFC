@@ -31,8 +31,8 @@ def Parameters():
   # The Boltzmann constant (eV/K)
   Const_kB                   = 8.6173303e-5
 
-  # Speed of light (km/s)
-  Const_C                    = 299792.458
+  # Speed of light (cm/s)
+  Const_C                    = 29979245800.0
 
   # Gravitational constant
   NEWTON_G                   = 1.0
@@ -55,8 +55,8 @@ def Parameters():
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
 
-  # Velocity dispersion of gas (km/s)
-  Sigma_g = 250  
+  # Velocity dispersion of gas (cm/s)
+  Sigma_g = 25000000
 
   # Lambda = r_{D}/r_{g}
   Lambda = 5
@@ -86,9 +86,9 @@ def Parameters():
   ## Temperature of gas (K)
   #Temp_g = 1e7
  
-  ## Turbulent velocity dispersion (km/s)
+  ## Turbulent velocity dispersion (cm/s)
   ## --> This parameter controls disk height
-  #Sigma_t = 200
+  #Sigma_t = 20000000
 
   ## Critical temperature for ISM disk (K)
   ##CriticalTemp = 3e4
@@ -102,7 +102,7 @@ def Parameters():
   Case = "Standard"  
   a0 = 1
   z0 = 0.1
-  Sigma_t = 250
+  Sigma_t = 25000000 # (cm/s)
   # Critical temperature for ISM disk (K)
   #CriticalTemp = 4e6
   CriticalTemp = 1e-99

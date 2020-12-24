@@ -35,7 +35,7 @@ def SphericalSphere( ):
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
-       InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C*1e5)**2
+       InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C)**2
     if par.Case == "Standard":
        # `InPres` is nunormalized by `Sigma_g` but normalized by `par.Const_C`
        # --> since the speed of light is hard-coded to 1 in GAMER
@@ -147,22 +147,13 @@ def SphericalSphere( ):
     Z   = (Kdx+0.5)*delta[0]-Center[0] 
     R   = np.sqrt(X**2+Y**2+Z**2) 
 
-    KT_mcSqr  = par.CriticalTemp*par.Const_kB                                          # K* (erg/K)
-    KT_mcSqr /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C*1e5)**2  # erg
+    KT_mcSqr  = par.CriticalTemp*par.Const_kB                                      # K* (erg/K)
+    KT_mcSqr /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C)**2  # erg
     KT_mcSqr /= par.Const_Erg2eV
 
-    ISM[0] = np.where( ISM_Temp < KT_mcSqr, ISM[0], FluidInBox[0] )
-    ISM[1] = np.where( ISM_Temp < KT_mcSqr, ISM[1], FluidInBox[1] )
-    ISM[2] = np.where( ISM_Temp < KT_mcSqr, ISM[2], FluidInBox[2] )
-    ISM[3] = np.where( ISM_Temp < KT_mcSqr, ISM[3], FluidInBox[3] )
-    ISM[4] = np.where( ISM_Temp < KT_mcSqr, ISM[4], FluidInBox[4] )
+    ISM = np.where( ISM_Temp < KT_mcSqr, ISM, FluidInBox )
 
-
-    FluidInBox[0] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[0], FluidInBox[0] ) 
-    FluidInBox[1] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[1], FluidInBox[1] ) 
-    FluidInBox[2] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[2], FluidInBox[2] ) 
-    FluidInBox[3] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[3], FluidInBox[3] ) 
-    FluidInBox[4] = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM[4], FluidInBox[4] ) 
+    FluidInBox = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM, FluidInBox ) 
 
     #####################################################
     ### Calculate enclosed mass and free-falling time ###

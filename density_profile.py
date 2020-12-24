@@ -44,7 +44,7 @@ def FreePara2DerivedPara( ):
 def IsothermalGasDensity( Phi ):
     if par.Case == "Mukherjee":
        SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
-       SoubdSpeedSqr /= 1e10 # (km/cm)**2
+       #SoubdSpeedSqr /= 1e10 # (km/cm)**2
        GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
     if par.Case == "Standard":
        GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
