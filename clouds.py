@@ -804,7 +804,8 @@ class FractalCube:
 
         return self._returner(cube, out)
 
-    def write_cube(self, fc=None, fname='UM_IC', app=True, prec='double'):
+    #def write_cube(self, fc=None, fname='UM_IC', app=True, prec='double'):
+    def write_cube(self, fc=None, app=True, prec='double'):
         """
         Writes out a fractal cube data file in little endian, 
         double precision. Care is taken not to overwrite existing files.
@@ -834,25 +835,22 @@ class FractalCube:
         else:
             ValueError('Unknown prec ' + prec)
 
-        if app:
-            ext = osp.splitext(fname)[1]
-            base = osp.splitext(fname)[0]
+#        if app:
+#            ext = osp.splitext(fname)[1]
+#            base = osp.splitext(fname)[0]
+#
+#            fname  = 'ni_'    + str(self.ni)
+#            fname += '_nj_'   + str(self.nj)
+#            fname += '_nk_'   + str(self.nk)
+#            fname += '_kmin_' + str(self.kmin)
+#            fname += '_mean_' + str(self.mean)
+#            fname += '_sigma_'+ str(self.sigma)
+#            fname += '_beta_' + str(self.beta)
+#
+#        fname = pt.unique_fname(fname)
 
-            fname  = 'ni_'    + str(self.ni)
-            fname += '_nj_'   + str(self.nj)
-            fname += '_nk_'   + str(self.nk)
-            fname += '_kmin_' + str(self.kmin)
-            fname += '_mean_' + str(self.mean)
-            fname += '_sigma_'+ str(self.sigma)
-            fname += '_beta_' + str(self.beta)
 
-        fname = pt.unique_fname(fname)
-
-        #out.T.tofile(fname)
-        #hdf5._HDF5(out)
-        dump.DumpFile(out)
-
-        return 1
+        return out
 
     def _returner(self, result, out):
         """ 

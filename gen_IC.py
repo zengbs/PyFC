@@ -10,4 +10,5 @@ fc = pyFC.LogNormalFractalCube(ni=Nx, nj=Ny, nk=Nz, kmin=10, mean=1)
 
 fc.gen_cube()
 
-pyFC.write_cube(fc=fc, fname='UM_IC', app=True, prec='single')
+Fractal = pyFC.write_cube(fc=fc, fname='UM_IC', app=True, prec='single')
+

@@ -1,16 +1,25 @@
 import numpy as np
-from pri2con import Pri2Con
 from sphere import SphericalSphere
 from density_profile import FreePara2DerivedPara
 import parameters as par
+import pyFC
+
 
 def DumpFile():
     par.Parameters()
 
     ############################
+    ###    Fractal cloud    ####
+    ############################
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
+    fc.gen_cube()                           
+    Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+
+
+    ############################
     ###     Dump density    ####
     ############################
-    FluidInBox, PotInBox = SphericalSphere()
+    FluidInBox, PotInBox = SphericalSphere( Fractal )
     FileName = "%s" % (par.Case)+"_UM_IC"
 
     FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 

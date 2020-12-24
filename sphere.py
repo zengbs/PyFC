@@ -4,7 +4,7 @@ from pri2con import Pri2Con
 import parameters as par
 
 
-def SphericalSphere( ):
+def SphericalSphere( Fractal ):
 
     par.Parameters() 
 
@@ -130,7 +130,7 @@ def SphericalSphere( ):
     ####################################
     PotInBoxCopy    = np.copy(PotInBox)
     FluidInBoxCopy  = np.copy(FluidInBox)
-    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center )
+    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, Fractal )
     ISM_Temp        = ISM[4]/ISM[0]
 
     ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])

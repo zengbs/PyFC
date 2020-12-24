@@ -83,7 +83,7 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
 """
 input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.Const_C**2`
 """
-def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
+def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
 
     # create an array stored ISM
     ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
@@ -175,5 +175,8 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center ):
 
     ISM[3] = 0
     ISM[4] = PresInBox
+
+    # Fractalize mass density
+    ISM[0] *= Fractal
 
     return ISM
