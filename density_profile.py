@@ -126,7 +126,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
        ISM[0] = par.ISM0   * np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
     if par.Case == "Standard":
        a = par.a0 * np.exp(-np.abs(Z)/par.z0)
-       ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2 )/par.Sigma_t**2 )  
+       ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2           )/par.Sigma_t**2 )
 
 #####################
 #    CosTheta = X/R
@@ -145,23 +145,13 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
 
 
 
-    # In cylindrical coordinate:
-    #  ∂Φ     ∂Φ   ∂R     ∂Φ   ∂R     ∂Φ   x     ∂Φ   y
-    # ---- = ---- ---- + ---- ---- = ---- --- + ---- ---, where R = ( x**2 + y**2 )**0.5, and Φ=Φ(x, y, z)
-    #  ∂R     ∂x   ∂x     ∂y   ∂y     ∂x   R     ∂y   R
-
     Diff_Phi_R          = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
     if par.Case == "Mukherjee":
        VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
     if par.Case == "Standard":
        VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
-       VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) # Vφ(R,z) = Vφ(R)*exp[-z/z0]
+       VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) 
 
-    # Vx = Vr * cosθ
-    # Vy = Vr * sinθ
-
-    # Vx = Vφ * sinθ
-    # Vy = Vφ * cosθ
     CosTheta = X/R
     SinTheta = Y/R
 

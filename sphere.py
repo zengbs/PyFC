@@ -2,7 +2,7 @@ import numpy as np
 from density_profile import *
 from pri2con import Pri2Con
 import parameters as par
-
+import sys
 
 def SphericalSphere( Fractal ):
 
@@ -16,11 +16,11 @@ def SphericalSphere( Fractal ):
 
     # Left edge and right edge coordinates of the desired
     # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)
-    le = np.array([ 0,  0,  0])
-    re = np.array([par.Lz, par.Ly, par.Lx]) / par.CoreRadius_D
+    le = np.array([ 0.0,  0.0,  0.0])
+    re = np.array([par.Lz, par.Ly, par.Lx]) / float(par.CoreRadius_D)
     
     # Cell spacing (normalized by CoreRadius_D)
-    N = [par.Nz, par.Ny, par.Nx ]
+    N = np.array([par.Nz, par.Ny, par.Nx ], dtype=par.Precision)
     delta = (re-le)/N
 
     ####################################
@@ -84,10 +84,11 @@ def SphericalSphere( Fractal ):
     EnclosedMass = 0.0
     FluidInBox = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
     PresInBox  = np.zeros((par.Nz, par.Ny, par.Nx),    dtype=par.Precision)
-
+   
 
     for k in range(par.Nz+2*GRA_GHOST_SIZE):
-        print("k=%3d/%3d" % (k, par.Nz), flush=True)
+        print("k=%3d/%3d" % (k, par.Nz))
+        sys.stdout.flush() 
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
             for i in range(par.Nx+2*GRA_GHOST_SIZE):
                 # indices for non-ghost zone
@@ -98,7 +99,6 @@ def SphericalSphere( Fractal ):
                 x = (ii+0.5)*delta[0] 
                 y = (jj+0.5)*delta[1]
                 z = (kk+0.5)*delta[2]
-
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 #filling `FluidInBox` with fluid variables
@@ -110,7 +110,7 @@ def SphericalSphere( Fractal ):
                           FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
                           FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
                           PresInBox    [kk][jj][ii] = np.interp( r, Coarse_r, InPres )
-                          EnclosedMass += np.interp( r, Coarse_r, InRho )
+                          EnclosedMass             += np.interp( r, Coarse_r, InRho  )
                      else:
                           FluidInBox[0][kk][jj][ii] = OutDens
                           FluidInBox[1][kk][jj][ii] = OutMomX
@@ -147,11 +147,11 @@ def SphericalSphere( Fractal ):
     Z   = (Kdx+0.5)*delta[0]-Center[0] 
     R   = np.sqrt(X**2+Y**2+Z**2) 
 
-    KT_mcSqr  = par.CriticalTemp*par.Const_kB                                      # K* (erg/K)
-    KT_mcSqr /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C)**2  # erg
-    KT_mcSqr /= par.Const_Erg2eV
+    KT_mcSqr   = par.CriticalTemp*par.Const_kB                                      # K* (erg/K)
+    KT_mcSqr  /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C)**2  # erg
+    KT_mcSqr  /= par.Const_Erg2eV
 
-    ISM = np.where( ISM_Temp < KT_mcSqr, ISM, FluidInBox )
+    ISM        = np.where( ISM_Temp < KT_mcSqr, ISM, FluidInBox )
 
     FluidInBox = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM, FluidInBox ) 
 

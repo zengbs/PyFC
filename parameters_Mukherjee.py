@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 256 
-  Ny = 256  
-  Nz = 256  
+  Nx = 64 
+  Ny = 64  
+  Nz = 64  
 
   # Box size
   Lx = 3 
@@ -40,11 +40,12 @@ def Parameters():
   # electron volt per erg
   Const_Erg2eV               = 6.2415e11
 
+
   ##########################
   ###  Free parameters   ###
   ##########################
   # Sphere radius
-  SphereRadius = 0.45*Lx
+  SphereRadius = 0.40*Lx
 
   # The eq(2) in Sutherland & Bicknell (2007)
   Constant  = 9
@@ -73,6 +74,8 @@ def Parameters():
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
 
+
+
   ############################
   ###         Case         ###
   ### Mukherjee, Standard  ###
@@ -91,7 +94,7 @@ def Parameters():
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 3e4
+  CriticalTemp = 1e+99
   #CriticalTemp = 1e-99
 
   # number density at the center of ISM (1/cm^3)
@@ -99,15 +102,15 @@ def Parameters():
 
 
 
-  ### If Case = "Standard" ###
+  ## If Case = "Standard" ###
   #Case = "Standard"  
   #a0 = 1
   #z0 = 0.1
   #Sigma_t = 25000000 # (cm/s)
   ## Critical temperature for ISM disk (K)
   ##CriticalTemp = 4e6
-  #CriticalTemp = 1e-99
-  ##CriticalTemp = 1e+99
+  ##CriticalTemp = 1e-99
+  #CriticalTemp = 1e+99
 
 
   ############################

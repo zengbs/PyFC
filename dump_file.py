@@ -11,14 +11,14 @@ def DumpFile():
     ############################
     ###    Fractal cloud    ####
     ############################
-    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
-    fc.gen_cube()                           
-    Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+    #fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
+    #fc.gen_cube()                           
+    #Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+    Fractal = 1
 
-
-    ############################
-    ###     Dump density    ####
-    ############################
+    #############################
+    ####     Dump density    ####
+    #############################
     FluidInBox, PotInBox = SphericalSphere( Fractal )
     FileName = "%s" % (par.Case)+"_UM_IC"
 
@@ -29,9 +29,9 @@ def DumpFile():
     FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
     FluidInBox.tofile(FileName)
 
-    ############################
-    ###     Dump potential   ###
-    ############################
+    #############################
+    ####     Dump potential   ###
+    #############################
     FileName = "%s" % (par.Case)+"_ExtPotTable"
 
     PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
