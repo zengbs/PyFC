@@ -145,7 +145,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
 
 
 
-    Diff_Phi_R          = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
+    Diff_Phi_R = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
     if par.Case == "Mukherjee":
        VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
     if par.Case == "Standard":
@@ -155,7 +155,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
     CosTheta = X/R
     SinTheta = Y/R
 
-    # `PotInBox` have been unnormalized by `Const_C**2` so that we need to normalize `VelocityPhi` by `Const_C` again
+    # `PotInBox` have been unnormalized by `Const_C**2`
     if par.Case == "Mukherjee":
        ISM[1] = VelocityPhi * SinTheta / par.Const_C
        ISM[2] = VelocityPhi * CosTheta / par.Const_C
