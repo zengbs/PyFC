@@ -3,7 +3,7 @@ def Parameters():
   from density_profile import FreePara2DerivedPara
 
   global Nx, Ny, Nz, Lx, Ly, Lz, Const_kB, Const_C, Constant, NEWTON_G
-  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon
+  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon, a0, z0
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
@@ -15,9 +15,9 @@ def Parameters():
   Nz = 64  
 
   # Box size
-  Lx = 3
-  Ly = 3
-  Lz = 3
+  Lx = 3 
+  Ly = 3 
+  Lz = 3 
 
   ##########################
   ### Physical constants ###
@@ -39,6 +39,7 @@ def Parameters():
 
   # electron volt per erg
   Const_Erg2eV               = 6.2415e11
+
   ##########################
   ###  Free parameters   ###
   ##########################
@@ -46,7 +47,7 @@ def Parameters():
   SphereRadius = 0.4*Lx
 
   # The eq(2) in Sutherland & Bicknell (2007)
-  Constant = 9
+  Constant  = 9
 
   # Core radius of gas sphere (kpc)
   CoreRadius_g = 1
@@ -54,14 +55,8 @@ def Parameters():
   # Peak gas density (1/cm^3)
   Rho0_g = 0.5
 
-  # number density at the center of ISM (1/cm^3)
-  ISM0   = 200
-
   # Velocity dispersion of gas (km/s)
   Sigma_g = 250  
-
-  # Turbulent velocity dispersion (km/s)
-  Sigma_t = 250
 
   # Lambda = r_{D}/r_{g}
   Lambda = 5
@@ -69,29 +64,50 @@ def Parameters():
   # Kappa = \sigma_{D}/\sigma_{g}
   Kappa = 2
 
-  # Temperature of gas (K)
-  Temp_g = 1e7
- 
   # The potential at the center of sphere
   Phi0 = 0
 
   # The spatial derivative of potential at the center of sphere
   DevPhi0 = 0
 
-  # Rotational coefficient
-  Epsilon   = 0.93
-
-  # Critical temperature for ISM disk (K)
-  CriticalTemp = 3e4
-
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
 
   ############################
   ###         Case         ###
+  ### Mukherjee, Standard  ###
   ############################
-  #Case = "Mukherjee"  # Mukherjee, Standard
-  Case = "Standard"  # Mukherjee, Standard
+  #Case = "Mukherjee"  
+
+  #### If Case = "Mukherjee" ###
+  ## Rotational coefficient
+  #Epsilon   = 0.93
+  #
+  ## Temperature of gas (K)
+  #Temp_g = 1e7
+ 
+  ## Turbulent velocity dispersion (km/s)
+  ## --> This parameter controls disk height
+  #Sigma_t = 200
+
+  ## Critical temperature for ISM disk (K)
+  ##CriticalTemp = 3e4
+
+  ## number density at the center of ISM (1/cm^3)
+  #ISM0   = 200
+
+
+
+  ### If Case = "Standard" ###
+  Case = "Standard"  
+  a0 = 1
+  z0 = 0.1
+  Sigma_t = 250
+  # Critical temperature for ISM disk (K)
+  #CriticalTemp = 4e6
+  CriticalTemp = 1e-99
+  #CriticalTemp = 1e+99
+
 
   ############################
   ### Numerical parameters ###

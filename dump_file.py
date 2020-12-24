@@ -13,7 +13,11 @@ def DumpFile():
     FluidInBox, PotInBox = SphericalSphere()
     FileName = "%s" % (par.Case)+"_UM_IC"
 
-    FluidInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[1] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[2] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[3] *= par.Const_C*1e5*par.Const_AtomMass*par.Const_MeanMolecularWeight 
+    FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight
     FluidInBox.tofile(FileName)
 
     ############################
@@ -21,7 +25,7 @@ def DumpFile():
     ############################
     FileName = "%s" % (par.Case)+"_ExtPotTable"
 
-    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight
+    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*(par.Const_C*1e5)**2
     PotInBox.tofile(FileName)
 
 par.Parameters()
@@ -58,9 +62,9 @@ print("Precision                 = %s" % par.Precision                 )
 print("Critical temperature      = %e" % par.CriticalTemp              )
 
 if par.Case == "Mukherjee":
-   print("Epsilon                   = %e" % par.Epsilon                   )
-   print("Temp_g                    = %e" % par.Temp_g                    )
-   print("Sigma_t                   = %e" % par.Sigma_t                   )
+   print("Epsilon                = %e" % par.Epsilon                   )
+   print("Temp_g                 = %e" % par.Temp_g                    )
+   print("Sigma_t                = %e" % par.Sigma_t                   )
 if par.Case == "Standard":
-   print("a0                        = %e" % par.a0                        )
-   print("z0                        = %e" % par.z0                        )
+   print("a0                     = %e" % par.a0                        )
+   print("z0                     = %e" % par.z0                        )
