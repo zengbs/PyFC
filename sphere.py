@@ -87,7 +87,7 @@ def SphericalSphere( ):
 
 
     for k in range(par.Nz+2*GRA_GHOST_SIZE):
-        print("k=%3d/%3d" % (k, par.Nz))
+        print("k=%3d/%3d" % (k, par.Nz), flush=True)
         for j in range(par.Ny+2*GRA_GHOST_SIZE):
             for i in range(par.Nx+2*GRA_GHOST_SIZE):
                 # indices for non-ghost zone
