@@ -26,7 +26,7 @@ def DumpFile():
     FluidInBox[1] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox[2] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox[3] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight
+    FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
     FluidInBox.tofile(FileName)
 
     ############################
