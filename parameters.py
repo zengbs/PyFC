@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 64 
-  Ny = 64  
-  Nz = 64  
+  Nx = 128 
+  Ny = 128  
+  Nz = 128  
 
   # Box size
   Lx = 3 
@@ -77,36 +77,37 @@ def Parameters():
   ###         Case         ###
   ### Mukherjee, Standard  ###
   ############################
-  #Case = "Mukherjee"  
+  Case = "Mukherjee"  
 
-  #### If Case = "Mukherjee" ###
-  ## Rotational coefficient
-  #Epsilon   = 0.93
-  #
-  ## Temperature of gas (K)
-  #Temp_g = 1e7
+  ### If Case = "Mukherjee" ###
+  # Rotational coefficient
+  Epsilon   = 0.93
+  
+  # Temperature of gas (K)
+  Temp_g = 1e7
  
-  ## Turbulent velocity dispersion (cm/s)
-  ## --> This parameter controls disk height
-  #Sigma_t = 20000000
+  # Turbulent velocity dispersion (cm/s)
+  # --> This parameter controls disk height
+  Sigma_t = 20000000
 
-  ## Critical temperature for ISM disk (K)
-  ##CriticalTemp = 3e4
+  # Critical temperature for ISM disk (K)
+  #CriticalTemp = 3e4
+  CriticalTemp = 1e-99
 
-  ## number density at the center of ISM (1/cm^3)
-  #ISM0   = 200
+  # number density at the center of ISM (1/cm^3)
+  ISM0   = 200
 
 
 
   ### If Case = "Standard" ###
-  Case = "Standard"  
-  a0 = 1
-  z0 = 0.1
-  Sigma_t = 25000000 # (cm/s)
-  # Critical temperature for ISM disk (K)
-  #CriticalTemp = 4e6
-  CriticalTemp = 1e-99
-  #CriticalTemp = 1e+99
+  #Case = "Standard"  
+  #a0 = 1
+  #z0 = 0.1
+  #Sigma_t = 25000000 # (cm/s)
+  ## Critical temperature for ISM disk (K)
+  ##CriticalTemp = 4e6
+  #CriticalTemp = 1e-99
+  ##CriticalTemp = 1e+99
 
 
   ############################
