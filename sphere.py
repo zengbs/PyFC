@@ -126,7 +126,7 @@ def SphericalSphere( Fractal ):
       
 
                 # filling `PotInBox` with Potential
-    PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
+            PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
     
 
     ####################################
