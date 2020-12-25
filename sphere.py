@@ -35,7 +35,8 @@ def SphericalSphere( Fractal ):
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
-       InPres  = InRho * par.Const_kB*par.Temp_g / (par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV) / (par.Const_C)**2
+       SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
+       InPres  = InRho * SoubdSpeedSqr / par.Const_C**2
     if par.Case == "Standard":
        # `InPres` is nunormalized by `Sigma_g` but normalized by `par.Const_C`
        # --> since the speed of light is hard-coded to 1 in GAMER
@@ -49,7 +50,10 @@ def SphericalSphere( Fractal ):
     OutUz   = 0
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
-    OutPres = 1e3*OutRho*(par.Sigma_g/par.Const_C)**2
+    if par.Case == "Mukherjee":
+       OutPres = 1e3*OutRho*SoubdSpeedSqr / par.Const_C**2
+    if par.Case == "Standard":
+       OutPres = 1e3*OutRho*(par.Sigma_g/par.Const_C)**2
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )

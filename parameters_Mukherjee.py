@@ -40,12 +40,11 @@ def Parameters():
   # electron volt per erg
   Const_Erg2eV               = 6.2415e11
 
-
   ##########################
   ###  Free parameters   ###
   ##########################
   # Sphere radius
-  SphereRadius = 0.40*Lx
+  SphereRadius = 0.45*Lx
 
   # The eq(2) in Sutherland & Bicknell (2007)
   Constant  = 9
@@ -74,8 +73,6 @@ def Parameters():
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )
 
-
-
   ############################
   ###         Case         ###
   ### Mukherjee, Standard  ###
@@ -87,15 +84,15 @@ def Parameters():
   Epsilon   = 0.93
   
   # Temperature of gas (K)
-  Temp_g = 1e7
+  #Temp_g = 1e7
+  Temp_g = 2.7055e6 # this sound speed of this temperature is 25000000
  
   # Turbulent velocity dispersion (cm/s)
   # --> This parameter controls disk height
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 1e+99
-  #CriticalTemp = 1e-99
+  CriticalTemp = 1e-99
 
   # number density at the center of ISM (1/cm^3)
   ISM0   = 200
@@ -109,8 +106,8 @@ def Parameters():
   #Sigma_t = 25000000 # (cm/s)
   ## Critical temperature for ISM disk (K)
   ##CriticalTemp = 4e6
-  ##CriticalTemp = 1e-99
-  #CriticalTemp = 1e+99
+  #CriticalTemp = 1e-99
+  ##CriticalTemp = 1e+99
 
 
   ############################

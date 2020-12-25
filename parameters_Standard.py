@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 256 
-  Ny = 256  
-  Nz = 256  
+  Nx = 128 
+  Ny = 128  
+  Nz = 128  
 
   # Box size
   Lx = 3 
@@ -105,7 +105,8 @@ def Parameters():
   z0 = 0.1
   Sigma_t = 25000000 # (cm/s)
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 4e6
+  #CriticalTemp = 4e6
+  CriticalTemp = 1e-99
 
 
   ############################
