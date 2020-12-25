@@ -834,20 +834,6 @@ class FractalCube:
         else:
             ValueError('Unknown prec ' + prec)
 
-#        if app:
-#            ext = osp.splitext(fname)[1]
-#            base = osp.splitext(fname)[0]
-#
-#            fname  = 'ni_'    + str(self.ni)
-#            fname += '_nj_'   + str(self.nj)
-#            fname += '_nk_'   + str(self.nk)
-#            fname += '_kmin_' + str(self.kmin)
-#            fname += '_mean_' + str(self.mean)
-#            fname += '_sigma_'+ str(self.sigma)
-#            fname += '_beta_' + str(self.beta)
-#
-#        fname = pt.unique_fname(fname)
-
 
         return out
 

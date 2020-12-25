@@ -10,9 +10,9 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 128 
-  Ny = 128  
-  Nz = 128  
+  Nx = 256 
+  Ny = 256  
+  Nz = 256  
 
   # Box size
   Lx = 3 
@@ -84,15 +84,16 @@ def Parameters():
   Epsilon   = 0.93
   
   # Temperature of gas (K)
-  #Temp_g = 1e7
-  Temp_g = 2.7055e6 # this sound speed of this temperature is 25000000
+  Temp_g = 1e7
+  #Temp_g = 2.7055e6 # this sound speed of this temperature is 25000000
  
   # Turbulent velocity dispersion (cm/s)
   # --> This parameter controls disk height
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 1e-99
+  #CriticalTemp = 1e-99
+  CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)
   ISM0   = 200

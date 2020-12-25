@@ -11,10 +11,10 @@ def DumpFile():
     ############################
     ###    Fractal cloud    ####
     ############################
-    #fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
-    #fc.gen_cube()                           
-    #Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
-    Fractal = 1
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
+    fc.gen_cube()                           
+    Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+    #Fractal = 1
 
     #############################
     ####     Dump density    ####
