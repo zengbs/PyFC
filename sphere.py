@@ -1,8 +1,68 @@
+from functools import partial
+import multiprocessing
 import numpy as np
 from density_profile import *
 from pri2con import Pri2Con
 import parameters as par
 import sys
+
+def Splitting3DFluid(CoreIdx, FluidInBox, PresInBox, PotInBox, delta, Center, Coarse_r, Potential, Inside, Outside):
+
+    InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres = Inside
+    OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres = Outside
+
+    NCore = multiprocessing.cpu_count()
+    TotalLoading = par.Nz+2*par.GRA_GHOST_SIZE
+    LoadingPerCore  = (TotalLoading - TotalLoading % NCore) / NCore
+
+    LastCore = NCore-1
+
+    if CoreIdx == LastCore:
+       LastIdx = par.Nz+2*par.GRA_GHOST_SIZE
+    else:
+       LastIdx = (CoreIdx+1)*LoadingPerCore
+
+    for k in range(CoreIdx*LoadingPerCore, LastIdx):
+        print("k=%3d/%3d" % (k, par.Nz))
+        sys.stdout.flush() 
+        for j in range(par.Ny+2*par.GRA_GHOST_SIZE):
+            for i in range(par.Nx+2*par.GRA_GHOST_SIZE):
+                # indices for non-ghost zone
+                ii = i - par.GRA_GHOST_SIZE                     
+                jj = j - par.GRA_GHOST_SIZE                     
+                kk = k - par.GRA_GHOST_SIZE                     
+
+                x = (ii+0.5)*delta[0] 
+                y = (jj+0.5)*delta[1]
+                z = (kk+0.5)*delta[2]
+                r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
+
+                #filling `FluidInBox` with fluid variables
+                if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
+                     if ( r < par.SphereRadius/par.CoreRadius_D ):
+                          FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
+                          FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
+                          FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
+                          FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
+                          FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
+                          PresInBox    [kk][jj][ii] = np.interp( r, Coarse_r, InPres )
+                          #EnclosedMass             += np.interp( r, Coarse_r, InRho  )
+                     else:
+                          FluidInBox[0][kk][jj][ii] = OutDens
+                          FluidInBox[1][kk][jj][ii] = OutMomX
+                          FluidInBox[2][kk][jj][ii] = OutMomY
+                          FluidInBox[3][kk][jj][ii] = OutMomZ
+                          FluidInBox[4][kk][jj][ii] = OutEngy
+                          PresInBox    [kk][jj][ii] = OutPres
+
+      
+
+                # filling `PotInBox` with Potential
+            PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
+
+    #return  FluidInBox, PotInBox
+
+
 
 def SphericalSphere( Fractal ):
 
@@ -85,49 +145,23 @@ def SphericalSphere( Fractal ):
     ## Filling box with fluid variables ##
     ######################################
 
-    EnclosedMass = 0.0
+    #EnclosedMass = 0.0
     FluidInBox = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
     PresInBox  = np.zeros((par.Nz, par.Ny, par.Nx),    dtype=par.Precision)
    
+   
+    Inside  = [ InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres ]
+    Outside = [ OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres ]
 
-    for k in range(par.Nz+2*GRA_GHOST_SIZE):
-        print("k=%3d/%3d" % (k, par.Nz))
-        sys.stdout.flush() 
-        for j in range(par.Ny+2*GRA_GHOST_SIZE):
-            for i in range(par.Nx+2*GRA_GHOST_SIZE):
-                # indices for non-ghost zone
-                ii = i - GRA_GHOST_SIZE                     
-                jj = j - GRA_GHOST_SIZE                     
-                kk = k - GRA_GHOST_SIZE                     
-
-                x = (ii+0.5)*delta[0] 
-                y = (jj+0.5)*delta[1]
-                z = (kk+0.5)*delta[2]
-                r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
-
-                #filling `FluidInBox` with fluid variables
-                if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
-                     if ( r < par.SphereRadius/par.CoreRadius_D ):
-                          FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
-                          FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
-                          FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
-                          FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
-                          FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
-                          PresInBox    [kk][jj][ii] = np.interp( r, Coarse_r, InPres )
-                          EnclosedMass             += np.interp( r, Coarse_r, InRho  )
-                     else:
-                          FluidInBox[0][kk][jj][ii] = OutDens
-                          FluidInBox[1][kk][jj][ii] = OutMomX
-                          FluidInBox[2][kk][jj][ii] = OutMomY
-                          FluidInBox[3][kk][jj][ii] = OutMomZ
-                          FluidInBox[4][kk][jj][ii] = OutEngy
-                          PresInBox    [kk][jj][ii] = OutPres
- 
-      
-
-                # filling `PotInBox` with Potential
-            PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
-    
+    # multi-processing
+    NCore = multiprocessing.cpu_count()
+    p = multiprocessing.Pool(32)
+    FunPartial = partial(Splitting3DFluid, FluidInBox=FluidInBox, PresInBox=PresInBox, 
+                                           PotInBox=PotInBox, delta=delta, Center=Center,
+                                           Coarse_r=Coarse_r, Potential=Potential,
+                                           Inside=Inside, Outside=Outside)
+    p.map(FunPartial, range(int(NCore)))
+    #p.join()
 
     ####################################
     ##########      ISM     ############
@@ -163,9 +197,9 @@ def SphericalSphere( Fractal ):
     ### Calculate enclosed mass and free-falling time ###
     #####################################################
 
-    MeanRho         = 3*EnclosedMass/( 4*np.pi*par.SphereRadius**3 )
-    FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
+    #MeanRho         = 3*EnclosedMass/( 4*np.pi*par.SphereRadius**3 )
+    #FreeFallingTime = 0.5427/( par.NEWTON_G * MeanRho )**0.5
 
-    print("Encloed mass = %e\n"      % (EnclosedMass)   )
-    print("Free falling time = %e\n" % (FreeFallingTime))
+    #print("Encloed mass = %e\n"      % (EnclosedMass)   )
+    #print("Free falling time = %e\n" % (FreeFallingTime))
     return FluidInBox, PotInBox
