@@ -162,7 +162,6 @@ def SphericalSphere( Fractal ):
     FluidInBox = np.concatenate( [ Pack[i][1] for i in range(NCore) ], axis=1 )
     PresInBox  = np.concatenate( [ Pack[i][2] for i in range(NCore) ], axis=0 )
     PotInBox   = np.concatenate( [ Pack[i][3] for i in range(NCore) ], axis=0 )
-    exit(0)
     
 
 

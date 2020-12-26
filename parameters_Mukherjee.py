@@ -99,8 +99,8 @@ def Parameters():
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  #CriticalTemp = 1e-99
-  CriticalTemp = 3e4
+  CriticalTemp = 1e-99
+  #CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)
   ISM0   = 200
