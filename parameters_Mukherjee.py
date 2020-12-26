@@ -1,3 +1,5 @@
+import numpy as np
+
 
 def Parameters():
   from density_profile import FreePara2DerivedPara
@@ -10,9 +12,14 @@ def Parameters():
 
   
   # Number of cells along x/y/z
-  Nx = 64 
-  Ny = 64  
-  Nz = 64  
+  Nx = 128 
+  Ny = 128  
+  Nz = 128
+  N = np.array([Nx, Ny, Nz])
+
+  if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
+     print("Nx/y/z % 16 != 0")
+     exit()
 
   # Box size
   Lx = 3 

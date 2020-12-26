@@ -7,63 +7,56 @@ import parameters as par
 import sys
 
 par.Parameters() 
-PotInBox   = np.zeros((par.Nz+2*par.GRA_GHOST_SIZE, par.Ny+2*par.GRA_GHOST_SIZE, par.Nx+2*par.GRA_GHOST_SIZE), dtype=par.Precision)
-FluidInBox = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
-PresInBox  = np.zeros((par.Nz, par.Ny, par.Nx),    dtype=par.Precision)
 
 def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Potential, Inside, Outside):
+
+    NCore = multiprocessing.cpu_count()
+    TotalLoading = par.Nz
+
+    if TotalLoading % NCore is not 0:
+       print("TotalLoading % NCore is not 0!!")
+       exit(0)
+
+    LoadingPerCore  = TotalLoading / NCore
+
+    FluidInBox_Rank = np.zeros((5, LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
+    PresInBox_Rank  = np.zeros((   LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
+    PotInBox_Rank   = np.zeros((   LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
+
 
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres = Inside
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres = Outside
 
-    NCore = multiprocessing.cpu_count()
-    TotalLoading = par.Nz+2*par.GRA_GHOST_SIZE
-    LoadingPerCore  = (TotalLoading - TotalLoading % NCore) / NCore
+    for k in range(LoadingPerCore):
+        for j in range(par.Ny):
+            for i in range(par.Nx):
 
+                x = (i+0.5)*delta[0] 
+                y = (j+0.5)*delta[1]
+                z = (CoreIdx*LoadingPerCore+k+0.5)*delta[2]
 
-    if CoreIdx == NCore-1:
-       LastIdx = par.Nz+2*par.GRA_GHOST_SIZE
-    else:
-       LastIdx = (CoreIdx+1)*LoadingPerCore
-
-    for k in range(CoreIdx*LoadingPerCore, LastIdx):
-        print("k=%3d/%3d" % (k, par.Nz))
-        sys.stdout.flush() 
-        for j in range(par.Ny+2*par.GRA_GHOST_SIZE):
-            for i in range(par.Nx+2*par.GRA_GHOST_SIZE):
-                # indices for non-ghost zone
-                ii = i - par.GRA_GHOST_SIZE                     
-                jj = j - par.GRA_GHOST_SIZE                     
-                kk = k - par.GRA_GHOST_SIZE                     
-
-                x = (ii+0.5)*delta[0] 
-                y = (jj+0.5)*delta[1]
-                z = (kk+0.5)*delta[2]
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
                 #filling `FluidInBox` with fluid variables
-                if ( 0<=ii<par.Nx and 0<=jj<par.Ny and 0<=kk<par.Nz ):
+                if ( 0<=i<par.Nx and 0<=j<par.Ny and 0<=k<par.Nz ):
                      if ( r < par.SphereRadius/par.CoreRadius_D ):
-                          FluidInBox[0][kk][jj][ii] = np.interp( r, Coarse_r, InDens )
-                          FluidInBox[1][kk][jj][ii] = np.interp( r, Coarse_r, InMomX ) 
-                          FluidInBox[2][kk][jj][ii] = np.interp( r, Coarse_r, InMomY ) 
-                          FluidInBox[3][kk][jj][ii] = np.interp( r, Coarse_r, InMomZ ) 
-                          FluidInBox[4][kk][jj][ii] = np.interp( r, Coarse_r, InEngy )
-                          PresInBox    [kk][jj][ii] = np.interp( r, Coarse_r, InPres )
-                          #EnclosedMass             += np.interp( r, Coarse_r, InRho  )
+                          FluidInBox_Rank[0][k][j][i] = np.interp( r, Coarse_r, InDens )
+                          FluidInBox_Rank[1][k][j][i] = np.interp( r, Coarse_r, InMomX ) 
+                          FluidInBox_Rank[2][k][j][i] = np.interp( r, Coarse_r, InMomY ) 
+                          FluidInBox_Rank[3][k][j][i] = np.interp( r, Coarse_r, InMomZ ) 
+                          FluidInBox_Rank[4][k][j][i] = np.interp( r, Coarse_r, InEngy )
+                          PresInBox_Rank    [k][j][i] = np.interp( r, Coarse_r, InPres )
                      else:
-                          FluidInBox[0][kk][jj][ii] = OutDens
-                          FluidInBox[1][kk][jj][ii] = OutMomX
-                          FluidInBox[2][kk][jj][ii] = OutMomY
-                          FluidInBox[3][kk][jj][ii] = OutMomZ
-                          FluidInBox[4][kk][jj][ii] = OutEngy
-                          PresInBox    [kk][jj][ii] = OutPres
+                          FluidInBox_Rank[0][k][j][i] = OutDens
+                          FluidInBox_Rank[1][k][j][i] = OutMomX
+                          FluidInBox_Rank[2][k][j][i] = OutMomY
+                          FluidInBox_Rank[3][k][j][i] = OutMomZ
+                          FluidInBox_Rank[4][k][j][i] = OutEngy
+                          PresInBox_Rank    [k][j][i] = OutPres
 
+                PotInBox_Rank [k][j][i] = np.interp( r, Coarse_r, Potential )
       
-
-                # filling `PotInBox` with Potential
-                PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
-    return FluidInBox, PotInBox
+    return [CoreIdx, FluidInBox_Rank, PresInBox_Rank, PotInBox_Rank]
 
 
 
@@ -154,13 +147,25 @@ def SphericalSphere( Fractal ):
 
     # multi-processing
     NCore = multiprocessing.cpu_count()
-    p = multiprocessing.Pool(32)
+
+    p = multiprocessing.Pool(NCore)
+
     FunPartial = partial(Splitting3DFluid, delta=delta, Center=Center,
-                                           Coarse_r=Coarse_r, Potential=Potential,
-                                           Inside=Inside, Outside=Outside)
-    FluidInBox, PotInBox = p.map(FunPartial, range(int(NCore)))[-1]
-    #p.close()
-    #p.join()
+                         Coarse_r=Coarse_r, Potential=Potential,
+                         Inside=Inside, Outside=Outside)
+
+    Pack = p.map(FunPartial, range(int(NCore)))
+
+    p.close()
+    p.join()
+
+    FluidInBox = np.concatenate( [ Pack[i][1] for i in range(NCore) ], axis=1 )
+    PresInBox  = np.concatenate( [ Pack[i][2] for i in range(NCore) ], axis=0 )
+    PotInBox   = np.concatenate( [ Pack[i][3] for i in range(NCore) ], axis=0 )
+    exit(0)
+    
+
+
     ####################################
     ##########      ISM     ############
     ####################################
