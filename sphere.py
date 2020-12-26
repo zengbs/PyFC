@@ -161,7 +161,8 @@ def SphericalSphere( Fractal ):
                                            Coarse_r=Coarse_r, Potential=Potential,
                                            Inside=Inside, Outside=Outside)
     p.map(FunPartial, range(int(NCore)))
-    #p.join()
+    p.close()
+    p.join()
 
     ####################################
     ##########      ISM     ############
