@@ -1,7 +1,13 @@
-#with open("density_profile.py") as fp:
-#    for i, line in enumerate(fp):
-#        if "\xe2" in line:
-#            print ("i=%d: %s\n" % (i,  repr(line)))
+import numpy as np
+from multiprocessing import Pool
 
-if ( 0<=2<3 and 0<=2<4 and 0<=4<6 ):
-  print("hi")
+def fill_array(start_val):
+    return list(range(start_val, start_val+10))
+
+if __name__=='__main__':
+    pool = Pool(processes=4)
+    list_start_vals = range(40, 60)
+    array_2D = np.array(pool.map(fill_array, list_start_vals))
+    print(pool.map(fill_array, list_start_vals))
+    pool.close() # ATTENTION HERE
+    #print array_2D

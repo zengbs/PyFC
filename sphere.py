@@ -6,7 +6,12 @@ from pri2con import Pri2Con
 import parameters as par
 import sys
 
-def Splitting3DFluid(CoreIdx, FluidInBox, PresInBox, PotInBox, delta, Center, Coarse_r, Potential, Inside, Outside):
+par.Parameters() 
+PotInBox   = np.zeros((par.Nz+2*par.GRA_GHOST_SIZE, par.Ny+2*par.GRA_GHOST_SIZE, par.Nx+2*par.GRA_GHOST_SIZE), dtype=par.Precision)
+FluidInBox = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
+PresInBox  = np.zeros((par.Nz, par.Ny, par.Nx),    dtype=par.Precision)
+
+def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Potential, Inside, Outside):
 
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres = Inside
     OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres = Outside
@@ -15,9 +20,8 @@ def Splitting3DFluid(CoreIdx, FluidInBox, PresInBox, PotInBox, delta, Center, Co
     TotalLoading = par.Nz+2*par.GRA_GHOST_SIZE
     LoadingPerCore  = (TotalLoading - TotalLoading % NCore) / NCore
 
-    LastCore = NCore-1
 
-    if CoreIdx == LastCore:
+    if CoreIdx == NCore-1:
        LastIdx = par.Nz+2*par.GRA_GHOST_SIZE
     else:
        LastIdx = (CoreIdx+1)*LoadingPerCore
@@ -58,15 +62,13 @@ def Splitting3DFluid(CoreIdx, FluidInBox, PresInBox, PotInBox, delta, Center, Co
       
 
                 # filling `PotInBox` with Potential
-            PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
-
-    #return  FluidInBox, PotInBox
+                PotInBox [k][j][i] = np.interp( r, Coarse_r, Potential )
+    return FluidInBox, PotInBox
 
 
 
 def SphericalSphere( Fractal ):
 
-    par.Parameters() 
 
     # Center of sphere (normalized by `par.CoreRadius_D`)
     Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
@@ -127,7 +129,6 @@ def SphericalSphere( Fractal ):
     ####################################
     GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
 
-    PotInBox   = np.zeros((par.Nz+2*GRA_GHOST_SIZE, par.Ny+2*GRA_GHOST_SIZE, par.Nx+2*GRA_GHOST_SIZE), dtype=par.Precision)
 
     Psi0       = par.Phi0    / par.Sigma_D**2 
     DevPsi0    = par.DevPhi0 / par.Sigma_D**2
@@ -146,8 +147,6 @@ def SphericalSphere( Fractal ):
     ######################################
 
     #EnclosedMass = 0.0
-    FluidInBox = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
-    PresInBox  = np.zeros((par.Nz, par.Ny, par.Nx),    dtype=par.Precision)
    
    
     Inside  = [ InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres ]
@@ -156,14 +155,12 @@ def SphericalSphere( Fractal ):
     # multi-processing
     NCore = multiprocessing.cpu_count()
     p = multiprocessing.Pool(32)
-    FunPartial = partial(Splitting3DFluid, FluidInBox=FluidInBox, PresInBox=PresInBox, 
-                                           PotInBox=PotInBox, delta=delta, Center=Center,
+    FunPartial = partial(Splitting3DFluid, delta=delta, Center=Center,
                                            Coarse_r=Coarse_r, Potential=Potential,
                                            Inside=Inside, Outside=Outside)
-    p.map(FunPartial, range(int(NCore)))
-    p.close()
-    p.join()
-
+    FluidInBox, PotInBox = p.map(FunPartial, range(int(NCore)))[-1]
+    #p.close()
+    #p.join()
     ####################################
     ##########      ISM     ############
     ####################################
