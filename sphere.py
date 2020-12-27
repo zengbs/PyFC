@@ -62,12 +62,12 @@ def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
     NCore = multiprocessing.cpu_count()
     LastCell = par.Nz+2*par.GRA_GHOST_SIZE
 
+    Center = Center + delta*par.GRA_GHOST_SIZE
+
     if CoreIdx is NCore-1:
        LoadingPerCore  = LastCell % (NCore-1)
-       print(LoadingPerCore)
     else:
        LoadingPerCore  = ( LastCell - (LastCell % (NCore-1)) ) / (NCore-1)
-       print(LoadingPerCore)
 
     PotInBox_Rank  = np.zeros((   LoadingPerCore, par.Ny+2*par.GRA_GHOST_SIZE, par.Nx+2*par.GRA_GHOST_SIZE), dtype=par.Precision)
 
@@ -76,16 +76,13 @@ def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
         for j in range(par.Ny+2*par.GRA_GHOST_SIZE):
             for i in range(par.Nx+2*par.GRA_GHOST_SIZE):
 
-                ii = i - par.GRA_GHOST_SIZE                         
-                jj = j - par.GRA_GHOST_SIZE                         
-
                 if CoreIdx is NCore-1:
                    kk = LastCell - LoadingPerCore + k - par.GRA_GHOST_SIZE                                                                                                 
                 else:
                    kk = CoreIdx * LoadingPerCore + k - par.GRA_GHOST_SIZE                                                                                                 
                               
-                x = (ii+0.5)*delta[0] 
-                y = (jj+0.5)*delta[1]
+                x = ( i+0.5)*delta[0] 
+                y = ( j+0.5)*delta[1]
                 z = (kk+0.5)*delta[2]
 
 
