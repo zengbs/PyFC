@@ -8,20 +8,19 @@ import sys
 
 par.Parameters() 
 
-def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Potential, Inside, Outside):
+def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Inside, Outside):
 
     NCore = multiprocessing.cpu_count()
-    TotalLoading = par.Nz
+    LastCell = par.Nz
 
-    if TotalLoading % NCore is not 0:
-       print("TotalLoading % NCore is not 0!!")
+    if LastCell % NCore is not 0:
+       print("LastCell % NCore is not 0!!")
        exit(0)
 
-    LoadingPerCore  = TotalLoading / NCore
+    LoadingPerCore  = LastCell / NCore
 
     FluidInBox_Rank = np.zeros((5, LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
     PresInBox_Rank  = np.zeros((   LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
-    PotInBox_Rank   = np.zeros((   LoadingPerCore, par.Ny, par.Nx), dtype=par.Precision)
 
 
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres = Inside
@@ -54,9 +53,48 @@ def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Potential, Inside, Outsid
                           FluidInBox_Rank[4][k][j][i] = OutEngy
                           PresInBox_Rank    [k][j][i] = OutPres
 
+      
+    return [CoreIdx, FluidInBox_Rank, PresInBox_Rank]
+
+
+def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
+
+    NCore = multiprocessing.cpu_count()
+    LastCell = par.Nz+2*par.GRA_GHOST_SIZE
+
+    if CoreIdx is NCore-1:
+       LoadingPerCore  = LastCell % (NCore-1)
+       print(LoadingPerCore)
+    else:
+       LoadingPerCore  = ( LastCell - (LastCell % (NCore-1)) ) / (NCore-1)
+       print(LoadingPerCore)
+
+    PotInBox_Rank  = np.zeros((   LoadingPerCore, par.Ny+2*par.GRA_GHOST_SIZE, par.Nx+2*par.GRA_GHOST_SIZE), dtype=par.Precision)
+
+
+    for k in range(LoadingPerCore):
+        for j in range(par.Ny+2*par.GRA_GHOST_SIZE):
+            for i in range(par.Nx+2*par.GRA_GHOST_SIZE):
+
+                ii = i - par.GRA_GHOST_SIZE                         
+                jj = j - par.GRA_GHOST_SIZE                         
+
+                if CoreIdx is NCore-1:
+                   kk = LastCell - LoadingPerCore + k - par.GRA_GHOST_SIZE                                                                                                 
+                else:
+                   kk = CoreIdx * LoadingPerCore + k - par.GRA_GHOST_SIZE                                                                                                 
+                              
+                x = (ii+0.5)*delta[0] 
+                y = (jj+0.5)*delta[1]
+                z = (kk+0.5)*delta[2]
+
+
+                r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
+
                 PotInBox_Rank [k][j][i] = np.interp( r, Coarse_r, Potential )
       
-    return [CoreIdx, FluidInBox_Rank, PresInBox_Rank, PotInBox_Rank]
+    return [CoreIdx, PotInBox_Rank]
+
 
 
 
@@ -120,7 +158,7 @@ def SphericalSphere( Fractal ):
     ####################################
     ##########   Potential  ############
     ####################################
-    GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
+    #GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
 
 
     Psi0       = par.Phi0    / par.Sigma_D**2 
@@ -145,25 +183,33 @@ def SphericalSphere( Fractal ):
     Inside  = [ InDens,   InMomX,  InMomY,  InMomZ,  InEngy,  InPres ]
     Outside = [ OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres ]
 
-    # multi-processing
+    # multi-processing generation of fluid 
     NCore = multiprocessing.cpu_count()
 
-    p = multiprocessing.Pool(NCore)
+    p1 = multiprocessing.Pool(NCore)
 
     FunPartial = partial(Splitting3DFluid, delta=delta, Center=Center,
-                         Coarse_r=Coarse_r, Potential=Potential,
-                         Inside=Inside, Outside=Outside)
+                         Coarse_r=Coarse_r, Inside=Inside, Outside=Outside)
 
-    Pack = p.map(FunPartial, range(int(NCore)))
+    Pack = p1.map(FunPartial, range(int(NCore)))
 
-    p.close()
-    p.join()
+    p1.close()
+    p1.join()
 
     FluidInBox = np.concatenate( [ Pack[i][1] for i in range(NCore) ], axis=1 )
     PresInBox  = np.concatenate( [ Pack[i][2] for i in range(NCore) ], axis=0 )
-    PotInBox   = np.concatenate( [ Pack[i][3] for i in range(NCore) ], axis=0 )
     
+    p2 = multiprocessing.Pool(NCore)
 
+    FunPartial = partial(Splitting3DPot, delta=delta, Center=Center,
+                         Coarse_r=Coarse_r, Potential=Potential)
+
+    Pack = p2.map(FunPartial, range(int(NCore)))
+
+    p2.close()
+    p2.join()
+
+    PotInBox  = np.concatenate( [ Pack[i][1] for i in range(NCore) ], axis=0 )
 
     ####################################
     ##########      ISM     ############
