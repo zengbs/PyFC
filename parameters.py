@@ -9,7 +9,7 @@ def Parameters():
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
-  global kmin, mean, sigma, beta
+  global kmin, mean, sigma, beta, fromfile
 
   # Fractal parameters
   fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
