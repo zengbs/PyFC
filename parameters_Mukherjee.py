@@ -9,12 +9,16 @@ def Parameters():
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
+  global kmin, mean
 
-  
+  # Fractal parameters
+  kmin = 6
+  mean = 10  
+
   # Number of cells along x/y/z
-  Nx = 128 
-  Ny = 128  
-  Nz = 128
+  Nx = 256 
+  Ny = 256  
+  Nz = 256
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
@@ -99,8 +103,8 @@ def Parameters():
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 1e-99
-  #CriticalTemp = 3e4
+  #CriticalTemp = 1e-99
+  CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)
   ISM0   = 200

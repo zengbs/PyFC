@@ -5,6 +5,7 @@ from density_profile import *
 from pri2con import Pri2Con
 import parameters as par
 import sys
+import time
 
 par.Parameters() 
 
@@ -181,6 +182,8 @@ def SphericalSphere( Fractal ):
     Outside = [ OutDens, OutMomX, OutMomY, OutMomZ, OutEngy, OutPres ]
 
     # multi-processing generation of fluid 
+    start = time.time()
+
     NCore = multiprocessing.cpu_count()
 
     p1 = multiprocessing.Pool(NCore)
@@ -208,6 +211,10 @@ def SphericalSphere( Fractal ):
 
     PotInBox  = np.concatenate( [ Pack[i][1] for i in range(NCore) ], axis=0 )
 
+    end = time.time()
+
+    print( "Elapsed time = %e with %d CPU cores"  % (end - start, NCore))
+    sys.stdout.flush()
     ####################################
     ##########      ISM     ############
     ####################################

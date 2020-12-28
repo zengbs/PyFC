@@ -11,10 +11,10 @@ def DumpFile():
     ############################
     ###    Fractal cloud    ####
     ############################
-    #fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=10, mean=1)
-    #fc.gen_cube()                           
-    #Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
-    Fractal = 1
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=par.kmin, mean=par.mean)
+    fc.gen_cube()                           
+    Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+    #Fractal = 1
 
     #############################
     ####     Dump density    ####
@@ -69,11 +69,13 @@ print("CoarseDr                  = %e" % par.CoarseDr                  )
 print("Case                      = %s" % par.Case                      )
 print("Precision                 = %s" % par.Precision                 )
 print("Critical temperature      = %e" % par.CriticalTemp              )
+print("kmin                      = %e" % par.kmin                      )
+print("mean                      = %e" % par.mean                      )
 
 if par.Case == "Mukherjee":
-   print("Epsilon                = %e" % par.Epsilon                   )
-   print("Temp_g                 = %e" % par.Temp_g                    )
-   print("Sigma_t                = %e" % par.Sigma_t                   )
+   print("Epsilon                   = %e" % par.Epsilon                )
+   print("Temp_g                    = %e" % par.Temp_g                 )
+   print("Sigma_t                   = %e" % par.Sigma_t                )
 if par.Case == "Standard":
-   print("a0                     = %e" % par.a0                        )
-   print("z0                     = %e" % par.z0                        )
+   print("a0                        = %e" % par.a0                     )
+   print("z0                        = %e" % par.z0                     )
