@@ -19,7 +19,7 @@ def DumpFile():
        Fractal.tofile("Fractal")
     else:
        if  os.path.isfile("Fractal"):
-           Fractal = np.fromfile("Fractal")
+           Fractal = np.fromfile("Fractal",dtype=par.Precision)
        else:
            print("Fractal does not exist!!")
            exit(0)
