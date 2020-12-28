@@ -9,15 +9,18 @@ def Parameters():
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
-  global kmin, mean
+  global kmin, mean, sigma, beta
 
   # Fractal parameters
-  kmin = 10
-  mean = 10  
+  fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
+  kmin  = 10
+  mean  = 10  
+  sigma = 5
+  beta  = -5.0/3.0
 
   # Number of cells along x/y/z
   Nx = 512 
-  Ny = 512  
+  Ny = 512 
   Nz = 512 
   N = np.array([Nx, Ny, Nz])
 
@@ -103,8 +106,8 @@ def Parameters():
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  #CriticalTemp = 1e-99
-  CriticalTemp = 3e4
+  CriticalTemp = 1e+99
+  #CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)
   ISM0   = 200

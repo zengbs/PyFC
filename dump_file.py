@@ -3,6 +3,7 @@ from sphere import SphericalSphere
 from density_profile import FreePara2DerivedPara
 import parameters as par
 import pyFC
+import os
 
 
 def DumpFile():
@@ -11,9 +12,19 @@ def DumpFile():
     ############################
     ###    Fractal cloud    ####
     ############################
-    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=par.kmin, mean=par.mean)
-    fc.gen_cube()                           
-    Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+    if par.fromfile is None:
+       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=par.kmin, mean=par.mean, sigma=par.sigma, beta=par.beta)
+       fc.gen_cube()                           
+       Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
+       Fractal.tofile("Fractal")
+    else:
+       if  os.path.isfile("Fractal"):
+           Fractal = np.fromfile("Fractal")
+       else:
+           print("Fractal does not exist!!")
+           exit(0)
+
+
     #Fractal = 1
 
     #############################
@@ -71,6 +82,8 @@ print("Precision                 = %s" % par.Precision                 )
 print("Critical temperature      = %e" % par.CriticalTemp              )
 print("kmin                      = %e" % par.kmin                      )
 print("mean                      = %e" % par.mean                      )
+print("sigma                     = %e" % par.sigma                     )
+print("beta                      = %e" % par.beta                      )
 
 if par.Case == "Mukherjee":
    print("Epsilon                   = %e" % par.Epsilon                )

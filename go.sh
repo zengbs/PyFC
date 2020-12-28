@@ -9,3 +9,4 @@ mkdir data/$LAST
 mv Mukherjee_UM_IC       data/$LAST
 mv Mukherjee_ExtPotTable data/$LAST
 cp parameters.py         data/$LAST 
+echo "Done"
