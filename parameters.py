@@ -12,10 +12,11 @@ def Parameters():
   global kmin, mean, sigma, beta, fromfile
 
   # Fractal parameters
-  fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
-  kmin  = 10
-  mean  = 10  
-  sigma = 5
+  #fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
+  fromfile = None  # `None` stands for generating fractal cube by PyFC
+  kmin  = 10.0
+  mean  = 10.0  
+  sigma = 5.0
   beta  = -5.0/3.0
 
   # Number of cells along x/y/z

@@ -30,8 +30,16 @@ def DumpFile():
     #############################
     ####     Dump density    ####
     #############################
-    FluidInBox, PotInBox = SphericalSphere( Fractal )
+    #FluidInBox, PotInBox = SphericalSphere( Fractal )
     FileName = "%s" % (par.Case)+"_UM_IC"
+
+    FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nx), dtype=par.Precision)
+
+    FluidInBox[0] = Fractal.reshape(par.Nx,par.Ny.par.Nz)
+    FluidInBox[1] = 0
+    FluidInBox[2] = 0
+    FluidInBox[3] = 0
+    FluidInBox[4] = Fractal.reshape(par.Nx,par.Ny.par.Nz)
 
     FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox[1] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
@@ -43,10 +51,10 @@ def DumpFile():
     #############################
     ####     Dump potential   ###
     #############################
-    FileName = "%s" % (par.Case)+"_ExtPotTable"
+    #FileName = "%s" % (par.Case)+"_ExtPotTable"
 
-    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
-    PotInBox.tofile(FileName)
+    #PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
+    #PotInBox.tofile(FileName)
 
 par.Parameters()
 out=np.zeros((par.Nx, par.Ny, par.Nz))
