@@ -25,7 +25,7 @@ def DumpFile():
            print("Fractal does not exist!!")
            exit(0)
 
-    Fractal = 1
+    #Fractal = 1
 
     #############################
     ####     Dump density    ####

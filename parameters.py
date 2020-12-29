@@ -12,11 +12,12 @@ def Parameters():
   global kmin, mean, sigma, beta, fromfile, DensRatio
 
   # Fractal parameters
-  fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
-  #fromfile = None  # `None` stands for generating fractal cube by PyFC
-  kmin  = 10.0
-  mean  = 10.0  
-  sigma = 5.0
+  # `None` stands for generating fractal cube by PyFC
+  #fromfile = "Fractal"  
+  fromfile = None  
+  kmin  = 6.0
+  mean  = 1.0  
+  sigma = np.sqrt(5.0)
   beta  = -5.0/3.0
 
   # Number of cells along x/y/z
@@ -29,10 +30,10 @@ def Parameters():
      print("Nx/y/z % 16 != 0")
      exit()
 
-  # Box size
-  Lx = 3 
-  Ly = 3 
-  Lz = 3 
+  # Box size (kpc)
+  Lx = 4.0 
+  Ly = 4.0 
+  Lz = 4.0 
 
   ##########################
   ### Physical constants ###
@@ -61,8 +62,8 @@ def Parameters():
   # Sphere radius
   SphereRadius = 0.45*Lx
 
-  # density ratio
-  DensRatio = 1e-3
+  # density ratio on both sides of the surface of the sphere
+  DensRatio = 1
 
   # The eq(2) in Sutherland & Bicknell (2007)
   Constant  = 9
@@ -107,13 +108,14 @@ def Parameters():
  
   # Turbulent velocity dispersion (cm/s)
   # --> This parameter controls disk height
-  Sigma_t = 20000000
+  Sigma_t = 25000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 1e-99
-  #CriticalTemp = 3e4
+  #CriticalTemp = 1e-99
+  CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)
+  # Table2 in Mukherjee (2018)
   ISM0   = 200
 
 
