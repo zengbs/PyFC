@@ -12,8 +12,8 @@ def Parameters():
   global kmin, mean, sigma, beta, fromfile
 
   # Fractal parameters
-  #fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
-  fromfile = None  # `None` stands for generating fractal cube by PyFC
+  fromfile = "Fractal"  # `None` stands for generating fractal cube by PyFC
+  #fromfile = None  # `None` stands for generating fractal cube by PyFC
   kmin  = 10.0
   mean  = 10.0  
   sigma = 5.0
@@ -107,7 +107,7 @@ def Parameters():
   Sigma_t = 20000000
 
   # Critical temperature for ISM disk (K)
-  CriticalTemp = 1e+99
+  CriticalTemp = 1e-99
   #CriticalTemp = 3e4
 
   # number density at the center of ISM (1/cm^3)

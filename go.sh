@@ -6,7 +6,7 @@ LAST=`ls -l data/ | wc -l`
 LAST=$(printf "%02d" $LAST)
 
 mkdir data/$LAST
-mv Mukherjee_UM_IC       data/$LAST
-mv Mukherjee_ExtPotTable data/$LAST
-cp parameters.py         data/$LAST 
+mv UM_IC                 data/$LAST
+mv ExtPotTable           data/$LAST
+cp *.py                  data/$LAST 
 echo "Done"
