@@ -58,7 +58,7 @@ def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Inside, Outside):
     return [CoreIdx, FluidInBox_Rank, PresInBox_Rank]
 
 
-def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
+def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential, DensRatio):
 
     NCore = multiprocessing.cpu_count()
     LastCell = par.Nz+2*par.GRA_GHOST_SIZE
@@ -89,7 +89,12 @@ def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
 
                 r = np.sqrt((x-Center[0])**2 + (y-Center[1])**2 + (z-Center[2])**2)
 
-                PotInBox_Rank [k][j][i] = np.interp( r, Coarse_r, Potential )
+                R = par.SphereRadius/par.CoreRadius_D
+
+                if ( r < R ):
+                     PotInBox_Rank [k][j][i] = np.interp( r, Coarse_r, Potential )
+                else:
+                     PotInBox_Rank [k][j][i] = np.interp( R, Coarse_r, Potential )
       
     return [CoreIdx, PotInBox_Rank]
 
@@ -133,18 +138,19 @@ def SphericalSphere( Fractal ):
        # --> since the speed of light is hard-coded to 1 in GAMER
        InPres  = InRho*(par.Sigma_g/par.Const_C)**2
 
+    DensRatio = 1e-4
 
     # Fluid outside box
-    OutRho  = 1e-3*np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho )
+    OutRho  = np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho ) * DensRatio
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
-       OutPres = 1e3*OutRho*SoubdSpeedSqr / par.Const_C**2
+       OutPres = OutRho*SoubdSpeedSqr / par.Const_C**2
     if par.Case == "Standard":
-       OutPres = 1e3*OutRho*(par.Sigma_g/par.Const_C)**2
+       OutPres = OutRho*(par.Sigma_g/par.Const_C)**2
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
@@ -202,7 +208,7 @@ def SphericalSphere( Fractal ):
     p2 = multiprocessing.Pool(NCore)
 
     FunPartial = partial(Splitting3DPot, delta=delta, Center=Center,
-                         Coarse_r=Coarse_r, Potential=Potential)
+                         Coarse_r=Coarse_r, Potential=Potential, DensRatio=DensRatio)
 
     Pack = p2.map(FunPartial, range(int(NCore)))
 
