@@ -32,7 +32,7 @@ def DumpFile():
     #############################
     FluidInBox, PotInBox = SphericalSphere( Fractal )
 
-    FileName = "%s" % (par.Case)+"_UM_IC"
+    FileName = "UM_IC"
 
     FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
     FluidInBox[1] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
@@ -45,7 +45,7 @@ def DumpFile():
     #############################
     ####     Dump potential   ###
     #############################
-    FileName = "%s" % (par.Case)+"_ExtPotTable"
+    FileName = "ExtPotTable"
 
     PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
     PotInBox.tofile(FileName)
