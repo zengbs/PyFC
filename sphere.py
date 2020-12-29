@@ -11,6 +11,8 @@ par.Parameters()
 
 def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Inside, Outside):
 
+    Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
+
     NCore = multiprocessing.cpu_count()
     LastCell = par.Nz
 
@@ -58,7 +60,7 @@ def Splitting3DFluid(CoreIdx, delta, Center, Coarse_r, Inside, Outside):
     return [CoreIdx, FluidInBox_Rank, PresInBox_Rank]
 
 
-def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential, DensRatio):
+def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
 
     NCore = multiprocessing.cpu_count()
     LastCell = par.Nz+2*par.GRA_GHOST_SIZE
@@ -138,19 +140,18 @@ def SphericalSphere( Fractal ):
        # --> since the speed of light is hard-coded to 1 in GAMER
        InPres  = InRho*(par.Sigma_g/par.Const_C)**2
 
-    DensRatio = 1e-4
 
     # Fluid outside box
-    OutRho  = np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho ) * DensRatio
+    OutRho  = np.interp( par.SphereRadius/par.CoreRadius_D, Coarse_r, InRho ) * par.DensRatio
     OutUX   = 0 
     OutUy   = 0
     OutUz   = 0
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
-       OutPres = OutRho*SoubdSpeedSqr / par.Const_C**2
+       OutPres = OutRho*SoubdSpeedSqr / par.Const_C**2 / par.DensRatio
     if par.Case == "Standard":
-       OutPres = OutRho*(par.Sigma_g/par.Const_C)**2
+       OutPres = OutRho*(par.Sigma_g/par.Const_C)**2 / par.DensRatio
 
     # Conversion
     InDens,   InMomX,  InMomY,  InMomZ,  InEngy = Pri2Con(  InRho,  InUX,  InUy,  InUz, InPres  )
@@ -208,7 +209,7 @@ def SphericalSphere( Fractal ):
     p2 = multiprocessing.Pool(NCore)
 
     FunPartial = partial(Splitting3DPot, delta=delta, Center=Center,
-                         Coarse_r=Coarse_r, Potential=Potential, DensRatio=DensRatio)
+                         Coarse_r=Coarse_r, Potential=Potential)
 
     Pack = p2.map(FunPartial, range(int(NCore)))
 
@@ -226,6 +227,7 @@ def SphericalSphere( Fractal ):
     ####################################
     PotInBoxCopy    = np.copy(PotInBox)
     FluidInBoxCopy  = np.copy(FluidInBox)
+    Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
     ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, Fractal )
     ISM_Temp        = ISM[4]/ISM[0]
 
