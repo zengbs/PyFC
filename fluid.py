@@ -24,7 +24,6 @@ def Tem2Cs( Temperature ):
 
 
 def Pri2Con( Rho, Ux, Uy, Uz, Pres ):
-
     LorentzFactor = np.sqrt( 1.0 + np.square(Ux) + np.square(Uy) + np.square(Uz) );
     Temperature = Pres/Rho;
     HTilde = EoS_Temp2HTilde( Temperature );
@@ -54,7 +53,6 @@ def EoS_Temp2HTilde( Temp ):
     return HTilde;
 
 def SRHD_HTildeFunction( HTilde, MSqr_DSqr, Temp ):
-
     H =  HTilde + 1.0;
     Factor0 = np.square( H ) + MSqr_DSqr;
                                             
