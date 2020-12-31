@@ -1,14 +1,13 @@
 import numpy as np
-from sphere import SphericalSphere
-from density_profile import FreePara2DerivedPara
+from sphere import SetIC
 import parameters as par
-import pyFC
+#import pyFC
 import os
 import sys
 
 
 def DumpFile():
-    par.Parameters()
+    #par.Parameters()
 
     ############################
     ###   Fractal denisty   ####
@@ -72,47 +71,68 @@ def DumpFile():
 
     FileName = "UM_IC"
 
-    FluidInBox = np.zeros((5, par.Nx, par.Ny, par.Nz),dtype=Precision)
+    Fluid3D = np.zeros((5, par.Nx, par.Ny, par.Nz),dtype=par.Precision)
 
-    FluidInBox[0] = GasDens * par.Const_AtomicMassUnit*par.Const_MolecularWeight 
-    FluidInBox[1] = GasMomX * par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
-    FluidInBox[2] = GasMomY * par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
-    FluidInBox[3] = GasMomZ * par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
-    FluidInBox[4] = GasEngy * par.Const_AtomicMassUnit*par.Const_MolecularWeight*par.Const_C**2
+    Fluid3D[0] = GasDens * par.UNIT_D
+    Fluid3D[1] = GasMomX * par.UNIT_D * par.UNIT_V  
+    Fluid3D[2] = GasMomY * par.UNIT_D * par.UNIT_V
+    Fluid3D[3] = GasMomZ * par.UNIT_D * par.UNIT_V
+    Fluid3D[4] = GasEngy * par.UNIT_P
 
-    FluidInBox.tofile(FileName)
+    Fluid3D.tofile(FileName)
 
     #############################
     ####     Dump potential   ###
     #############################
     FileName = "ExtPotTable"
 
-    Potential *= par.Const_AtomicMassUnit*par.Const_MolecularWeight*par.Const_C**2
+    Potential *= par.UNIT_V**2
     Potential.tofile(FileName)
 
 par.Parameters()
 DumpFile()
 
-print("Nx                        = %d" % par.Nx                        )
-print("Ny                        = %d" % par.Ny                        )
-print("Nz                        = %d" % par.Nz                        )
-print("Lx                        = %d" % par.Lx                        )
-print("Ly                        = %d" % par.Ly                        )
-print("Lz                        = %d" % par.Lz                        )
-print("Const_kB                  = %e" % par.Const_kB                  )
-print("Const_C                   = %e" % par.Const_C                   )
-print("NEWTON_G                  = %e" % par.NEWTON_G                  )
-print("SphereRadius              = %e" % par.SphereRadius              )
-print("PotCenter                 = %e" % par.PotCenter                 )
-print("DiffPotCenter             = %e" % par.DiffPotCenter             )
-print("Const_AtomicMassUnit      = %e" % par.Const_AtomicMassit        )
-print("Const_MolecularWeight     = %e" % par.Const_MolecularWeight     )
-print("Precision                 = %s" % par.Precision                 )
-print("kmin                      = %e" % par.dens_kmin                 )
-print("mean                      = %e" % par.dens_mean                 )
-print("sigma                     = %e" % par.dens_sigma                )
-print("beta                      = %e" % par.dens_beta                 )
-print("kmin                      = %e" % par.Uxyz_kmin                 )
-print("mean                      = %e" % par.Uxyz_mean                 )
-print("sigma                     = %e" % par.Uxyz_sigma                )
-print("beta                      = %e" % par.Uxyz_beta                 )
+print("Nx                               = %d" % par.Nx                              )
+print("Ny                               = %d" % par.Ny                              )
+print("Nz                               = %d" % par.Nz                              )
+print("Lx                               = %d" % par.Lx                              )
+print("Ly                               = %d" % par.Ly                              )
+print("Lz                               = %d" % par.Lz                              )
+print("Const_kB                         = %e" % par.Const_kB                        )
+print("Const_C                          = %e" % par.Const_C                         )
+print("NEWTON_G                         = %e" % par.NEWTON_G                        )
+print("SphereRadius                     = %e" % par.SphereRadius                    )
+print("PotCenter                        = %e" % par.PotCenter                       )
+print("Const_AtomicMassUnit             = %e" % par.Const_AtomicMassUnit            )
+print("Const_MolecularWeight            = %e" % par.Const_MolecularWeight           )
+print("Precision                        = %s" % par.Precision                       )
+print("kmin                             = %e" % par.dens_kmin                       )
+print("mean                             = %e" % par.dens_mean                       )
+print("sigma                            = %e" % par.dens_sigma                      )
+print("beta                             = %e" % par.dens_beta                       )
+print("kmin                             = %e" % par.Uxyz_kmin                       )
+print("mean                             = %e" % par.Uxyz_mean                       )
+print("sigma                            = %e" % par.Uxyz_sigma                      )
+print("beta                             = %e" % par.Uxyz_beta                       )
+print("UNIT_D                           = %e" % par.UNIT_D                          )
+print("UNIT_V                           = %e" % par.UNIT_V                          )
+print("UNIT_L                           = %e" % par.UNIT_L                          )
+print("UNIT_M                           = %e" % par.UNIT_M                          )
+print("UNIT_P                           = %e" % par.UNIT_P                          )
+print("UNIT_E                           = %e" % par.UNIT_E                          )
+print("DensRatio                        = %e" % par.DensRatio                       )
+print("PeakElectronNumberDensity        = %e" % par.PeakElectronNumberDensity       )
+print("Temperature                      = %e" % par.Temperature                     )
+print("V_halo                           = %e" % par.V_halo                          )
+print("d_halo                           = %e" % par.d_halo                          )
+print("DiskMass                         = %e" % par.DiskMass                        )
+print("a                                = %e" % par.a                               )
+print("b                                = %e" % par.b                               )
+print("BulgeMass                        = %e" % par.BulgeMass                       )
+print("d_bulge                          = %e" % par.d_bulge                         )
+print("Const_MolecularWeightPerElectron = %e" % par.Const_MolecularWeightPerElectron)
+print("PeakGasMassDensity               = %e" % par.PeakGasMassDensity              )
+print("CenterX                          = %e" % par.Center[0]                       )
+print("CenterY                          = %e" % par.Center[1]                       )
+print("CenterZ                          = %e" % par.Center[2]                       )
+print("Cs                               = %e" % par.Cs                              )

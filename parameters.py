@@ -1,17 +1,16 @@
 import numpy as np
-import fluid
+from fluid import Tem2Cs
 
 
 def Parameters():
-  from density_profile import FreePara2DerivedPara
 
   global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit, Const_MolecularWeight, Const_SolarMass, Const_MolecularWeightPerElectron
   global Nx, Ny, Nz, Lx, Ly, Lz, delta
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
-  global SphereRadius, DensRatio
-  global PeakElectronNumberDensity, Temperature, PotCenter, DiffPotCenter, PeakGasNumberDensity, PeakGasMassDensity
+  global SphereRadius, DensRatio, Center
+  global PeakElectronNumberDensity, Temperature, PotCenter, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E
@@ -20,7 +19,7 @@ def Parameters():
   ###    Unit (cgs)      ###
   ##########################
   UNIT_D = 1e-24            # mass density
-  UNIT_V = 29979245800      # velocity
+  UNIT_V = 29979245800.     # velocity
   UNIT_L = 3.08567758149e21 # length
   UNIT_M = UNIT_D*UNIT_L**3 # mass
   UNIT_P = UNIT_D*UNIT_V**2 # energy density
@@ -106,10 +105,6 @@ def Parameters():
   # potential at the center of sphere
   PotCenter = 0.
 
-  # spatial derivative of potential at the center of sphere
-  DiffPotCenter = 0.
-
-
 
   # *** gravitational potential ***
 
@@ -132,8 +127,8 @@ def Parameters():
   b = 0.26           # kpc
 
   a *= Const_kpc
-  b /= UNIT_L     
-  a *= Const_kpc
+  b *= Const_kpc
+  a /= UNIT_L     
   b /= UNIT_L     
 
   # bulge mass (solar mass)
@@ -144,6 +139,7 @@ def Parameters():
   d_bulge = 0.7      # kpc
   d_bulge *= Const_kpc
   d_bulge /= UNIT_L
+
   ############################
   ### Numerical parameters ###
   ############################
@@ -170,30 +166,25 @@ def Parameters():
   # Left edge and right edge coordinates of the desired
   # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)                                                        
   le = np.array([ 0.0,  0.0,  0.0])
-  re = np.array([par.Lz, par.Ly, par.Lx])
+  re = np.array([  Lz,   Ly,   Lx])
       
   # Cell spacing (normalized by CoreRadius_D)
-  N      = np.array([par.Nz, par.Ny, par.Nx ], dtype=par.Precision)
-  delta  = (re-le)/N
-  delta *= Const_kpc
-  delta /= UNIT_L
+  N      = np.array([Nz, Ny, Nx], dtype=Precision)
+  if Precision is 'float32':
+     delta  = (re-le)/N.astype(np.float32)
+  else:
+     delta  = (re-le)/N.astype(np.float64)
 
   # molecular weight per electron
   Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
 
-  # peak gas number density (cm**-3)
-  PeakGasNumberDensity   = PeakElectronNumberDensity*Const_MolecularWeightPerElectron*Const_AtomicMassUnit
-
-
-  # peak gas number density (g/cm**-3)
-  PeakGasMassDensity  = Const_AtomicMassUnit*Const_MolecularWeight*PeakGasNumberDensity
+  # peak gas mass density (g/cm**3)
+  PeakGasMassDensity  = Const_MolecularWeightPerElectron*PeakElectronNumberDensity*Const_AtomicMassUnit
   PeakGasMassDensity /= UNIT_D
 
   # physical coordinate of center of sphere (origin is at corner) (kpc)
-  Center = np.array([par.Lz,par.Ly,par.Lx])*0.5
-  Center *= Const_kpc
-  Center /= UNIT_L
+  Center = np.array([Lz,Ly,Lx])*0.5
 
   # sound speed
-  Cs = Tem2Cs(par.Temperature)
+  Cs = Tem2Cs(Temperature)
   Cs /= UNIT_V

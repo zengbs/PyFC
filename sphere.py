@@ -6,7 +6,6 @@ import parameters as par
 import sys
 import time
 
-par.Parameters() 
 
 def SetIC( ):
 
@@ -21,12 +20,7 @@ def SetIC( ):
     # convert primitive to conservative variables
     GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( GasRho, GasVelX, GasVelY, GasVelZ, GasPres  )
 
-
-    # unnormalized by `par.Sigma_D` but normalized by `par.Const_C`
-    # --> since the speed of light is hard-coded to 1 in GAMER
-    #Potential *= (par.Sigma_D/par.Const_C**2
-
-    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential
+    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, TotPot
 
     ####################################
     ##########      ISM     ############

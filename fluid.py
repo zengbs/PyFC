@@ -1,8 +1,12 @@
+import parameters as par
+import numpy as np
+
 # *************************************************
 # description: temperature to sound speed
 # input      : temperature (K)
 # output     : sound speed (cm/s)
 # **************************************************
+
 
 def Tem2Cs( Temperature ):
     eta  = par.Const_kB*Temperature

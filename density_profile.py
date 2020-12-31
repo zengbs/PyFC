@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 import parameters as par
-import fluid
 
 
 # **********************************************************************
@@ -90,7 +89,11 @@ def TotPotGasDensity():
     TotalPot    += BulgePotential()
 
     GasDensity   = np.exp(-(TotalPot-par.PotCenter)/par.Cs**2)
-    GasDensity  *= par.PeakGasNumberDensity
+    GasDensity  *= par.PeakGasMassDensity
+ 
+    PotNx = TotalPot.shape[0]
+    PotNy = TotalPot.shape[1]
+    PotNz = TotalPot.shape[2]
 
     # remove ghost zone inside `GasDensity`
     GasDensity   = GasDensity[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
