@@ -1,7 +1,7 @@
 import multiprocessing
 import numpy as np
 from density_profile import *
-from pri2con import Pri2Con
+from fluid import Pri2Con
 import parameters as par
 import sys
 import time

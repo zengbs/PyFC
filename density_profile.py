@@ -38,6 +38,7 @@ def HaloPotential():
 
     Pot        = par.V_halo**2
     Pot       *= np.log(R**2+par.d_halo**2)
+    Pot       /= par.UNIT_V**2
     return Pot
 
 
@@ -59,6 +60,7 @@ def DiskPotential():
    
     Pot        = -par.NEWTON_G*par.DiskMass
     Pot       /= np.sqrt(Var3)
+    Pot       /= par.UNIT_V**2
     return Pot
 
 
@@ -75,6 +77,7 @@ def BulgePotential():
     X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
     Pot        = -par.NEWTON_G*par.BulgeMass
     Pot       /= R+par.d_bulge
+    Pot       /= par.UNIT_V**2
     return Pot
   
 
@@ -88,6 +91,8 @@ def TotPotGasDensity():
     TotalPot    += DiskPotential ()
     TotalPot    += BulgePotential()
 
+    
+
     GasDensity   = np.exp(-(TotalPot-par.PotCenter)/par.Cs**2)
     GasDensity  *= par.PeakGasMassDensity
  
@@ -99,6 +104,7 @@ def TotPotGasDensity():
     GasDensity   = GasDensity[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
     GasDensity   = GasDensity[:, par.GRA_GHOST_SIZE:PotNy-par.GRA_GHOST_SIZE, :]
     GasDensity   = GasDensity[:, :, par.GRA_GHOST_SIZE:PotNz-par.GRA_GHOST_SIZE]
+
     return GasDensity, TotalPot
 
 
