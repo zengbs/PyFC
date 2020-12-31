@@ -43,8 +43,8 @@ def FreePara2DerivedPara( ):
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
     if par.Case == "Mukherjee":
-       SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
-       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoubdSpeedSqr )
+       SoundSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
+       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoundSpeedSqr )
     if par.Case == "Standard":
        GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
     return GasDensityProfile
@@ -82,7 +82,7 @@ def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
 """
 input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.Const_C**2`
 """
-def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
+def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity, FractalUxyz ):
 
     # create an array stored ISM
     ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
@@ -166,6 +166,9 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, Fractal ):
     ISM[4] = PresInBox
 
     # Fractalize mass density
-    ISM[0] *= Fractal
+    ISM[0] *= FractalDensity
+    ISM[1] *= FractalUxyz 
+    ISM[2] *= FractalUxyz
+    ISM[3] *= FractalUxyz
 
     return ISM
