@@ -11,10 +11,20 @@ def Parameters():
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
   global SphereRadius, DensRatio
-  global PeakElectronNumberDensity, Temperature, PotCenter, DiffPotCenter, PeakGasNumberDensity
+  global PeakElectronNumberDensity, Temperature, PotCenter, DiffPotCenter, PeakGasNumberDensity, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs
+  global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E
 
+  ##########################
+  ###    Unit (cgs)      ###
+  ##########################
+  UNIT_D = 1e-24            # mass density
+  UNIT_V = 29979245800      # velocity
+  UNIT_L = 3.08567758149e21 # length
+  UNIT_M = UNIT_D*UNIT_L**3 # mass
+  UNIT_P = UNIT_D*UNIT_V**2 # energy density
+  UNIT_E = UNIT_P*UNIT_L**3 # energy
 
   ##########################
   ### Physical constants ###
@@ -41,6 +51,9 @@ def Parameters():
   # solar mass (g)
   Const_SolarMass            = 1.9891e33
 
+  # kpc (cm)
+  Const_kpc                  = 3.08567758149e21
+
   ##########################
   #######   PyFC  ##########
   ##########################
@@ -48,27 +61,35 @@ def Parameters():
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
   dens_fromfile = None
-  dens_kmin  = 6.0
-  dens_mean  = 1.0  
-  dens_sigma = np.sqrt(5.0)
-  dens_beta  = -5.0/3.0
+  dens_kmin     = 6.0
+  dens_mean     = 1.0  
+  dens_sigma    = np.sqrt(5.0)
+  dens_beta     = -5.0/3.0
 
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
   Uxyz_fromfile = None
-  Uxyz_kmin  = 3.0
-  Uxyz_mean  = 1.0  
-  Uxyz_sigma = 10000000.0 / np.sqrt(3.0) / Const_C
-  Uxyz_beta  = -5.0/3.0
+  Uxyz_kmin     = 3.0
+  Uxyz_mean     = 1.0  
+  Uxyz_sigma    = 10000000.0 / np.sqrt(3.0) / Const_C
+  Uxyz_beta     = -5.0/3.0
 
   ###############################
   ###  Physical parameters    ###
+  ###  (normalized by UNIT)   ###
   ###############################
 
   # Box size (kpc)
   Lx = 4.0 
   Ly = 4.0 
   Lz = 4.0 
+
+  Lx *= Const_kpc
+  Ly *= Const_kpc
+  Lz *= Const_kpc
+  Lx /= UNIT_L
+  Ly /= UNIT_L
+  Lz /= UNIT_L
 
   # Sphere radius
   SphereRadius = 0.45*Lx
@@ -77,7 +98,7 @@ def Parameters():
   DensRatio = 1.
 
   # peak electron number density (cm**-3)
-  PeakElectronNumberDensity   = 2.
+  PeakElectronNumberDensity = 2.
 
   # initial temperature (K)
   Temperature = 2e6
@@ -93,21 +114,36 @@ def Parameters():
   # *** gravitational potential ***
 
   # velocity dispersion of halo (km/s)
-  V_halo            = 131.5
+  V_halo  = 131.5
+  V_halo *= 1e5 # km -> cm
+  V_halo /= UNIT_V
 
   # distance (kpc)
   d_halo     = 12.
 
+  d_halo *= Const_kpc
+  d_halo /= UNIT_L
+
   # disk mass (solar mass)
   DiskMass = 1e11
+  DiskMass *= Const_SolarMass
+  DiskMass /= UNIT_M
   a = 6.50           # kpc
   b = 0.26           # kpc
 
+  a *= Const_kpc
+  b /= UNIT_L     
+  a *= Const_kpc
+  b /= UNIT_L     
+
   # bulge mass (solar mass)
   BulgeMass = 3.4e10
+  BulgeMass *= Const_SolarMass
+  BulgeMass /= UNIT_M
+
   d_bulge = 0.7      # kpc
-
-
+  d_bulge *= Const_kpc
+  d_bulge /= UNIT_L
   ############################
   ### Numerical parameters ###
   ############################
@@ -127,17 +163,20 @@ def Parameters():
      print("Nx/y/z % 16 != 0")
      exit()
 
-  ############################
-  # Derived parameters
-  ############################
+  ###############################
+  ###  Derived parameters     ###
+  ###  (normalized by UNIT)   ###
+  ###############################
   # Left edge and right edge coordinates of the desired
   # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)                                                        
   le = np.array([ 0.0,  0.0,  0.0])
-  re = np.array([par.Lz, par.Ly, par.Lx]) / float(par.CoreRadius_D)
+  re = np.array([par.Lz, par.Ly, par.Lx])
       
   # Cell spacing (normalized by CoreRadius_D)
-  N = np.array([par.Nz, par.Ny, par.Nx ], dtype=par.Precision)
-  delta = (re-le)/N
+  N      = np.array([par.Nz, par.Ny, par.Nx ], dtype=par.Precision)
+  delta  = (re-le)/N
+  delta *= Const_kpc
+  delta /= UNIT_L
 
   # molecular weight per electron
   Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
@@ -145,8 +184,16 @@ def Parameters():
   # peak gas number density (cm**-3)
   PeakGasNumberDensity   = PeakElectronNumberDensity*Const_MolecularWeightPerElectron*Const_AtomicMassUnit
 
+
+  # peak gas number density (g/cm**-3)
+  PeakGasMassDensity  = Const_AtomicMassUnit*Const_MolecularWeight*PeakGasNumberDensity
+  PeakGasMassDensity /= UNIT_D
+
   # physical coordinate of center of sphere (origin is at corner) (kpc)
   Center = np.array([par.Lz,par.Ly,par.Lx])*0.5
+  Center *= Const_kpc
+  Center /= UNIT_L
 
   # sound speed
   Cs = Tem2Cs(par.Temperature)
+  Cs /= UNIT_V

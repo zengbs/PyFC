@@ -30,15 +30,15 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def HaloPotential(Array, R):
+def HaloPotential():
     Nx         = par.Nx+2*par.GRA_GHOST_SIZE
     Ny         = par.Ny+2*par.GRA_GHOST_SIZE
     Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
     X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
 
-    Pot        = par.V_halo**2*np.log(R**2+par.d_halo**2)
-
+    Pot        = par.V_halo**2
+    Pot       *= np.log(R**2+par.d_halo**2)
     return Pot
 
 
@@ -47,7 +47,7 @@ def HaloPotential(Array, R):
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def DiskPotential(Array, R):
+def DiskPotential():
     Nx         = par.Nx+2*par.GRA_GHOST_SIZE
     Ny         = par.Ny+2*par.GRA_GHOST_SIZE
     Nz         = par.Nz+2*par.GRA_GHOST_SIZE
@@ -68,7 +68,7 @@ def DiskPotential(Array, R):
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def BulgePotential(Array, R):
+def BulgePotential():
     Nx         = par.Nx+2*par.GRA_GHOST_SIZE
     Ny         = par.Ny+2*par.GRA_GHOST_SIZE
     Nz         = par.Nz+2*par.GRA_GHOST_SIZE
@@ -91,11 +91,6 @@ def TotPotGasDensity():
 
     GasDensity   = np.exp(-(TotalPot-par.PotCenter)/par.Cs**2)
     GasDensity  *= par.PeakGasNumberDensity
-
-    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
-
-    np.where( R > par.SphereRadius,  )
-
 
     # remove ghost zone inside `GasDensity`
     GasDensity   = GasDensity[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
