@@ -103,7 +103,7 @@ def Splitting3DPot(CoreIdx, delta, Center, Coarse_r, Potential):
 
 
 
-def SphericalSphere( Fractal ):
+def SphericalSphere( FractalDensity,  FractalUxyz ):
 
 
     # Center of sphere (normalized by `par.CoreRadius_D`)
@@ -228,7 +228,7 @@ def SphericalSphere( Fractal ):
     PotInBoxCopy    = np.copy(PotInBox)
     FluidInBoxCopy  = np.copy(FluidInBox)
     Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
-    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, Fractal )
+    ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, FractalDensity,  FractalUxyz )
     ISM_Temp        = ISM[4]/ISM[0]
 
     ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])

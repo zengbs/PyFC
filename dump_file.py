@@ -4,33 +4,71 @@ from density_profile import FreePara2DerivedPara
 import parameters as par
 import pyFC
 import os
+import sys
 
 
 def DumpFile():
     par.Parameters()
 
     ############################
-    ###    Fractal cloud    ####
+    ###   Fractal denisty   ####
     ############################
-    if par.fromfile is None:
-       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz, kmin=par.kmin, mean=par.mean, sigma=par.sigma, beta=par.beta)
+
+    if par.dens_fromfile is None:
+       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                      kmin=par.dens_kmin, mean=par.dens_mean,
+                                      sigma=par.dens_sigma, beta=par.dens_beta)
        fc.gen_cube()                           
-       Fractal = pyFC.write_cube(fc=fc, app=True, prec='single')
-       Fractal.tofile("Fractal")
+       FractalDensity = pyFC.write_cube(fc=fc, app=True, prec='single')
+       FractalDensity.tofile("FractalDensity")
     else:
-       if  os.path.isfile("Fractal"):
-           Fractal = np.fromfile("Fractal",dtype=par.Precision)
-           Fractal = Fractal.reshape(par.Nx,par.Ny,par.Nz)
+       if  os.path.isfile("FractalDensity"):
+           FractalDensity = np.fromfile("FractalDensity",dtype=par.Precision)
+           FractalDensity = FractalDensity.reshape(par.Nx,par.Ny,par.Nz)
        else:
-           print("Fractal does not exist!!")
+           print("FractalDensity does not exist!!")
            exit(0)
 
-    #Fractal = 1
+
+    ############################
+    ###   Fractal Ux/y/z    ####
+    ############################
+
+    if par.Uxyz_fromfile is None:
+       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+       fc.gen_cube()                           
+       FractalUxyz = pyFC.write_cube(fc=fc, app=True, prec='single')
+       FractalUxyz.tofile("FractalUxyz")
+    else:
+       if  os.path.isfile("FractalUxyz"):
+           FractalUxyz = np.fromfile("FractalUxyz",dtype=par.Precision)
+           FractalUxyz = FractalUxyz.reshape(par.Nx,par.Ny,par.Nz)
+       else:
+           print("FractalUxyz does not exist!!")
+           exit(0)
+
+    #FractalDensity = 1
+    #FractalUxyz    = 1
+
+
+    FractalU = np.power(FractalUxyz, 2.0)*3
+
+    print( "The varience of the fractal density = %e" % np.var (FractalDensity) )
+    print( "The     mean of the fractal density = %e" % np.mean(FractalDensity) )
+    print( "The varience of the fractal Uxyz    = %e" % np.var (FractalUxyz   ) )
+    print( "The     mean of the fractal Uxyz    = %e" % np.mean(FractalUxyz   ) )
+    print( "The varience of the fractal U       = %e" % np.var (FractalU      ) )
+    print( "The     mean of the fractal U       = %e" % np.mean(FractalU      ) )
+
+    sys.stdout.flush()
+
 
     #############################
     ####     Dump density    ####
     #############################
-    FluidInBox, PotInBox = SphericalSphere( Fractal )
+    FluidInBox, PotInBox = SphericalSphere( FractalDensity, FractalUxyz )
 
     FileName = "UM_IC"
 
@@ -81,10 +119,14 @@ print("CoarseDr                  = %e" % par.CoarseDr                  )
 print("Case                      = %s" % par.Case                      )
 print("Precision                 = %s" % par.Precision                 )
 print("Critical temperature      = %e" % par.CriticalTemp              )
-print("kmin                      = %e" % par.kmin                      )
-print("mean                      = %e" % par.mean                      )
-print("sigma                     = %e" % par.sigma                     )
-print("beta                      = %e" % par.beta                      )
+print("kmin                      = %e" % par.dens_kmin                 )
+print("mean                      = %e" % par.dens_mean                 )
+print("sigma                     = %e" % par.dens_sigma                )
+print("beta                      = %e" % par.dens_beta                 )
+print("kmin                      = %e" % par.Uxyz_kmin                 )
+print("mean                      = %e" % par.Uxyz_mean                 )
+print("sigma                     = %e" % par.Uxyz_sigma                )
+print("beta                      = %e" % par.Uxyz_beta                 )
 
 if par.Case == "Mukherjee":
    print("Epsilon                   = %e" % par.Epsilon                )

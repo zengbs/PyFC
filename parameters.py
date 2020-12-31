@@ -8,36 +8,14 @@ def Parameters():
   global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon, a0, z0
   global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
-  global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
-  global kmin, mean, sigma, beta, fromfile, DensRatio
-
-  # Fractal parameters
-  # `None` stands for generating fractal cube by PyFC
-  #fromfile = "Fractal"  
-  fromfile = None  
-  kmin  = 6.0
-  mean  = 1.0  
-  sigma = np.sqrt(5.0)
-  beta  = -5.0/3.0
-
-  # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
-  N = np.array([Nx, Ny, Nz])
-
-  if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
-     print("Nx/y/z % 16 != 0")
-     exit()
-
-  # Box size (kpc)
-  Lx = 4.0 
-  Ly = 4.0 
-  Lz = 4.0 
+  global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case, DensRatio
+  global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
+  global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
 
   ##########################
   ### Physical constants ###
   ##########################
+
   # Atomic mass unit (g)
   Const_AtomMass             = 1.66e-24
 
@@ -56,9 +34,47 @@ def Parameters():
   # electron volt per erg
   Const_Erg2eV               = 6.2415e11
 
+
+  ##########################
+  #######   PyFC  ##########
+  ##########################
+
+  # Fractal parameters for density
+  # `None` stands for generating fractal cube by PyFC
+  dens_fromfile = None
+  dens_kmin  = 6.0
+  dens_mean  = 1.0  
+  dens_sigma = np.sqrt(5.0)
+  dens_beta  = -5.0/3.0
+
+  # Fractal parameters for Ux/y/z
+  # `None` stands for generating fractal cube by PyFC
+  Uxyz_fromfile = None
+  Uxyz_kmin  = 3.0
+  Uxyz_mean  = 1.0  
+  Uxyz_sigma = 10000000.0 / np.sqrt(3.0) / Const_C
+  Uxyz_beta  = -5.0/3.0
+
+
   ##########################
   ###  Free parameters   ###
   ##########################
+
+  # Number of cells along x/y/z
+  Nx = 512 
+  Ny = 512 
+  Nz = 512 
+  N = np.array([Nx, Ny, Nz])
+
+  if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
+     print("Nx/y/z % 16 != 0")
+     exit()
+
+  # Box size (kpc)
+  Lx = 4.0 
+  Ly = 4.0 
+  Lz = 4.0 
+
   # Sphere radius
   SphereRadius = 0.45*Lx
 
