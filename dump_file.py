@@ -72,11 +72,11 @@ def DumpFile():
 
     FileName = "UM_IC"
 
-    FluidInBox[0] *= par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[1] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[2] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[3] *= par.Const_C*par.Const_AtomMass*par.Const_MeanMolecularWeight 
-    FluidInBox[4] *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
+    FluidInBox[0] *= par.Const_AtomicMassUnit*par.Const_MolecularWeight 
+    FluidInBox[1] *= par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
+    FluidInBox[2] *= par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
+    FluidInBox[3] *= par.Const_C*par.Const_AtomicMassUnit*par.Const_MolecularWeight 
+    FluidInBox[4] *= par.Const_AtomicMassUnit*par.Const_MolecularWeight*par.Const_C**2
 
     FluidInBox.tofile(FileName)
 
@@ -85,7 +85,7 @@ def DumpFile():
     #############################
     FileName = "ExtPotTable"
 
-    PotInBox *= par.Const_AtomMass*par.Const_MeanMolecularWeight*par.Const_C**2
+    PotInBox *= par.Const_AtomicMassUnit*par.Const_MolecularWeight*par.Const_C**2
     PotInBox.tofile(FileName)
 
 par.Parameters()
@@ -103,14 +103,14 @@ print("NEWTON_G                  = %e" % par.NEWTON_G                  )
 print("SphereRadius              = %e" % par.SphereRadius              )
 print("Constant                  = %e" % par.Constant                  )
 print("CoreRadius_g              = %e" % par.CoreRadius_g              )
-print("Rho0_g                    = %e" % par.Rho0_g                    )
+print("PeakNumberDensity                    = %e" % par.PeakNumberDensity                    )
 print("Sigma_g                   = %e" % par.Sigma_g                   )
 print("Lambda                    = %e" % par.Lambda                    )
 print("Kappa                     = %e" % par.Kappa                     )
-print("Phi0                      = %e" % par.Phi0                      )
-print("DevPhi0                   = %e" % par.DevPhi0                   )
-print("Const_AtomMass            = %e" % par.Const_AtomMass            )
-print("Const_MeanMolecularWeight = %e" % par.Const_MeanMolecularWeight )
+print("PotCenter                      = %e" % par.PotCenter                      )
+print("DiffPotCenter                   = %e" % par.DiffPotCenter                   )
+print("Const_AtomicMassUnit            = %e" % par.Const_AtomicMassUnit            )
+print("Const_MolecularWeight = %e" % par.Const_MolecularWeight )
 print("Rho0_D                    = %e" % par.Rho0_D                    )
 print("Sigma_D                   = %e" % par.Sigma_D                   )
 print("CoreRadius_D              = %e" % par.CoreRadius_D              )

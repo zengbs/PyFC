@@ -3,8 +3,8 @@ def Parameters():
   from density_profile import FreePara2DerivedPara
 
   global Nx, Ny, Nz, Lx, Ly, Lz, Const_kB, Const_C, Constant, NEWTON_G
-  global CoreRadius_g, Rho0_g, Sigma_g, Lambda, Kappa, Epsilon, a0, z0
-  global Temp_g, Phi0, DevPhi0, Const_AtomMass, Const_MeanMolecularWeight, Sigma_t, ISM0
+  global CoreRadius_g, PeakNumberDensity, Sigma_g, Lambda, Kappa, Epsilon, a0, z0
+  global Temp_g, PotCenter, DiffPotCenter, Const_AtomicMassUnit, Const_MolecularWeight, Sigma_t, ISM0
   global BPoint, CoarseDr, SphereRadius, Precision, GRA_GHOST_SIZE
   global Rho0_D, Sigma_D, CoreRadius_D, CriticalTemp, Const_Erg2eV, Case
 
@@ -23,10 +23,10 @@ def Parameters():
   ### Physical constants ###
   ##########################
   # Atomic mass unit (g)
-  Const_AtomMass             = 1.66e-24
+  Const_AtomicMassUnit             = 1.66e-24
 
   # Mean molecular weight
-  Const_MeanMolecularWeight  = 0.6
+  Const_MolecularWeight  = 0.6
 
   # The Boltzmann constant (eV/K)
   Const_kB                   = 8.6173303e-5
@@ -53,7 +53,7 @@ def Parameters():
   CoreRadius_g = 1
 
   # Peak gas density (1/cm^3)
-  Rho0_g = 0.5
+  PeakNumberDensity = 0.5
 
   # Velocity dispersion of gas (cm/s)
   Sigma_g = 25000000
@@ -65,10 +65,10 @@ def Parameters():
   Kappa = 2
 
   # The potential at the center of sphere
-  Phi0 = 0
+  PotCenter = 0
 
   # The spatial derivative of potential at the center of sphere
-  DevPhi0 = 0
+  DiffPotCenter = 0
 
   # Derived parameters
   Rho0_D, Sigma_D, CoreRadius_D = FreePara2DerivedPara( )

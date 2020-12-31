@@ -16,7 +16,7 @@ def f(y, rPrime, params):
 
 def FreePara2DerivedPara( ):
     # Peak density of DM     
-    Rho0_D = par.Rho0_g * par.Kappa * par.Kappa / par.Lambda / par.Lambda
+    Rho0_D = par.PeakNumberDensity * par.Kappa * par.Kappa / par.Lambda / par.Lambda
 
     # Core radius of DM
     CoreRadius_D = par.Lambda*par.CoreRadius_g
@@ -43,20 +43,20 @@ def FreePara2DerivedPara( ):
 # Density of isothermal gas sphere as a function of total potential
 def IsothermalGasDensity( Phi ):
     if par.Case == "Mukherjee":
-       SoundSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
-       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / SoundSpeedSqr )
+       SoundSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MolecularWeight*par.Const_AtomicMassUnit*par.Const_Erg2eV)
+       GasDensityProfile = par.PeakNumberDensity * np.exp(  -( Phi - par.PotCenter ) / SoundSpeedSqr )
     if par.Case == "Standard":
-       GasDensityProfile = par.Rho0_g * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_g**2 )
+       GasDensityProfile = par.PeakNumberDensity * np.exp(  -( Phi - par.PotCenter ) / par.Sigma_g**2 )
     return GasDensityProfile
 
 # Density of isothermal DM sphere as a function of total potential
 def IsothermalDMDensity( Phi ):
-    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.Phi0 ) / par.Sigma_D**2 )
+    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.PotCenter ) / par.Sigma_D**2 )
     return DMDensityProfile
 
 def NumericalDensity( rPrime ):
-    Psi0           = par.Phi0    / par.Sigma_D**2
-    DevPsi0        = par.DevPhi0 / par.Sigma_D**2
+    Psi0           = par.PotCenter    / par.Sigma_D**2
+    DevPsi0        = par.DiffPotCenter / par.Sigma_D**2
    
     Psi            = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )
     Phi            = Psi         * par.Sigma_D**2
@@ -125,7 +125,7 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity
        ISM[0] = par.ISM0   * np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
     if par.Case == "Standard":
        a = par.a0 * np.exp(-np.abs(Z)/par.z0)
-       ISM[0] = par.Rho0_g * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2           )/par.Sigma_t**2 )
+       ISM[0] = par.PeakNumberDensity * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2           )/par.Sigma_t**2 )
 
 #####################
 #    CosTheta = X/R

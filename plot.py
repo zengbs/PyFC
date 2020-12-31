@@ -8,8 +8,8 @@ import parameters as par
 def Plot( ):
     par.Parameters()
 
-    Psi0           = par.Phi0    / par.Sigma_D**2
-    DevPsi0        = par.DevPhi0 / par.Sigma_D**2
+    Psi0           = par.PotCenter    / par.Sigma_D**2
+    DevPsi0        = par.DiffPotCenter / par.Sigma_D**2
 
     fig, ax = plt.subplots( 1, 2, sharex=False, sharey=False )
     fig.subplots_adjust( hspace=0.1, wspace=0.1 )                                                             
@@ -28,14 +28,14 @@ def Plot( ):
     #B,=ax[1].plot( rPrime, GasOnlyPotential, '^', label='Gas potential without DM' )
 
     ## DM-only
-    #ParaPhy[1]             = 0 # Rho0_g = 0
+    #ParaPhy[1]             = 0 # PeakNumberDensity = 0
     #DMOnlyPotential        = NumericalTotalPotential( rPrime, Kappa, Lambda, Constant, Psi0, DevPsi0 )
     #Nothing, DMOnlyDensity = NumericalDensity( rPrime, ParaPhy )
     #Const_C,=ax[0].plot( rPrime, DMOnlyDensity  , 'o', label='DM density without Gas'   )
     #D,=ax[1].plot( rPrime, DMOnlyPotential, 'x', label='DM potential without Gas' )
     
     # DM and gas
-    #ParaPhy[1]            = Rho0_g
+    #ParaPhy[1]            = PeakNumberDensity
     #ParaPhy[4]            = Kappa
 
     TotalPotential        = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )

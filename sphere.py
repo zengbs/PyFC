@@ -133,7 +133,7 @@ def SphericalSphere( FractalDensity,  FractalUxyz ):
     # unnormalized by `par.Sigma_g` but normalized by `par.Const_C`
     # --> since the speed of light is hard-coded to 1 in GAMER
     if par.Case == "Mukherjee":
-       SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MeanMolecularWeight*par.Const_AtomMass*par.Const_Erg2eV)
+       SoubdSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MolecularWeight*par.Const_AtomicMassUnit*par.Const_Erg2eV)
        InPres  = InRho * SoubdSpeedSqr / par.Const_C**2
     if par.Case == "Standard":
        # `InPres` is nunormalized by `Sigma_g` but normalized by `par.Const_C`
@@ -166,8 +166,8 @@ def SphericalSphere( FractalDensity,  FractalUxyz ):
     #GRA_GHOST_SIZE = par.GRA_GHOST_SIZE
 
 
-    Psi0       = par.Phi0    / par.Sigma_D**2 
-    DevPsi0    = par.DevPhi0 / par.Sigma_D**2
+    Psi0       = par.PotCenter    / par.Sigma_D**2 
+    DevPsi0    = par.DiffPotCenter / par.Sigma_D**2
 
     Potential = NumericalTotalPotential( Coarse_r, Psi0, DevPsi0 )
 
@@ -246,7 +246,7 @@ def SphericalSphere( FractalDensity,  FractalUxyz ):
     R   = np.sqrt(X**2+Y**2+Z**2) 
 
     KT_mcSqr   = par.CriticalTemp*par.Const_kB                                      # K* (erg/K)
-    KT_mcSqr  /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C)**2  # erg
+    KT_mcSqr  /= par.Const_MolecularWeight*par.Const_AtomicMassUnit*(par.Const_C)**2  # erg
     KT_mcSqr  /= par.Const_Erg2eV
 
     ISM        = np.where( ISM_Temp < KT_mcSqr, ISM, FluidInBox )
