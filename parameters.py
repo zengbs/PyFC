@@ -1,18 +1,19 @@
 import numpy as np
+import fluid
 
 
 def Parameters():
   from density_profile import FreePara2DerivedPara
 
-  global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit,
-         Const_MolecularWeight, Const_SolarMass, Const_MolecularWeightPerElectron
-  global Nx, Ny, Nz, Lx, Ly, Lz
+  global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit, Const_MolecularWeight, Const_SolarMass, Const_MolecularWeightPerElectron
+  global Nx, Ny, Nz, Lx, Ly, Lz, delta
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
-  global BPoint, CoarseDr, Precision, GRA_GHOST_SIZE
+  global Precision, GRA_GHOST_SIZE
   global SphereRadius, DensRatio
-  global PeakElectronNumberDensity, Temperature, PotCenter, DiffPotCenter
+  global PeakElectronNumberDensity, Temperature, PotCenter, DiffPotCenter, PeakGasNumberDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
+  global Cs
 
 
   ##########################
@@ -39,9 +40,6 @@ def Parameters():
 
   # solar mass (g)
   Const_SolarMass            = 1.9891e33
-
-  # molecular weight per electron
-  Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
 
   ##########################
   #######   PyFC  ##########
@@ -113,13 +111,6 @@ def Parameters():
   ############################
   ### Numerical parameters ###
   ############################
-
-  # The boundary point for integration
-  BPoint   = 1e-5
-
-  # The integration step
-  CoarseDr = 1e-5
-
   # ghost zone size for potential
   GRA_GHOST_SIZE = 2
 
@@ -136,3 +127,26 @@ def Parameters():
      print("Nx/y/z % 16 != 0")
      exit()
 
+  ############################
+  # Derived parameters
+  ############################
+  # Left edge and right edge coordinates of the desired
+  # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)                                                        
+  le = np.array([ 0.0,  0.0,  0.0])
+  re = np.array([par.Lz, par.Ly, par.Lx]) / float(par.CoreRadius_D)
+      
+  # Cell spacing (normalized by CoreRadius_D)
+  N = np.array([par.Nz, par.Ny, par.Nx ], dtype=par.Precision)
+  delta = (re-le)/N
+
+  # molecular weight per electron
+  Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
+
+  # peak gas number density (cm**-3)
+  PeakGasNumberDensity   = PeakElectronNumberDensity*Const_MolecularWeightPerElectron*Const_AtomicMassUnit
+
+  # physical coordinate of center of sphere (origin is at corner) (kpc)
+  Center = np.array([par.Lz,par.Ly,par.Lx])*0.5
+
+  # sound speed
+  Cs = Tem2Cs(par.Temperature)

@@ -1,88 +1,116 @@
 import sys
 import numpy as np
-from scipy.integrate import odeint
 import parameters as par
-import matplotlib.pyplot as plt
+import fluid
 
 
-np.set_printoptions(threshold=sys.maxsize)
- 
-def f(y, rPrime, params):
-    Psi, DevPsi = y      # unpack current values of y
-    Kappa, Lambda, Constant, Psi0, DevPsi0 = params  # unpack parameters
+# **********************************************************************
+# description: create four 3D array storing 
+#              (1) x-coordinate
+#              (2) y-coordinate
+#              (3) z-coordinate
+#              (4) the distance between cell itself and center
+# input      : None
+# output     : 3D array stroing x, y, z, and radial distance
+# **********************************************************************
+def Create3DCoordinateArray(Nx, Ny, Nz):
+    Idx       = np.indices((Nz, Ny, Nx))[2]
+    Jdx       = np.indices((Nz, Ny, Nx))[1]
+    Kdx       = np.indices((Nz, Ny, Nx))[0]
+              
+    X         = (Idx+0.5)*par.delta[2]-par.Center[2]
+    Y         = (Jdx+0.5)*par.delta[1]-par.Center[1]
+    Z         = (Kdx+0.5)*par.delta[0]-par.Center[0] 
+    R         = np.sqrt(X**2+Y**2+Z**2)
+    return X, Y, Z, R
 
-    derivs = [ DevPsi, -2*DevPsi/rPrime + Constant*( np.exp(-Psi) + Lambda*Lambda/Kappa/Kappa*np.exp(-Kappa*Kappa*Psi) ) ]
-    return derivs
 
-def FreePara2DerivedPara( ):
-    # Peak density of DM     
-    Rho0_D = par.PeakNumberDensity * par.Kappa * par.Kappa / par.Lambda / par.Lambda
+# **********************************************************************
+# description: halo potential
+# input      : None
+# output     : potential 3D array including ghost zone
+# **********************************************************************
+def HaloPotential(Array, R):
+    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
-    # Core radius of DM
-    CoreRadius_D = par.Lambda*par.CoreRadius_g
+    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
 
-    # Velocity dispersion of DM
-    Sigma_D = par.Kappa * par.Sigma_g
-    return Rho0_D, Sigma_D, CoreRadius_D
+    Pot        = par.V_halo**2*np.log(R**2+par.d_halo**2)
+
+    return Pot
 
 
-## Exat NFW density
-#def ExactNFWDensity( r, ScaleRadius, Rho0_DM ):
-#    a = r / ScaleRadius   
-#    NFWDensityProfile1D = Rho0_DM / ( a * np.square( 1 + a ) )
-#    return NFWDensityProfile1D
-#
-## Exat NFW potential
-#def ExactNFWPotential(r, Rho0_DM, ScaleRadius):
-#    Exact = -4*np.pi*NEWTON_G*Rho0_DM*np.power(ScaleRadius,3) * np.log(1+r/ScaleRadius) / r - -4*np.pi*NEWTON_G*Rho0_DM*ScaleRadius**2
-#    return Exact
-
-#########################
-# return: GasDensityProfile [g/cm**3]
-#########################
-# Density of isothermal gas sphere as a function of total potential
-def IsothermalGasDensity( Phi ):
-    if par.Case == "Mukherjee":
-       SoundSpeedSqr  = par.Const_kB*par.Temp_g/(par.Const_MolecularWeight*par.Const_AtomicMassUnit*par.Const_Erg2eV)
-       GasDensityProfile = par.PeakNumberDensity * np.exp(  -( Phi - par.PotCenter ) / SoundSpeedSqr )
-    if par.Case == "Standard":
-       GasDensityProfile = par.PeakNumberDensity * np.exp(  -( Phi - par.PotCenter ) / par.Sigma_g**2 )
-    return GasDensityProfile
-
-# Density of isothermal DM sphere as a function of total potential
-def IsothermalDMDensity( Phi ):
-    DMDensityProfile = par.Rho0_D * np.exp(  -( Phi - par.PotCenter ) / par.Sigma_D**2 )
-    return DMDensityProfile
-
-def NumericalDensity( rPrime ):
-    Psi0           = par.PotCenter    / par.Sigma_D**2
-    DevPsi0        = par.DiffPotCenter / par.Sigma_D**2
+# **********************************************************************
+# description: disk potential (Miyamoto-Nagai disk)
+# input      : None
+# output     : potential 3D array including ghost zone
+# **********************************************************************
+def DiskPotential(Array, R):
+    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
    
-    Psi            = NumericalTotalPotential( rPrime, Psi0, DevPsi0 )
-    Phi            = Psi         * par.Sigma_D**2
+    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
 
-    GasDensity     = IsothermalGasDensity( Phi )
-    DMDensity      = IsothermalDMDensity ( Phi )
-    return GasDensity, DMDensity
-
-"""
-return: gravitational potential normalized by par.Sigma_D**2 but unnormalized by `par.Const_C**2`
-"""
-def NumericalTotalPotential( rPrime, Psi0, DevPsi0 ):
-    # Bundle Parameters
-    params = [ par.Kappa, par.Lambda, par.Constant, Psi0, DevPsi0 ]
+    Var1       = np.sqrt(Z**2+par.b**2)
+    Var2       = par.a + Var1
+    Var3       = X**2 + Y**2 + Var2**2
+   
+    Pot        = -par.NEWTON_G*par.DiskMass
+    Pot       /= np.sqrt(Var3)
+    return Pot
 
 
-    # Bundle boundary values
-    y0     = [ Psi0, DevPsi0 ]
-    # Solve ODE       
-    TotalPotential = odeint( f, y0, rPrime, args=(params,) )
-    return TotalPotential[:,0]
+# **********************************************************************
+# description: bulge potential
+# input      : None
+# output     : potential 3D array including ghost zone
+# **********************************************************************
+def BulgePotential(Array, R):
+    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
-"""
-input: PotInBox: gravitational potential unnormalized by `par.Sigma_D**2` but normalized by `par.Const_C**2`
-"""
-def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity, FractalUxyz ):
+    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+    Pot        = -par.NEWTON_G*par.BulgeMass
+    Pot       /= R+par.d_bulge
+    return Pot
+  
+
+# **********************************************************************
+# description: get isothermal gas density
+# input      : None
+# output     : gas density 3D array but excluding ghost zone (g/cm**3)
+# **********************************************************************
+def TotPotGasDensity():
+    TotalPot     = HaloPotential ()
+    TotalPot    += DiskPotential ()
+    TotalPot    += BulgePotential()
+
+    GasDensity   = np.exp(-(TotalPot-par.PotCenter)/par.Cs**2)
+    GasDensity  *= par.PeakGasNumberDensity
+
+    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+
+    np.where( R > par.SphereRadius,  )
+
+
+    # remove ghost zone inside `GasDensity`
+    GasDensity   = GasDensity[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
+    GasDensity   = GasDensity[:, par.GRA_GHOST_SIZE:PotNy-par.GRA_GHOST_SIZE, :]
+    GasDensity   = GasDensity[:, :, par.GRA_GHOST_SIZE:PotNz-par.GRA_GHOST_SIZE]
+    return GasDensity, TotalPot
+
+
+
+# **********************************************************************
+# description: 
+# input      :
+# output     : 
+# **********************************************************************
+def NumericalISM( PotInBox, FluidInBox, PresInBox, FractalDensity, FractalUxyz ):
 
     # create an array stored ISM
     ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
@@ -114,9 +142,9 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity
     Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
     Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
 
-    X   = (Idx+0.5)*delta[2]-Center[2]
-    Y   = (Jdx+0.5)*delta[1]-Center[1]
-    Z   = (Kdx+0.5)*delta[0]-Center[0] 
+    X   = (Idx+0.5)*par.delta[2]-par.Center[2]
+    Y   = (Jdx+0.5)*par.delta[1]-par.Center[1]
+    Z   = (Kdx+0.5)*par.delta[0]-par.Center[0] 
     R   = np.sqrt(X**2+Y**2)
 
 
