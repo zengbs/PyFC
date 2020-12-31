@@ -7,7 +7,6 @@ import sys
 
 
 def DumpFile():
-    #par.Parameters()
 
     ############################
     ###   Fractal denisty   ####
