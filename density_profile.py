@@ -29,16 +29,18 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def HaloPotential():
-    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
-    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
-    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
+def HaloPotential(origin):
+    if origin is False:
+       Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+       Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+       Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
-    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+       X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+    else:
+       R          = 0.
 
     Pot        = par.V_halo**2
     Pot       *= np.log(R**2+par.d_halo**2)
-    Pot       /= par.UNIT_V**2
     return Pot
 
 
@@ -47,12 +49,15 @@ def HaloPotential():
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def DiskPotential():
-    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
-    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
-    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
+def DiskPotential(origin):
+    if origin is False:
+       Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+       Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+       Nz         = par.Nz+2*par.GRA_GHOST_SIZE
    
-    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+       X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+    else:
+       X = Y = Z = R = 0.
 
     Var1       = np.sqrt(Z**2+par.b**2)
     Var2       = par.a + Var1
@@ -60,7 +65,6 @@ def DiskPotential():
    
     Pot        = -par.NEWTON_G*par.DiskMass
     Pot       /= np.sqrt(Var3)
-    Pot       /= par.UNIT_V**2
     return Pot
 
 
@@ -69,15 +73,18 @@ def DiskPotential():
 # input      : None
 # output     : potential 3D array including ghost zone
 # **********************************************************************
-def BulgePotential():
-    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
-    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
-    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
+def BulgePotential(origin):
+    if origin is False:
+       Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+       Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+       Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
-    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+       X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+    else:
+       R = 0.
+
     Pot        = -par.NEWTON_G*par.BulgeMass
     Pot       /= R+par.d_bulge
-    Pot       /= par.UNIT_V**2
     return Pot
   
 
@@ -87,27 +94,48 @@ def BulgePotential():
 # output     : gas density 3D array but excluding ghost zone (g/cm**3)
 # **********************************************************************
 def TotPotGasDensity():
-    TotalPot     = HaloPotential ()
-    TotalPot    += DiskPotential ()
-    TotalPot    += BulgePotential()
+    TotPot           = HaloPotential (False)
+    TotPot          += DiskPotential (False)
+    TotPot          += BulgePotential(False)
 
-    
+    TotPotCenter     = HaloPotential (True)
+    TotPotCenter    += DiskPotential (True)
+    TotPotCenter    += BulgePotential(True)
 
-    GasDensity   = np.exp(-(TotalPot-par.PotCenter)/par.Cs**2)
+
+    GasDensity   = np.exp(-(TotPot-TotPotCenter)/par.Cs**2)
     GasDensity  *= par.PeakGasMassDensity
  
-    PotNx = TotalPot.shape[0]
-    PotNy = TotalPot.shape[1]
-    PotNz = TotalPot.shape[2]
+    PotNx = TotPot.shape[0]
+    PotNy = TotPot.shape[1]
+    PotNz = TotPot.shape[2]
 
     # remove ghost zone inside `GasDensity`
     GasDensity   = GasDensity[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
     GasDensity   = GasDensity[:, par.GRA_GHOST_SIZE:PotNy-par.GRA_GHOST_SIZE, :]
     GasDensity   = GasDensity[:, :, par.GRA_GHOST_SIZE:PotNz-par.GRA_GHOST_SIZE]
 
-    return GasDensity, TotalPot
+    return GasDensity, TotPot
 
 
+def Truncate(GasDensity, Pot):
+    # truncate density
+    DensityRatio = 500.
+
+    DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/DensityRatio, dtype=par.Precision)
+
+    GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > DensityRatio, DensOutSide, GasDensity)
+
+    # truncate potential
+    TotPotCenter     = HaloPotential (True)
+    TotPotCenter    += DiskPotential (True)
+    TotPotCenter    += BulgePotential(True)
+
+    PotOutside  = TotPotCenter + par.Cs**2*np.log(DensityRatio)*np.full(Pot.shape, 1., dtype=par.Precision)
+
+    Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(DensityRatio), PotOutside, Pot)
+
+    return GasDensity, Pot
 
 # **********************************************************************
 # description: 

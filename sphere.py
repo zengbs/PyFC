@@ -13,7 +13,9 @@ def SetIC( ):
     ############   Fluid  ##############
     ####################################
 
-    GasRho, TotPot  = TotPotGasDensity()
+    GasRho, TotPot = TotPotGasDensity()
+    GasRho, TotPot = Truncate(GasRho, TotPot)
+
     GasPres = GasRho*par.Cs**2
     GasVelX = GasVelY = GasVelZ = np.zeros(GasRho.shape, dtype=par.Precision)
 

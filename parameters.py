@@ -10,10 +10,10 @@ def Parameters():
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
   global SphereRadius, DensRatio, Center
-  global PeakElectronNumberDensity, Temperature, PotCenter, PeakGasMassDensity
+  global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs
-  global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E
+  global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
 
   ##########################
   ###    Unit (cgs)      ###
@@ -21,6 +21,7 @@ def Parameters():
   UNIT_D = 1e-24            # mass density
   UNIT_V = 29979245800.     # velocity
   UNIT_L = 3.08567758149e21 # length
+  UNIT_T = UNIT_L / UNIT_V  # time
   UNIT_M = UNIT_D*UNIT_L**3 # mass
   UNIT_P = UNIT_D*UNIT_V**2 # energy density
   UNIT_E = UNIT_P*UNIT_L**3 # energy
@@ -42,7 +43,10 @@ def Parameters():
   Const_C                    = 29979245800.0
 
   # Gravitational constant
-  NEWTON_G                   = 1.0
+  NEWTON_G                   = 6.6743e-8
+  NEWTON_G                  /= UNIT_L**3
+  NEWTON_G                  *= UNIT_M
+  NEWTON_G                  *= UNIT_T**2
 
   # electron volt per erg
   Const_Erg2eV               = 6.2415e11
@@ -79,9 +83,9 @@ def Parameters():
   ###############################
 
   # Box size (kpc)
-  Lx = 4.0 
-  Ly = 4.0 
-  Lz = 4.0 
+  Lx = 50.0 
+  Ly = 50.0 
+  Lz = 50.0 
 
   Lx *= Const_kpc
   Ly *= Const_kpc
@@ -101,9 +105,6 @@ def Parameters():
 
   # initial temperature (K)
   Temperature = 2e6
-
-  # potential at the center of sphere
-  PotCenter = 0.
 
 
   # *** gravitational potential ***
@@ -150,9 +151,9 @@ def Parameters():
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 1024 
+  Ny = 1024 
+  Nz = 1024 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
