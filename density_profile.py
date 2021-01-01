@@ -13,9 +13,9 @@ import parameters as par
 # output     : 3D array stroing x, y, z, and radial distance
 # **********************************************************************
 def Create3DCoordinateArray(Nx, Ny, Nz):
-    Idx       = np.indices((Nz, Ny, Nx))[2]
-    Jdx       = np.indices((Nz, Ny, Nx))[1]
-    Kdx       = np.indices((Nz, Ny, Nx))[0]
+    Idx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[2]
+    Jdx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[1]
+    Kdx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[0]
               
     X         = (Idx+0.5)*par.delta[2]-par.Center[2]
     Y         = (Jdx+0.5)*par.delta[1]-par.Center[1]
