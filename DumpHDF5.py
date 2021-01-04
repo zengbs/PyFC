@@ -1,7 +1,7 @@
 import numpy as np
 import h5py
 
-def _HDF5(out):
+def HDF5(out, filename, boxsize):
 
     # Number of cells along x/y/z
     Nx = out.shape[0] 
@@ -14,7 +14,7 @@ def _HDF5(out):
     # Left edge and right edge coordinates of the desired
     # simulation domain which will be used in GAMER.
     le = np.zeros(3) # [0 0 0]
-    re = np.ones(3)  # [1 1 1]
+    re = np.array(boxsize)  # [1 1 1]
     
     # Cell spacing
     delta = (re-le)/ddims  # [1/128 1/128 1/128]
@@ -42,7 +42,6 @@ def _HDF5(out):
 
     Dens, MomX, MomY, MomZ, Engy = Pri2Con( Rho, Ux, Uy, Uz, Pres )
   
-    filename = "Hydro_IC"
 
     f = h5py.File(filename,"w")
 

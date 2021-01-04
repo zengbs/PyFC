@@ -803,8 +803,8 @@ class FractalCube:
 
         return self._returner(cube, out)
 
-    #def write_cube(self, fc=None, fname='UM_IC', app=True, prec='double'):
-    def write_cube(self, fc=None, app=True, prec='double'):
+    def write_cube(self, fc=None, fname='UM_IC', app=True, prec='double', boxsize=[1.,1.,1.]):
+    #def write_cube(self, fc=None, app=True, prec='double'):
         """
         Writes out a fractal cube data file in little endian, 
         double precision. Care is taken not to overwrite existing files.
@@ -834,8 +834,9 @@ class FractalCube:
         else:
             ValueError('Unknown prec ' + prec)
 
+        hdf5.HDF5(out, fname, boxsize)
 
-        return out
+        #return out
 
     def _returner(self, result, out):
         """ 
