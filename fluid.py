@@ -7,13 +7,13 @@ import numpy as np
 # output     : sound speed (cm/s)
 # **************************************************
 
-
-def Tem2Cs( Temperature ):
+def Tem2Eta( Temperature ):
     eta  = par.Const_kB*Temperature
     eta /= par.Const_AtomicMassUnit*par.Const_MolecularWeight
     eta /= par.Const_C**2
-    eta /= par.Const_Erg2eV
+    return eta
 
+def Eta2Cs( eta ):
     h = 2.5*eta + np.sqrt( 2.25 * eta**2 + 1.0 )                                                                                          
     hTilde = 2.5*eta + 2.25*eta*eta/(1+np.sqrt(1+2.25*eta**2))
     a = eta *( 5.0*h - 8.0*eta )

@@ -13,13 +13,16 @@ import parameters as par
 # output     : 3D array stroing x, y, z, and radial distance
 # **********************************************************************
 def Create3DCoordinateArray(Nx, Ny, Nz):
-    Idx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[2]
-    Jdx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[1]
-    Kdx       = np.indices((Nz, Ny, Nx), dtype=par.Precision)[0]
+    Idx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[1]
+    Jdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[2]
+    Kdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[0]
               
-    X         = (Idx+0.5)*par.delta[2]-par.Center[2]
-    Y         = (Jdx+0.5)*par.delta[1]-par.Center[1]
-    Z         = (Kdx+0.5)*par.delta[0]-par.Center[0] 
+    X         = Idx-par.GRA_GHOST_SIZE+0.5-par.Nx*0.5
+    Y         = Jdx-par.GRA_GHOST_SIZE+0.5-par.Ny*0.5
+    Z         = Kdx-par.GRA_GHOST_SIZE+0.5-par.Nz*0.5
+    X        *= par.delta[0]
+    Y        *= par.delta[1]
+    Z        *= par.delta[2]
     R         = np.sqrt(X**2+Y**2+Z**2)
     return X, Y, Z, R
 
@@ -38,7 +41,6 @@ def HaloPotential(origin):
        X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
     else:
        R          = 0.
-
     Pot        = par.V_halo**2
     Pot       *= np.log(R**2+par.d_halo**2)
     return Pot
@@ -62,7 +64,7 @@ def DiskPotential(origin):
     Var1       = np.sqrt(Z**2+par.b**2)
     Var2       = par.a + Var1
     Var3       = X**2 + Y**2 + Var2**2
-   
+
     Pot        = -par.NEWTON_G*par.DiskMass
     Pot       /= np.sqrt(Var3)
     return Pot
@@ -102,10 +104,15 @@ def TotPotGasDensity():
     TotPotCenter    += DiskPotential (True)
     TotPotCenter    += BulgePotential(True)
 
+    Nx         = par.Nx+2*par.GRA_GHOST_SIZE
+    Ny         = par.Ny+2*par.GRA_GHOST_SIZE
+    Nz         = par.Nz+2*par.GRA_GHOST_SIZE
 
-    GasDensity   = np.exp(-(TotPot-TotPotCenter)/par.Cs**2)
+    X, Y, Z, R = Create3DCoordinateArray(Nx, Ny, Nz)
+
+    GasDensity   = np.exp(-(TotPot-TotPotCenter)/par.Eta)
     GasDensity  *= par.PeakGasMassDensity
- 
+    print(par.PeakGasMassDensity) 
     PotNx = TotPot.shape[0]
     PotNy = TotPot.shape[1]
     PotNz = TotPot.shape[2]
@@ -119,21 +126,19 @@ def TotPotGasDensity():
 
 
 def Truncate(GasDensity, Pot):
-    # truncate density
-    DensityRatio = 500.
 
-    DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/DensityRatio, dtype=par.Precision)
+    DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/par.DensityRatio, dtype=par.Precision)
 
-    GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > DensityRatio, DensOutSide, GasDensity)
+    GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio, DensOutSide, GasDensity)
 
     # truncate potential
     TotPotCenter     = HaloPotential (True)
     TotPotCenter    += DiskPotential (True)
     TotPotCenter    += BulgePotential(True)
 
-    PotOutside  = TotPotCenter + par.Cs**2*np.log(DensityRatio)*np.full(Pot.shape, 1., dtype=par.Precision)
+    PotOutside  = TotPotCenter + par.Cs**2*np.log(par.DensityRatio)*np.full(Pot.shape, 1., dtype=par.Precision)
 
-    Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(DensityRatio), PotOutside, Pot)
+    Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(par.DensityRatio), PotOutside, Pot)
 
     return GasDensity, Pot
 
@@ -170,13 +175,13 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, FractalDensity, FractalUxyz )
     PotInBoxExtendZ = np.tile(PotOnEquator,(par.Nz,1,1))
 
     # Construct indices array
-    Idx = np.indices((par.Nz, par.Ny, par.Nx))[2]
-    Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
-    Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
+    Idx = np.indices((par.Nx, par.Ny, par.Nz))[0]
+    Jdx = np.indices((par.Nx, par.Ny, par.Nz))[1]
+    Kdx = np.indices((par.Nx, par.Ny, par.Nz))[2]
 
-    X   = (Idx+0.5)*par.delta[2]-par.Center[2]
+    X   = (Idx+0.5)*par.delta[0]-par.Center[0]
     Y   = (Jdx+0.5)*par.delta[1]-par.Center[1]
-    Z   = (Kdx+0.5)*par.delta[0]-par.Center[0] 
+    Z   = (Kdx+0.5)*par.delta[2]-par.Center[2] 
     R   = np.sqrt(X**2+Y**2)
 
 
@@ -232,3 +237,14 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, FractalDensity, FractalUxyz )
     ISM[3] *= FractalUxyz
 
     return ISM
+
+#x=0.046875
+#y=0.046875
+#z=0.046875
+#par.Parameters()
+#
+#print(HaloPotential(x,y,z))
+#print(DiskPotential(x,y,z))
+#print(BulgePotential(x,y,z))
+#ToPot = HaloPotential(0,0,0)+DiskPotential(0,0,0)+BulgePotential(0,0,0)
+#print(ToPot)

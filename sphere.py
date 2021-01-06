@@ -14,9 +14,9 @@ def SetIC( ):
     ####################################
 
     GasRho, TotPot = TotPotGasDensity()
-    GasRho, TotPot = Truncate(GasRho, TotPot)
+    #GasRho, TotPot = Truncate(GasRho, TotPot)
 
-    GasPres = GasRho*par.Cs**2
+    GasPres = GasRho*par.Eta
     GasVelX = GasVelY = GasVelZ = np.zeros(GasRho.shape, dtype=par.Precision)
 
     # convert primitive to conservative variables

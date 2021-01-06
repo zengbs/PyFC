@@ -1,5 +1,5 @@
 import numpy as np
-from fluid import Tem2Cs
+from fluid import Eta2Cs, Tem2Eta
 
 
 def Parameters():
@@ -9,10 +9,10 @@ def Parameters():
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
-  global SphereRadius, DensRatio, Center
+  global SphereRadius, DensityRatio, Center
   global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
-  global Cs
+  global Cs, Eta
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
 
   ##########################
@@ -36,14 +36,14 @@ def Parameters():
   # molecular weight
   Const_MolecularWeight      = 0.61
 
-  # The Boltzmann constant (eV/K)
-  Const_kB                   = 8.6173303e-5
+  # The Boltzmann constant (erg/K)
+  Const_kB                   = 1.38064852e-16
 
   # Speed of light (cm/s)
   Const_C                    = 29979245800.0
 
   # Gravitational constant
-  NEWTON_G                   = 6.6743e-8
+  NEWTON_G                   = 6.6738e-8
   NEWTON_G                  /= UNIT_L**3
   NEWTON_G                  *= UNIT_M
   NEWTON_G                  *= UNIT_T**2
@@ -52,7 +52,7 @@ def Parameters():
   Const_Erg2eV               = 6.2415e11
 
   # solar mass (g)
-  Const_SolarMass            = 1.9891e33
+  Const_SolarMass            = 1.9885e33
 
   # kpc (cm)
   Const_kpc                  = 3.08567758149e21
@@ -83,9 +83,9 @@ def Parameters():
   ###############################
 
   # Box size (kpc)
-  Lx = 50.0 
-  Ly = 50.0 
-  Lz = 50.0 
+  Lx = 5.0 
+  Ly = 5.0 
+  Lz = 5.0 
 
   Lx *= Const_kpc
   Ly *= Const_kpc
@@ -98,7 +98,7 @@ def Parameters():
   SphereRadius = 0.45*Lx
 
   # density ratio on both sides of the surface of the sphere
-  DensRatio = 1.
+  DensityRatio = 600.
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
@@ -151,14 +151,14 @@ def Parameters():
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 1024 
-  Ny = 1024 
-  Nz = 1024 
+  Nx = 512 
+  Ny = 512 
+  Nz = 512 
   N = np.array([Nx, Ny, Nz])
 
-  if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
-     print("Nx/y/z % 16 != 0")
-     exit()
+  #if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
+  #   print("Nx/y/z % 16 != 0")
+  #   exit()
 
   ###############################
   ###  Derived parameters     ###
@@ -167,10 +167,10 @@ def Parameters():
   # Left edge and right edge coordinates of the desired
   # simulation domain which will be used in GAMER. (Normalized by CoreRadius_D)                                                        
   le = np.array([ 0.0,  0.0,  0.0])
-  re = np.array([  Lz,   Ly,   Lx])
+  re = np.array([  Lx,   Ly,   Lz])
       
   # Cell spacing (normalized by CoreRadius_D)
-  N      = np.array([Nz, Ny, Nx], dtype=Precision)
+  N      = np.array([Nx, Ny, Nz], dtype=Precision)
   if Precision is 'float32':
      delta  = (re-le)/N.astype(np.float32)
   else:
@@ -184,8 +184,9 @@ def Parameters():
   PeakGasMassDensity /= UNIT_D
 
   # physical coordinate of center of sphere (origin is at corner) (kpc)
-  Center = np.array([Lz,Ly,Lx])*0.5
+  Center = np.array([Lx,Ly,Lz])*0.5
 
   # sound speed
-  Cs = Tem2Cs(Temperature)
+  Eta = Tem2Eta( Temperature )
+  Cs = Eta2Cs( Eta )
   Cs /= UNIT_V
