@@ -7,30 +7,22 @@ import sys
 import time
 
 
-def SetIC( ):
+def SetIC( FractalDensity, FractalUxyz ):
 
     ####################################
     ############   Fluid  ##############
     ####################################
 
-    GasRho, TotPot = TotPotGasDensity()
-    #GasRho, TotPot = Truncate(GasRho, TotPot)
+    GasRho,     TotPot     = TotPotGasDensity()
+    TrunGasRho, TrunTotPot = Truncate(GasRho, TotPot)
 
-    GasPres = GasRho*par.Eta
+    FractalTrunGasRho = np.where(GasRho == TrunGasRho, TrunGasRho*FractalDensity, TrunGasRho )
+
+    TrunGasPres        = TrunGasRho*par.Eta
+
     GasVelX = GasVelY = GasVelZ = np.zeros(GasRho.shape, dtype=par.Precision)
 
     # convert primitive to conservative variables
-    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( GasRho, GasVelX, GasVelY, GasVelZ, GasPres  )
+    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( FractalTrunGasRho, GasVelX, GasVelY, GasVelZ, TrunGasPres  )
 
     return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, TotPot
-
-    ####################################
-    ##########      ISM     ############
-    ####################################
-    #PotInBoxCopy    = np.copy(PotInBox)
-    #FluidInBoxCopy  = np.copy(FluidInBox)
-    #Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
-    #ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, FractalDensity,  FractalUxyz )
-    #ISM_Temp        = ISM[4]/ISM[0]
-
-    #ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])

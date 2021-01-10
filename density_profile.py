@@ -112,7 +112,7 @@ def TotPotGasDensity():
 
     GasDensity   = np.exp(-(TotPot-TotPotCenter)/par.Eta)
     GasDensity  *= par.PeakGasMassDensity
-    print(par.PeakGasMassDensity) 
+
     PotNx = TotPot.shape[0]
     PotNy = TotPot.shape[1]
     PotNz = TotPot.shape[2]
@@ -125,6 +125,11 @@ def TotPotGasDensity():
     return GasDensity, TotPot
 
 
+# **********************************************************************
+# description: truncation
+# input      : None
+# output     : 
+# **********************************************************************
 def Truncate(GasDensity, Pot):
 
     DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/par.DensityRatio, dtype=par.Precision)
@@ -141,110 +146,3 @@ def Truncate(GasDensity, Pot):
     Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(par.DensityRatio), PotOutside, Pot)
 
     return GasDensity, Pot
-
-# **********************************************************************
-# description: 
-# input      :
-# output     : 
-# **********************************************************************
-def NumericalISM( PotInBox, FluidInBox, PresInBox, FractalDensity, FractalUxyz ):
-
-    # create an array stored ISM
-    ISM       = np.zeros((5, par.Nz, par.Ny, par.Nx), dtype=par.Precision)
-
-    # unnormalized by `par.Const_C**2`
-    PotInBox *= par.Const_C**2
-
-    # the box storing potential includes ghost zone
-    PotNz     = par.Nz + 2*par.GRA_GHOST_SIZE
-    PotNy     = par.Ny + 2*par.GRA_GHOST_SIZE
-    PotNx     = par.Nx + 2*par.GRA_GHOST_SIZE
-
-    # remove ghost zone inside `PotInBox`
-    PotInBox  = PotInBox[par.GRA_GHOST_SIZE:PotNx-par.GRA_GHOST_SIZE, :, :]
-    PotInBox  = PotInBox[:, par.GRA_GHOST_SIZE:PotNy-par.GRA_GHOST_SIZE, :]
-    PotInBox  = PotInBox[:, :, par.GRA_GHOST_SIZE:PotNz-par.GRA_GHOST_SIZE]
-
-    # extract the potential values on the equator
-    if par.Nz%2 == 0:
-       PotOnEquator = 0.5*( PotInBox[:,:,int(par.Nz/2-1)] + PotInBox[:,:,int(par.Nz/2)] )
-    else:
-       PotOnEquator = PotInBox[:,:,int((par.Nz-1)*0.5)]
-
-    # Construct an array by repeating `PotOnEquator` along z-direction
-    PotInBoxExtendZ = np.tile(PotOnEquator,(par.Nz,1,1))
-
-    # Construct indices array
-    Idx = np.indices((par.Nx, par.Ny, par.Nz))[0]
-    Jdx = np.indices((par.Nx, par.Ny, par.Nz))[1]
-    Kdx = np.indices((par.Nx, par.Ny, par.Nz))[2]
-
-    X   = (Idx+0.5)*par.delta[0]-par.Center[0]
-    Y   = (Jdx+0.5)*par.delta[1]-par.Center[1]
-    Z   = (Kdx+0.5)*par.delta[2]-par.Center[2] 
-    R   = np.sqrt(X**2+Y**2)
-
-
-    # expression below have assumed that the potential at the center of sphere is zero
-    if par.Case == "Mukherjee":
-       ISM[0] = par.ISM0   * np.exp( -( PotInBox -  PotInBoxExtendZ*par.Epsilon**2 )/par.Sigma_t**2 )
-    if par.Case == "Standard":
-       a = par.a0 * np.exp(-np.abs(Z)/par.z0)
-       ISM[0] = par.PeakNumberDensity * np.exp( -( PotInBox -  PotInBoxExtendZ*a**2           )/par.Sigma_t**2 )
-
-#####################
-#    CosTheta = X/R
-#    SinTheta = Y/R
-#    fig, ax = plt.subplots(1,1)
-#    #ax[0].imshow(np.flipud(X[int(par.Nz/2),:,:]), interpolation="None")
-#    #ax[1].imshow(np.flipud(Y[int(par.Nz/2),:,:]), interpolation="None")
-#    #ax[2].imshow(np.flipud(CosTheta[int(par.Nz/2),:,:]), interpolation="None")
-#    cbr=ax.imshow(PresInBox[int(par.Nz/2),:,:], interpolation="None")
-#    #ax[1].imshow(Y[int(par.Nz/2),:,:], interpolation="None")
-#    #ax[2].imshow(CosTheta[int(par.Nz/2),:,:], interpolation="None")
-#    #cbr=ax[3].imshow(np.flipud(SinTheta[int(par.Nz/2),:,:]), interpolation="None")
-#    fig.colorbar(cbr)
-#    plt.show() 
-#####################
-
-
-
-    Diff_Phi_R = np.abs( np.gradient(PotInBox,axis=2) * X/R + np.gradient(PotInBox,axis=1) * Y/R )
-    if par.Case == "Mukherjee":
-       VelocityPhi      = par.Epsilon * np.sqrt( R * Diff_Phi_R )
-    if par.Case == "Standard":
-       VelocityPhi      = par.a0 * np.sqrt( R * Diff_Phi_R )
-       VelocityPhi_ExpZ = VelocityPhi * np.exp(-np.abs(Z)/par.z0) 
-
-    CosTheta = X/R
-    SinTheta = Y/R
-
-    # `PotInBox` have been unnormalized by `Const_C**2`
-    if par.Case == "Mukherjee":
-       ISM[1] = VelocityPhi * SinTheta / par.Const_C
-       ISM[2] = VelocityPhi * CosTheta / par.Const_C
-    if par.Case == "Standard":
-       ISM[1] = VelocityPhi_ExpZ * SinTheta / par.Const_C
-       ISM[2] = VelocityPhi_ExpZ * CosTheta / par.Const_C
-
-    ISM[3] = 0
-    ISM[4] = PresInBox
-
-    # Fractalize mass density
-    ISM[0] *= FractalDensity
-    ISM[1] *= FractalUxyz 
-    ISM[2] *= FractalUxyz
-    ISM[3] *= FractalUxyz
-
-    return ISM
-
-#x=0.046875
-#y=0.046875
-#z=0.046875
-#par.Parameters()
-#
-#print(HaloPotential(x,y,z))
-#print(DiskPotential(x,y,z))
-#print(BulgePotential(x,y,z))
-#ToPot = HaloPotential(0,0,0)+DiskPotential(0,0,0)+BulgePotential(0,0,0)
-#print(ToPot)

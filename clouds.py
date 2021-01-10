@@ -834,9 +834,9 @@ class FractalCube:
         else:
             ValueError('Unknown prec ' + prec)
 
-        hdf5.HDF5(out, fname, boxsize)
+        #hdf5.HDF5(out, fname, boxsize)
 
-        #return out
+        return out
 
     def _returner(self, result, out):
         """ 

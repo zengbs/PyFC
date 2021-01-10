@@ -9,7 +9,7 @@ def Parameters():
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
-  global SphereRadius, DensityRatio, Center
+  global DensityRatio, Center
   global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs, Eta
@@ -94,11 +94,8 @@ def Parameters():
   Ly /= UNIT_L
   Lz /= UNIT_L
 
-  # Sphere radius
-  SphereRadius = 0.45*Lx
-
   # density ratio on both sides of the surface of the sphere
-  DensityRatio = 600.
+  DensityRatio = 400.
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
@@ -156,9 +153,9 @@ def Parameters():
   Nz = 512 
   N = np.array([Nx, Ny, Nz])
 
-  #if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
-  #   print("Nx/y/z % 16 != 0")
-  #   exit()
+  if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
+     print("Nx/y/z % 16 != 0")
+     exit()
 
   ###############################
   ###  Derived parameters     ###
