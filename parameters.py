@@ -14,6 +14,7 @@ def Parameters():
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs, Eta
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
+  global dens_FractalOn, Uxyz_FractalOn
 
   ##########################
   ###    Unit (cgs)      ###
@@ -63,19 +64,21 @@ def Parameters():
 
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
-  dens_fromfile = None
-  dens_kmin     = 6.0
-  dens_mean     = 1.0  
-  dens_sigma    = np.sqrt(5.0)
-  dens_beta     = -5.0/3.0
+  dens_FractalOn = True
+  dens_fromfile  = None
+  dens_kmin      = 6.0
+  dens_mean      = 1.0  
+  dens_sigma     = 0.5*np.sqrt(5.0)
+  dens_beta      = -5.0/3.0
 
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
-  Uxyz_fromfile = None
-  Uxyz_kmin     = 3.0
-  Uxyz_mean     = 1.0  
-  Uxyz_sigma    = 10000000.0 / np.sqrt(3.0) / Const_C
-  Uxyz_beta     = -5.0/3.0
+  Uxyz_FractalOn = False
+  Uxyz_fromfile  = None
+  Uxyz_kmin      = 3.0
+  Uxyz_mean      = 1.0  
+  Uxyz_sigma     = 10000000.0 / np.sqrt(3.0) / Const_C
+  Uxyz_beta      = -5.0/3.0
 
   ###############################
   ###  Physical parameters    ###
