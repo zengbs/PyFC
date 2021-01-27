@@ -49,8 +49,8 @@ def DumpFile():
            print("FractalUxyz does not exist!!")
            exit(0)
 
-    #FractalDensity = 1
-    FractalUxyz    = 1
+    FractalDensity = 1
+    FractalUxyz    = 0.0
 
 
     FractalU = np.power(FractalUxyz, 2.0)*3

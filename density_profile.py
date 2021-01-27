@@ -110,14 +110,17 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity
     PotInBoxExtendZ = np.tile(PotOnEquator,(par.Nz,1,1))
 
     # Construct indices array
-    Idx = np.indices((par.Nz, par.Ny, par.Nx))[2]
-    Jdx = np.indices((par.Nz, par.Ny, par.Nx))[1]
-    Kdx = np.indices((par.Nz, par.Ny, par.Nx))[0]
-
-    X   = (Idx+0.5)*delta[2]-Center[2]
-    Y   = (Jdx+0.5)*delta[1]-Center[1]
-    Z   = (Kdx+0.5)*delta[0]-Center[0] 
-    R   = np.sqrt(X**2+Y**2)
+    Idx       = np.indices((par.Nx, par.Ny, par.Nz), dtype=par.Precision)[1]
+    Jdx       = np.indices((par.Nx, par.Ny, par.Nz), dtype=par.Precision)[2]
+    Kdx       = np.indices((par.Nx, par.Ny, par.Nz), dtype=par.Precision)[0]
+              
+    X         = Idx+0.5-par.Nx*0.5
+    Y         = Jdx+0.5-par.Ny*0.5
+    Z         = Kdx+0.5-par.Nz*0.5
+    X        *= delta[0]
+    Y        *= delta[1]
+    Z        *= delta[2]
+    R         = np.sqrt(X**2+Y**2)
 
 
     # expression below have assumed that the potential at the center of sphere is zero

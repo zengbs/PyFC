@@ -1,6 +1,6 @@
 
 LAST=`ls -l /projectZ/tseng/milkyway/data/ | wc -l`
-LAST=$(printf "%02d" $LAST)
+LAST=$(printf "%03d" $LAST)
 
 mkdir /projectZ/tseng/milkyway/data/$LAST
 source activate py2.7
