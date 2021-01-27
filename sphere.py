@@ -13,23 +13,13 @@ def SetIC( FractalDensity, FractalUxyz ):
     ############   Fluid  ##############
     ####################################
 
-    GasRho,     TotPot     = TotPotGasDensity()
-    TrunGasRho, TrunTotPot = Truncate(GasRho, TotPot)
+    GasRho  = GasDensity(FractalDensity)
 
-    if par.dens_FractalOn:
-       FractalTrunGasRho = np.where(GasRho == TrunGasRho, TrunGasRho*FractalDensity, TrunGasRho )
-    else:
-       FractalTrunGasRho = TrunGasRho 
+    GasPres = par.AmbientDens*par.Eta
 
-    TrunGasPres        = TrunGasRho*par.Eta
-
-    if par.Uxyz_FractalOn:
-       print("Not support yet!!")
-       exit(0)
-    else:
-       GasVelX = GasVelY = GasVelZ = np.zeros(GasRho.shape, dtype=par.Precision)
+    GasVelX = GasVelY = GasVelZ = 0
 
     # convert primitive to conservative variables
-    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( FractalTrunGasRho, GasVelX, GasVelY, GasVelZ, TrunGasPres  )
+    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( GasRho, GasVelX, GasVelY, GasVelZ, GasPres  )
 
-    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, TotPot
+    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy

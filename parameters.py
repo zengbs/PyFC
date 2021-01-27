@@ -6,12 +6,11 @@ def Parameters():
 
   global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit, Const_MolecularWeight, Const_SolarMass, Const_MolecularWeightPerElectron
   global Nx, Ny, Nz, Lx, Ly, Lz, delta
-  global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
-  global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
-  global Precision, GRA_GHOST_SIZE
-  global DensityRatio, Center
-  global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
-  global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
+  global Precision, AmbientDens
+  global dens_fromfile, dens_kmin, dens_mean, dens_sigma, dens_beta
+  global Uxyz_fromfile, Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta  
+  global Center
+  global Temperature
   global Cs, Eta
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
   global dens_FractalOn, Uxyz_FractalOn
@@ -66,9 +65,10 @@ def Parameters():
   # `None` stands for generating fractal cube by PyFC
   dens_FractalOn = True
   dens_fromfile  = None
-  dens_kmin      = 6.0
-  dens_mean      = 1.0  
-  dens_sigma     = 0.5*np.sqrt(5.0)
+  dens_kmin      = 16.66
+  #dens_mean      = 5.0
+  dens_mean      = 1
+  dens_sigma     = np.sqrt(5.0)
   dens_beta      = -5.0/3.0
 
   # Fractal parameters for Ux/y/z
@@ -97,63 +97,22 @@ def Parameters():
   Ly /= UNIT_L
   Lz /= UNIT_L
 
-  # density ratio on both sides of the surface of the sphere
-  DensityRatio = 400.
-
-  # peak electron number density (cm**-3)
-  PeakElectronNumberDensity = 2.
 
   # initial temperature (K)
-  Temperature = 2e6
-
-
-  # *** gravitational potential ***
-
-  # velocity dispersion of halo (km/s)
-  V_halo  = 131.5
-  V_halo *= 1e5 # km -> cm
-  V_halo /= UNIT_V
-
-  # distance (kpc)
-  d_halo     = 12.
-
-  d_halo *= Const_kpc
-  d_halo /= UNIT_L
-
-  # disk mass (solar mass)
-  DiskMass = 1e11
-  DiskMass *= Const_SolarMass
-  DiskMass /= UNIT_M
-  a = 6.50           # kpc
-  b = 0.26           # kpc
-
-  a *= Const_kpc
-  b *= Const_kpc
-  a /= UNIT_L     
-  b /= UNIT_L     
-
-  # bulge mass (solar mass)
-  BulgeMass = 3.4e10
-  BulgeMass *= Const_SolarMass
-  BulgeMass /= UNIT_M
-
-  d_bulge = 0.7      # kpc
-  d_bulge *= Const_kpc
-  d_bulge /= UNIT_L
+  Temperature = 3e6
+  AmbientDens = 3e-25
+  AmbientDens /= UNIT_D
 
   ############################
   ### Numerical parameters ###
   ############################
-  # ghost zone size for potential
-  GRA_GHOST_SIZE = 2
-
   # Floating-point precision
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 256 
+  Ny = 256 
+  Nz = 256 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
@@ -179,9 +138,6 @@ def Parameters():
   # molecular weight per electron
   Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
 
-  # peak gas mass density (g/cm**3)
-  PeakGasMassDensity  = Const_MolecularWeightPerElectron*PeakElectronNumberDensity*Const_AtomicMassUnit
-  PeakGasMassDensity /= UNIT_D
 
   # physical coordinate of center of sphere (origin is at corner) (kpc)
   Center = np.array([Lx,Ly,Lz])*0.5
