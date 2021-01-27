@@ -42,7 +42,7 @@ def Parameters():
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
   dens_fromfile = None
-  dens_kmin  = 6.0
+  dens_kmin  = 16.6
   dens_mean  = 1.0  
   dens_sigma = np.sqrt(5.0)
   dens_beta  = -5.0/3.0
@@ -61,9 +61,9 @@ def Parameters():
   ##########################
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 256 
+  Ny = 256 
+  Nz = 256 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
@@ -71,9 +71,9 @@ def Parameters():
      exit()
 
   # Box size (kpc)
-  Lx = 4.0 
-  Ly = 4.0 
-  Lz = 4.0 
+  Lx = 5.0 
+  Ly = 5.0 
+  Lz = 5.0 
 
   # Sphere radius
   SphereRadius = 0.45*Lx

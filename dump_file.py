@@ -50,7 +50,7 @@ def DumpFile():
            exit(0)
 
     #FractalDensity = 1
-    #FractalUxyz    = 1
+    FractalUxyz    = 1
 
 
     FractalU = np.power(FractalUxyz, 2.0)*3
