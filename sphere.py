@@ -229,9 +229,7 @@ def SphericalSphere( FractalDensity,  FractalUxyz ):
     FluidInBoxCopy  = np.copy(FluidInBox)
     Center = np.array([par.Lz,par.Ly,par.Lx])*0.5/par.CoreRadius_D
     ISM             = NumericalISM( PotInBoxCopy, FluidInBoxCopy, PresInBox, delta, Center, FractalDensity,  FractalUxyz )
-    ISM_Temp        = ISM[4]/ISM[0]
 
-    ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
     ###################################
     ######     
@@ -249,7 +247,12 @@ def SphericalSphere( FractalDensity,  FractalUxyz ):
     KT_mcSqr  /= par.Const_MeanMolecularWeight*par.Const_AtomMass*(par.Const_C)**2  # erg
     KT_mcSqr  /= par.Const_Erg2eV
 
-    ISM        = np.where( ISM_Temp < KT_mcSqr, ISM, FluidInBox )
+
+    ISM[0]     = np.where( ISM[4]/ISM[0] < KT_mcSqr, ISM[0]*FractalDensity, FluidInBox[0] )
+    ISM[0]     = np.where( ISM[4]/ISM[0] < 5.0*KT_mcSqr, ISM[0]               , FluidInBox[0] )
+    
+
+    ISM[0], ISM[1], ISM[2], ISM[3], ISM[4] = Pri2Con(ISM[0], ISM[1], ISM[2], ISM[3], ISM[4])
 
     FluidInBox = np.where( R<par.SphereRadius/par.CoreRadius_D, ISM, FluidInBox ) 
 

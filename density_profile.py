@@ -169,9 +169,9 @@ def NumericalISM( PotInBox, FluidInBox, PresInBox, delta, Center, FractalDensity
     ISM[4] = PresInBox
 
     # Fractalize mass density
-    ISM[0] *= FractalDensity
-    ISM[1] *= FractalUxyz 
-    ISM[2] *= FractalUxyz
-    ISM[3] *= FractalUxyz
+    #ISM[0] *= FractalDensity
+    #ISM[1] *= FractalUxyz 
+    #ISM[2] *= FractalUxyz
+    #ISM[3] *= FractalUxyz
 
     return ISM
