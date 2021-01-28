@@ -42,7 +42,7 @@ def Parameters():
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
   dens_fromfile = None
-  dens_kmin  = 16.6
+  dens_kmin  = 16.5
   dens_mean  = 1.0  
   dens_sigma = np.sqrt(5.0)
   dens_beta  = -5.0/3.0
