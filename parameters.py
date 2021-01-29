@@ -10,7 +10,7 @@ def Parameters():
   global dens_fromfile, dens_kmin, dens_mean, dens_sigma, dens_beta
   global Uxyz_fromfile, Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta  
   global Center
-  global Temperature
+  global AmbientTemperature
   global Cs, Eta
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
   global dens_FractalOn, Uxyz_FractalOn
@@ -66,8 +66,7 @@ def Parameters():
   dens_FractalOn = True
   dens_fromfile  = None
   dens_kmin      = 16.66
-  #dens_mean      = 5.0
-  dens_mean      = 1
+  dens_mean      = 1e2
   dens_sigma     = np.sqrt(5.0)
   dens_beta      = -5.0/3.0
 
@@ -99,8 +98,8 @@ def Parameters():
 
 
   # initial temperature (K)
-  Temperature = 3e6
-  AmbientDens = 3e-25
+  AmbientTemperature = 1e7
+  AmbientDens = 1e-25
   AmbientDens /= UNIT_D
 
   ############################
@@ -143,6 +142,6 @@ def Parameters():
   Center = np.array([Lx,Ly,Lz])*0.5
 
   # sound speed
-  Eta = Tem2Eta( Temperature )
+  Eta = Tem2Eta( AmbientTemperature )
   Cs = Eta2Cs( Eta )
   Cs /= UNIT_V
