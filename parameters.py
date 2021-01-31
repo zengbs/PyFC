@@ -66,7 +66,7 @@ def Parameters():
   dens_FractalOn = True
   dens_fromfile  = None
   dens_kmin      = 16.66
-  dens_mean      = 1e2
+  dens_mean      = 1.
   dens_sigma     = np.sqrt(5.0)
   dens_beta      = -5.0/3.0
 

@@ -39,14 +39,16 @@ def GasDensity(FractalDensity):
 
     AmbientDens = np.full(FractalDensity.shape, par.AmbientDens, dtype=par.Precision)
 
-    FractalDensity *= AmbientDens
+    #FractalDensity *= AmbientDens
     #FractalDensity *= AmbientDens*par.dens_mean
 
     InsideFractal = np.logical_and(-0.07*par.Lz<Z, Z<0.07*par.Lz)
 
-    GasDensity = np.where(InsideFractal, FractalDensity , AmbientDens)
+    GasDensity = np.where( InsideFractal, FractalDensity*1e-22/par.UNIT_D , AmbientDens )
 
-    GasDensity = np.where( GasDensity > AmbientDens, GasDensity, AmbientDens )
+    InsideFractal = np.logical_and(InsideFractal, GasDensity > AmbientDens*1e-22/par.UNIT_D)
+
+    GasDensity = np.where( InsideFractal, GasDensity, AmbientDens )
 
     #GasPres = par.AmbientDens*par.Eta
 
