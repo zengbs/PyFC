@@ -95,7 +95,7 @@ def Parameters():
   Lz /= UNIT_L
 
   # density ratio on both sides of the surface of the sphere
-  DensityRatio = 25000.
+  DensityRatio = 45000.
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
