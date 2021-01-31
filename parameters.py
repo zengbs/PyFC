@@ -83,9 +83,9 @@ def Parameters():
   ###############################
 
   # Box size (kpc)
-  Lx = 5.0 
-  Ly = 5.0 
-  Lz = 5.0 
+  Lx = 50.
+  Ly = 50.
+  Lz = 50.
 
   Lx *= Const_kpc
   Ly *= Const_kpc
@@ -95,7 +95,7 @@ def Parameters():
   Lz /= UNIT_L
 
   # density ratio on both sides of the surface of the sphere
-  DensityRatio = 400.
+  DensityRatio = 25000.
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
@@ -148,9 +148,9 @@ def Parameters():
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 256 
+  Ny = 256 
+  Nz = 256 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
