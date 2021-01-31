@@ -19,6 +19,8 @@ def DumpFile():
        fc.gen_cube()                           
        FractalDensity = pyFC.write_cube(fc=fc, app=True, prec='single')
        FractalDensity.tofile("FractalDensity")
+    elif par.dens_fromfile == 'off':
+       FractalDensity = 1.0
     else:
        if  os.path.isfile("FractalDensity"):
            FractalDensity = np.fromfile("FractalDensity",dtype=par.Precision)
@@ -39,6 +41,8 @@ def DumpFile():
        fc.gen_cube()                           
        FractalUxyz = pyFC.write_cube(fc=fc, app=True, prec='single')
        FractalUxyz.tofile("FractalUxyz")
+    elif par.dens_fromfile == 'off':
+       FractalUxyz = 0.0
     else:
        if  os.path.isfile("FractalUxyz"):
            FractalUxyz = np.fromfile("FractalUxyz",dtype=par.Precision)
