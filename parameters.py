@@ -74,7 +74,7 @@ def Parameters():
   Uxyz_fromfile = None
   Uxyz_kmin     = 5.0
   Uxyz_mean     = 1.0 / Const_C 
-  Uxyz_sigma    = 10000000.0 / Const_C
+  Uxyz_sigma    = 1000000.0 / Const_C
   Uxyz_beta     = -5.0/3.0
 
   ###############################

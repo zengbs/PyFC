@@ -5,8 +5,11 @@ import pyFC
 import os
 import sys
 from multiprocessing import Pool
+from threading import Thread
 
-def GetFractalDensity():
+par.Parameters()
+
+def GetFractalDensity(x):
     fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
                                    kmin=par.dens_kmin, mean=par.dens_mean,
                                    sigma=par.dens_sigma, beta=par.dens_beta)
@@ -17,7 +20,7 @@ def GetFractalDensity():
 
 
     # Ux
-def GetFractalUx():
+def GetFractalUx(x):
     fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
                                    kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
                                    sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
@@ -27,7 +30,7 @@ def GetFractalUx():
     return FractalUx
 
     # Uy
-def GetFractalUy():
+def GetFractalUy(x):
     fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
                                    kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
                                    sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
@@ -37,7 +40,7 @@ def GetFractalUy():
     return FractalUy
 
     # Uz
-def GetFractalUz():
+def GetFractalUz(x):
     fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
                                    kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
                                    sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
@@ -46,91 +49,67 @@ def GetFractalUz():
     FractalUz.tofile("FractalUz")
     return FractalUz
 
-def DumpFile():
+pool = Pool(processes=4)
 
-    ############################
-    ###   Fractal denisty   ####
-    ############################
-    if par.dens_fromfile is None:
-       GetFractalDensity()
-    elif par.dens_fromfile == 'off':
-       FractalDensity = 1.0
-    else:
-       if  os.path.isfile("FractalDensity"):
-           FractalDensity = np.fromfile("FractalDensity",dtype=par.Precision)
-           FractalDensity = FractalDensity.reshape(par.Nx,par.Ny,par.Nz)
-       else:
-           print("FractalDensity does not exist!!")
-           exit(0)
+############################
+###   Fractal denisty   ####
+############################
+result1 = pool.map_async(GetFractalDensity,range(1))
 
+############################
+###   Fractal Ux/y/z    ####
+############################
 
+result2 = pool.map_async(GetFractalUx,range(1))
+result3 = pool.map_async(GetFractalUy,range(1))
+result4 = pool.map_async(GetFractalUz,range(1))
 
-    ############################
-    ###   Fractal Ux/y/z    ####
-    ############################
+FractalDensity = np.array(result1.get())
+FractalUx      = np.array(result2.get())
+FractalUy      = np.array(result3.get())
+FractalUz      = np.array(result4.get())
 
-    if par.Uxyz_fromfile is None:
-       GetFractalUx()
-       GetFractalUy()
-       GetFractalUz()
-    elif par.Uxyz_fromfile == 'off':
-       FractalUx = 0.0
-       FractalUy = 0.0
-       FractalUz = 0.0
-    else:
-       if  os.path.isfile("FractalUx"):
-           FractalUx = np.fromfile("FractalUx",dtype=par.Precision)
-           FractalUx = FractalUx.reshape(par.Nx,par.Ny,par.Nz)
-       if  os.path.isfile("FractalUy"):
-           FractalUy = np.fromfile("FractalUy",dtype=par.Precision)
-           FractalUy = FractalUy.reshape(par.Nx,par.Ny,par.Nz)
-       if  os.path.isfile("FractalUz"):
-           FractalUz = np.fromfile("FractalUz",dtype=par.Precision)
-           FractalUz = FractalUz.reshape(par.Nx,par.Ny,par.Nz)
-       else:
-           print("FractalUxyz does not exist!!")
-           exit(0)
+FractalDensity.tofile("FractalDensity")
+FractalUx.tofile("FractalUx")
+FractalUy.tofile("FractalUy")
+FractalUz.tofile("FractalUz")
+
+print( "The varience of the fractal density = %e" % np.var (FractalDensity) )
+print( "The     mean of the fractal density = %e" % np.mean(FractalDensity) )
+print( "The varience of the fractal Ux      = %e" % np.var (FractalUx     ) )
+print( "The     mean of the fractal Ux      = %e" % np.mean(FractalUx     ) )
+print( "The varience of the fractal Uy      = %e" % np.var (FractalUy     ) )
+print( "The     mean of the fractal Uy      = %e" % np.mean(FractalUy     ) )
+print( "The varience of the fractal Uz      = %e" % np.var (FractalUz     ) )
+print( "The     mean of the fractal Uz      = %e" % np.mean(FractalUz     ) )
+
+sys.stdout.flush()
 
 
-    print( "The varience of the fractal density = %e" % np.var (FractalDensity) )
-    print( "The     mean of the fractal density = %e" % np.mean(FractalDensity) )
-    print( "The varience of the fractal Ux      = %e" % np.var (FractalUx     ) )
-    print( "The     mean of the fractal Ux      = %e" % np.mean(FractalUx     ) )
-    print( "The varience of the fractal Uy      = %e" % np.var (FractalUy     ) )
-    print( "The     mean of the fractal Uy      = %e" % np.mean(FractalUy     ) )
-    print( "The varience of the fractal Uz      = %e" % np.var (FractalUz     ) )
-    print( "The     mean of the fractal Uz      = %e" % np.mean(FractalUz     ) )
+#############################
+####     Dump density    ####
+#############################
+GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
 
-    sys.stdout.flush()
+FileName = "UM_IC"
 
+Fluid3D = np.zeros((5, par.Nx, par.Ny, par.Nz),dtype=par.Precision)
 
-    #############################
-    ####     Dump density    ####
-    #############################
-    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
+Fluid3D[0] = GasDens * par.UNIT_D
+Fluid3D[1] = GasMomX * par.UNIT_D * par.UNIT_V  
+Fluid3D[2] = GasMomY * par.UNIT_D * par.UNIT_V
+Fluid3D[3] = GasMomZ * par.UNIT_D * par.UNIT_V
+Fluid3D[4] = GasEngy * par.UNIT_P
+Fluid3D.tofile(FileName)
 
-    FileName = "UM_IC"
+#############################
+####     Dump potential   ###
+#############################
+FileName = "ExtPotTable"
 
-    Fluid3D = np.zeros((5, par.Nx, par.Ny, par.Nz),dtype=par.Precision)
+Potential *= par.UNIT_V**2
+Potential.tofile(FileName)
 
-    Fluid3D[0] = GasDens * par.UNIT_D
-    Fluid3D[1] = GasMomX * par.UNIT_D * par.UNIT_V  
-    Fluid3D[2] = GasMomY * par.UNIT_D * par.UNIT_V
-    Fluid3D[3] = GasMomZ * par.UNIT_D * par.UNIT_V
-    Fluid3D[4] = GasEngy * par.UNIT_P
-
-    Fluid3D.tofile(FileName)
-
-    #############################
-    ####     Dump potential   ###
-    #############################
-    FileName = "ExtPotTable"
-
-    Potential *= par.UNIT_V**2
-    Potential.tofile(FileName)
-
-par.Parameters()
-DumpFile()
 
 print("Nx                               = %d" % par.Nx                              )
 print("Ny                               = %d" % par.Ny                              )
