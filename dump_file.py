@@ -35,31 +35,56 @@ def DumpFile():
     ############################
 
     if par.Uxyz_fromfile is None:
+       # Ux
        fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
                                       kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
                                       sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
        fc.gen_cube()                           
-       FractalUxyz = pyFC.write_cube(fc=fc, app=True, prec='single')
-       FractalUxyz.tofile("FractalUxyz")
-    elif par.dens_fromfile == 'off':
-       FractalUxyz = 0.0
+       FractalUx = pyFC.write_cube(fc=fc, app=True, prec='single')
+       FractalUx.tofile("FractalUx")
+
+       # Uy
+       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+       fc.gen_cube()                           
+       FractalUy = pyFC.write_cube(fc=fc, app=True, prec='single')
+       FractalUy.tofile("FractalUy")
+
+       # Uz
+       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+       fc.gen_cube()                           
+       FractalUz = pyFC.write_cube(fc=fc, app=True, prec='single')
+       FractalUz.tofile("FractalUz")
+    elif par.Uxyz_fromfile == 'off':
+       FractalUx = 0.0
+       FractalUy = 0.0
+       FractalUz = 0.0
     else:
-       if  os.path.isfile("FractalUxyz"):
-           FractalUxyz = np.fromfile("FractalUxyz",dtype=par.Precision)
-           FractalUxyz = FractalUxyz.reshape(par.Nx,par.Ny,par.Nz)
+       if  os.path.isfile("FractalUx"):
+           FractalUx = np.fromfile("FractalUx",dtype=par.Precision)
+           FractalUx = FractalUx.reshape(par.Nx,par.Ny,par.Nz)
+       if  os.path.isfile("FractalUy"):
+           FractalUy = np.fromfile("FractalUy",dtype=par.Precision)
+           FractalUy = FractalUy.reshape(par.Nx,par.Ny,par.Nz)
+       if  os.path.isfile("FractalUz"):
+           FractalUz = np.fromfile("FractalUz",dtype=par.Precision)
+           FractalUz = FractalUz.reshape(par.Nx,par.Ny,par.Nz)
        else:
            print("FractalUxyz does not exist!!")
            exit(0)
 
 
-    FractalU = np.power(FractalUxyz, 2.0)*3
-
     print( "The varience of the fractal density = %e" % np.var (FractalDensity) )
     print( "The     mean of the fractal density = %e" % np.mean(FractalDensity) )
-    print( "The varience of the fractal Uxyz    = %e" % np.var (FractalUxyz   ) )
-    print( "The     mean of the fractal Uxyz    = %e" % np.mean(FractalUxyz   ) )
-    print( "The varience of the fractal U       = %e" % np.var (FractalU      ) )
-    print( "The     mean of the fractal U       = %e" % np.mean(FractalU      ) )
+    print( "The varience of the fractal Ux      = %e" % np.var (FractalUx     ) )
+    print( "The     mean of the fractal Ux      = %e" % np.mean(FractalUx     ) )
+    print( "The varience of the fractal Uy      = %e" % np.var (FractalUy     ) )
+    print( "The     mean of the fractal Uy      = %e" % np.mean(FractalUy     ) )
+    print( "The varience of the fractal Uz      = %e" % np.var (FractalUz     ) )
+    print( "The     mean of the fractal Uz      = %e" % np.mean(FractalUz     ) )
 
     sys.stdout.flush()
 
@@ -67,8 +92,7 @@ def DumpFile():
     #############################
     ####     Dump density    ####
     #############################
-    FractalUxyz = 1
-    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential = SetIC( FractalDensity, FractalUxyz )
+    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
 
     FileName = "UM_IC"
 

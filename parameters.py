@@ -63,7 +63,7 @@ def Parameters():
 
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
-  dens_fromfile = 'off'
+  dens_fromfile = None
   dens_kmin     = 6.0
   dens_mean     = 1.0  
   dens_sigma    = np.sqrt(5.0)
@@ -71,10 +71,10 @@ def Parameters():
 
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
-  Uxyz_fromfile = 'off'
-  Uxyz_kmin     = 3.0
-  Uxyz_mean     = 1.0  
-  Uxyz_sigma    = 10000000.0 / np.sqrt(3.0) / Const_C
+  Uxyz_fromfile = None
+  Uxyz_kmin     = 5.0
+  Uxyz_mean     = 1.0 / Const_C 
+  Uxyz_sigma    = 10000000.0 / Const_C
   Uxyz_beta     = -5.0/3.0
 
   ###############################
@@ -148,9 +148,9 @@ def Parameters():
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 256 
-  Ny = 256 
-  Nz = 256 
+  Nx = 512 
+  Ny = 512 
+  Nz = 512 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
