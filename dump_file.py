@@ -4,21 +4,55 @@ import parameters as par
 import pyFC
 import os
 import sys
+from multiprocessing import Pool
 
+def GetFractalDensity():
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                   kmin=par.dens_kmin, mean=par.dens_mean,
+                                   sigma=par.dens_sigma, beta=par.dens_beta)
+    fc.gen_cube()                           
+    FractalDensity = pyFC.write_cube(fc=fc, app=True, prec='single')
+    FractalDensity.tofile("FractalDensity")
+    return FractalDensity
+
+
+    # Ux
+def GetFractalUx():
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                   kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                   sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+    fc.gen_cube()                           
+    FractalUx = pyFC.write_cube(fc=fc, app=True, prec='single')
+    FractalUx.tofile("FractalUx")
+    return FractalUx
+
+    # Uy
+def GetFractalUy():
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                   kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                   sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+    fc.gen_cube()                           
+    FractalUy = pyFC.write_cube(fc=fc, app=True, prec='single')
+    FractalUy.tofile("FractalUy")
+    return FractalUy
+
+    # Uz
+def GetFractalUz():
+    fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
+                                   kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
+                                   sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
+    fc.gen_cube()                           
+    FractalUz = pyFC.write_cube(fc=fc, app=True, prec='single')
+    FractalUz.tofile("FractalUz")
+    return FractalUz
 
 def DumpFile():
 
     ############################
     ###   Fractal denisty   ####
     ############################
-
     if par.dens_fromfile is None:
-       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
-                                      kmin=par.dens_kmin, mean=par.dens_mean,
-                                      sigma=par.dens_sigma, beta=par.dens_beta)
-       fc.gen_cube()                           
-       FractalDensity = pyFC.write_cube(fc=fc, app=True, prec='single')
-       FractalDensity.tofile("FractalDensity")
+       GetFractalDensity()
     elif par.dens_fromfile == 'off':
        FractalDensity = 1.0
     else:
@@ -30,34 +64,15 @@ def DumpFile():
            exit(0)
 
 
+
     ############################
     ###   Fractal Ux/y/z    ####
     ############################
 
     if par.Uxyz_fromfile is None:
-       # Ux
-       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
-                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
-                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
-       fc.gen_cube()                           
-       FractalUx = pyFC.write_cube(fc=fc, app=True, prec='single')
-       FractalUx.tofile("FractalUx")
-
-       # Uy
-       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
-                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
-                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
-       fc.gen_cube()                           
-       FractalUy = pyFC.write_cube(fc=fc, app=True, prec='single')
-       FractalUy.tofile("FractalUy")
-
-       # Uz
-       fc = pyFC.LogNormalFractalCube(ni=par.Nx, nj=par.Ny, nk=par.Nz,
-                                      kmin=par.Uxyz_kmin, mean=par.Uxyz_mean,
-                                      sigma=par.Uxyz_sigma, beta=par.Uxyz_beta)
-       fc.gen_cube()                           
-       FractalUz = pyFC.write_cube(fc=fc, app=True, prec='single')
-       FractalUz.tofile("FractalUz")
+       GetFractalUx()
+       GetFractalUy()
+       GetFractalUz()
     elif par.Uxyz_fromfile == 'off':
        FractalUx = 0.0
        FractalUy = 0.0
