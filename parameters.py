@@ -72,9 +72,9 @@ def Parameters():
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
   Uxyz_fromfile = None
-  Uxyz_kmin     = 5.0
+  Uxyz_kmin     = 3.0
   Uxyz_mean     = 1.0 / Const_C 
-  Uxyz_sigma    = 1000000.0 / Const_C
+  Uxyz_sigma    = 10000000.0 / Const_C
   Uxyz_beta     = -5.0/3.0
 
   ###############################
@@ -95,7 +95,7 @@ def Parameters():
   Lz /= UNIT_L
 
   # density ratio on both sides of the surface of the sphere
-  DensityRatio = 45000.
+  DensityRatio = 25000.
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.

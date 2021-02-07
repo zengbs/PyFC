@@ -13,7 +13,9 @@ conda deactivate
 
 mv UM_IC                 $Folder/$LAST
 mv ExtPotTable           $Folder/$LAST
-#mv FractalDensity       $Folder/$LAST
-#mv FractalUxyz          $Folder/$LAST
+mv FractalDensity        $Folder/$LAST
+mv FractalUx             $Folder/$LAST
+mv FractalUy             $Folder/$LAST
+mv FractalUz             $Folder/$LAST
 cp *.py                  $Folder/$LAST 
 echo "Done"

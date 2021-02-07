@@ -130,10 +130,13 @@ def TotPotGasDensity():
 # input      : None
 # output     : 
 # **********************************************************************
-def Truncate(GasDensity, Pot):
+def Truncate(GasDensity, Pot, FractalUx, FractalUy, FractalUz ):
 
     DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/par.DensityRatio, dtype=par.Precision)
 
+    FractalUx    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUx)
+    FractalUy    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUy)
+    FractalUz    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUz)
     GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio, DensOutSide, GasDensity)
 
     # truncate potential
@@ -145,4 +148,4 @@ def Truncate(GasDensity, Pot):
 
     Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(par.DensityRatio), PotOutside, Pot)
 
-    return GasDensity, Pot
+    return GasDensity, Pot, FractalUx, FractalUy, FractalUz
