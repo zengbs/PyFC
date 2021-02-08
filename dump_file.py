@@ -54,20 +54,31 @@ pool = Pool(processes=4)
 ############################
 ###   Fractal denisty   ####
 ############################
-result1 = pool.map_async(GetFractalDensity,range(1))
+if par.dens_fromfile == None:
+   result1 = pool.map_async(GetFractalDensity,range(1))
 
 ############################
 ###   Fractal Ux/y/z    ####
 ############################
 
-result2 = pool.map_async(GetFractalUx,range(1))
-result3 = pool.map_async(GetFractalUy,range(1))
-result4 = pool.map_async(GetFractalUz,range(1))
+if par.Uxyz_fromfile == None:
+   result2 = pool.map_async(GetFractalUx,range(1))
+   result3 = pool.map_async(GetFractalUy,range(1))
+   result4 = pool.map_async(GetFractalUz,range(1))
 
-FractalDensity = np.array(result1.get())
-FractalUx      = np.array(result2.get())
-FractalUy      = np.array(result3.get())
-FractalUz      = np.array(result4.get())
+if par.dens_fromfile == None:
+   FractalDensity = np.array(result1.get())
+else:
+   FractalDensity = np.full( [par.Nx, par.Ny, par.Nz ], 1.0, dtype=par.Precision )
+
+if par.Uxyz_fromfile == None:
+   FractalUx      = np.array(result2.get())
+   FractalUy      = np.array(result3.get())
+   FractalUz      = np.array(result4.get())
+else:
+   FractalUx      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
+   FractalUy      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
+   FractalUz      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
 
 FractalDensity.tofile("FractalDensity")
 FractalUx.tofile("FractalUx")
