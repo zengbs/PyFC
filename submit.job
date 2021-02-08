@@ -1,0 +1,25 @@
+#!/bin/bash
+#PBS -M zengbs@gmail.com
+#PBS -q workq
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=30:00:00:00
+
+cd $PBS_O_WORKDIR
+
+source activate py2.7
+
+Folder=/projectZ/tseng/milkyway/data
+
+LAST=`ls $Folder|sort -n|tail -n1`
+LAST=`python -c "print(int(\"$LAST\")+1)"`
+LAST=$(printf "%03d" $LAST)
+
+mkdir                      $Folder/$LAST
+
+
+cp *.py                    $Folder/$LAST 
+
+cd $Folder/$LAST
+
+python dump_file.py |& tee log
+conda deactivate
