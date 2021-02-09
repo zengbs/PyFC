@@ -3,7 +3,7 @@ source activate py2.7
 Folder=/projectZ/tseng/milkyway/data
 
 LAST=`ls $Folder|sort -n|tail -n1`
-LAST=$(($LAST + 1))
+LAST=`python -c "print(int(\"$LAST\")+1)"`
 LAST=$(printf "%03d" $LAST)
 
 mkdir                      $Folder/$LAST
