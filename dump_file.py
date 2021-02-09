@@ -149,18 +149,18 @@ print("UNIT_T                           = %e" % par.UNIT_T                      
 print("UNIT_M                           = %e" % par.UNIT_M                          )
 print("UNIT_P                           = %e" % par.UNIT_P                          )
 print("UNIT_E                           = %e" % par.UNIT_E                          )
-print("DensityRatio                     = %e" % par.DensityRatio                    )
-print("PeakElectronNumberDensity        = %e" % par.PeakElectronNumberDensity       )
-print("Temperature                      = %e" % par.Temperature                     )
-print("V_halo                           = %e" % par.V_halo                          )
-print("d_halo                           = %e" % par.d_halo                          )
-print("DiskMass                         = %e" % par.DiskMass                        )
-print("a                                = %e" % par.a                               )
-print("b                                = %e" % par.b                               )
-print("BulgeMass                        = %e" % par.BulgeMass                       )
-print("d_bulge                          = %e" % par.d_bulge                         )
-print("Const_MolecularWeightPerElectron = %e" % par.Const_MolecularWeightPerElectron)
-print("PeakGasMassDensity               = %e" % par.PeakGasMassDensity              )
+
+
+
+
+
+
+
+
+
+
+
+
 print("CenterX                          = %e" % par.Center[0]                       )
 print("CenterY                          = %e" % par.Center[1]                       )
 print("CenterZ                          = %e" % par.Center[2]                       )

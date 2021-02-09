@@ -4,16 +4,18 @@ from fluid import Eta2Cs, Tem2Eta
 
 def Parameters():
 
-  global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit, Const_MolecularWeight, Const_SolarMass, Const_MolecularWeightPerElectron
+  global Const_kB, Const_C, NEWTON_G, Const_Erg2eV, Const_AtomicMassUnit, Const_MolecularWeight, Const_SolarMass
   global Nx, Ny, Nz, Lx, Ly, Lz, delta
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
   global DensityRatio, Center
-  global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
-  global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs, Eta
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
+  global Bulge_Rho0, Bulge_a, Bulge_r, Bulge_alpha, Bulge_q
+  global Halo_Rho0, Halo_a, Halo_alpha, Halo_beta, Halo_q
+  global Disk_Sigma, Disk_Rd, Disk_z0, Disk_z1, Disk_alpha0, Disk_alpha1
+  global ISM_Sigma, ISM_Rg, ISM_Rm, ISM_zg
 
   ##########################
   ###    Unit (cgs)      ###
@@ -55,7 +57,8 @@ def Parameters():
   Const_SolarMass            = 1.9885e33
 
   # kpc (cm)
-  Const_kpc                  = 3.08567758149e21
+  Const_pc                   = 3.08567758149e18
+  Const_kpc                  = 1e3*Const_pc
 
   ##########################
   #######   PyFC  ##########
@@ -63,7 +66,7 @@ def Parameters():
 
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
-  dens_fromfile = None
+  dens_fromfile = 'off'
   dens_kmin     = 6.0
   dens_mean     = 1.0  
   dens_sigma    = np.sqrt(5.0)
@@ -71,7 +74,7 @@ def Parameters():
 
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
-  Uxyz_fromfile = None
+  Uxyz_fromfile = 'off'
   Uxyz_kmin     = 1.0
   Uxyz_mean     = 1.0 / Const_C
   Uxyz_sigma    = 1e5 / Const_C
@@ -94,49 +97,68 @@ def Parameters():
   Ly /= UNIT_L
   Lz /= UNIT_L
 
-  # density ratio on both sides of the surface of the sphere
-  DensityRatio = 25000.
-
-  # peak electron number density (cm**-3)
-  PeakElectronNumberDensity = 2.
-
-  # initial temperature (K)
-  Temperature = 2e6
 
 
-  # *** gravitational potential ***
+  # Bulge
+  Bulge_Rho0  = 0.427 # M_sun * pc**-3
+  Bulge_a     = 1.0   # kpc
+  Bulge_r     = 1.9   # kpc
+  Bulge_alpha = 1.8
+  Bulge_q     = 0.6
 
-  # velocity dispersion of halo (km/s)
-  V_halo  = 131.5
-  V_halo *= 1e5 # km -> cm
-  V_halo /= UNIT_V
+  Bulge_a    *= Const_kpc
+  Bulge_r    *= Const_kpc
+  Bulge_a    /= UNIT_L
+  Bulge_r    /= UNIT_L
 
-  # distance (kpc)
-  d_halo     = 12.
+  Bulge_Rho0 *= Const_SolarMass*Const_pc**3
+  Bulge_Rho0 /= UNIT_M
 
-  d_halo *= Const_kpc
-  d_halo /= UNIT_L
+  #  Dark halo
+  Halo_Rho0   = 0.711 # M_sun * pc**-3
+  Halo_a      = 3.83  # kpc
+  Halo_alpha  = -2.0
+  Halo_beta   = 2.96
+  Halo_q      = 0.8
 
-  # disk mass (solar mass)
-  DiskMass = 1e11
-  DiskMass *= Const_SolarMass
-  DiskMass /= UNIT_M
-  a = 6.50           # kpc
-  b = 0.26           # kpc
+  Halo_a     *= Const_kpc
+  Halo_a     /= UNIT_L
 
-  a *= Const_kpc
-  b *= Const_kpc
-  a /= UNIT_L     
-  b /= UNIT_L     
+  Halo_Rho0  *= Const_SolarMass*Const_pc**3
+  Halo_Rho0  /= UNIT_M
 
-  # bulge mass (solar mass)
-  BulgeMass = 3.4e10
-  BulgeMass *= Const_SolarMass
-  BulgeMass /= UNIT_M
+  # Stellar disk
+  Disk_Sigma  = 1905*0.75 # M_sun * pc**-2
+  Disk_Rd     = 2.0       # kpc
+  Disk_z0     = 0.3       # kpc
+  Disk_z1     = 1.0       # kpc
+  Disk_alpha0 = 0.5
+  Disk_alpha1 = 1 - Disk_alpha0
 
-  d_bulge = 0.7      # kpc
-  d_bulge *= Const_kpc
-  d_bulge /= UNIT_L
+  Disk_z0     *= Const_kpc
+  Disk_z0     /= UNIT_L
+  Disk_z1     *= Const_kpc
+  Disk_z1     /= UNIT_L
+  Disk_Rd     *= Const_kpc
+  Disk_Rd     /= UNIT_L
+
+  # ISM
+  ISM_Sigma  = 1905-Disk_Sigma # M_sun * pc**-2
+  ISM_Rg     = 2*Disk_Rd       # kpc
+  ISM_Rm     = 4               # kpc
+  ISM_zg     = 0.8             # kpc
+
+  ISM_Rm     *= Const_kpc
+  ISM_Rm     /= UNIT_L
+  ISM_Rg     *= Const_kpc
+  ISM_Rg     /= UNIT_L
+  ISM_zg     *= Const_kpc
+  ISM_zg     /= UNIT_L
+
+  Disk_Sigma *= Const_SolarMass*Const_pc**2
+  Disk_Sigma /= UNIT_M
+  ISM_Sigma  *= Const_SolarMass*Const_pc**2
+  ISM_Sigma  /= UNIT_M
 
   ############################
   ### Numerical parameters ###
@@ -173,12 +195,6 @@ def Parameters():
   else:
      delta  = (re-le)/N.astype(np.float64)
 
-  # molecular weight per electron
-  Const_MolecularWeightPerElectron = 5.0*Const_MolecularWeight/(2.0+Const_MolecularWeight)
-
-  # peak gas mass density (g/cm**3)
-  PeakGasMassDensity  = Const_MolecularWeightPerElectron*PeakElectronNumberDensity*Const_AtomicMassUnit
-  PeakGasMassDensity /= UNIT_D
 
   # physical coordinate of center of sphere (origin is at corner) (kpc)
   Center = np.array([Lx,Ly,Lz])*0.5
