@@ -22,32 +22,42 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
     X        *= par.delta[0]
     Y        *= par.delta[1]
     Z        *= par.delta[2]
-    R         = np.sqrt(X**2+Y**2+Z**2)
-    return X, Y, Z, R
+    r         = np.sqrt(X**2+Y**2+Z**2)
+    R         = np.sqrt(X**2+Y**2)
+    return X, Y, Z, r, R
 
-def Bulge(R, z):
+def Bulge(z, R):
     m    = np.sqrt( R**2 + (z/par.Bulge_q)**2 )
     Rho  = par.Bulge_Rho0 * np.power( m/par.Bulge_a, -par.Bulge_alpha )
-    Rho *= np.exp( -( par.Bulge_m / par.Bulge_r )**2 )
+    Rho *= np.exp( -( m / par.Bulge_r )**2 )
     return Rho
 
-def DarkHaol(R,z):
+def DarkHaol(z, R):
     m    = np.sqrt( R**2 + (z/par.Halo_q)**2 )
     Rho  = par.Halo_Rho0*np.power( m / par.Halo_a, -par.Halo_alpha )
     Rho *= np.power( 1 + m/par.Halo_a, par.Halo_alpha - par.Halo_beta )
     return Rho
 
-def StellarDisk(R, z):
+def StellarDisk(z, R):
     Rho   = 0.5*par.Disk_alpha0 / par.Disk_z0 * np.exp( -np.absolute(z)/par.Disk_z0 ) 
     Rho  += 0.5*par.Disk_alpha1 / par.Disk_z1 * np.exp( -np.absolute(z)/par.Disk_z1 ) 
-    Rho  *= par.Disk_Sigma * np.exp( -R/par.Disk_R )
+    Rho  *= par.Disk_Sigma * np.exp( -R/par.Disk_Rd )
     return Rho
 
-def ISM(R, z):
+def ISM(z, R):
     Rho  = 0.5*par.ISM_Sigma/par.ISM_zg
     Rho *= np.exp( -R/par.ISM_Rg - par.ISM_Rm / R - np.absolute(z)/par.ISM_zg )
+    #Array=np.where(Rho**2>0.0, False, True)
+    #print(np.any(Array))
+    #exit(0)
     return Rho
 
 
-def TotGasDensity(R, Z):
-    TotalDendity = Bulge(R, z) + DarkHaol(R,z) + StellarDisk(R, z) + ISM(R, z)
+def TotGasDensity():
+    x, y, z, r, R = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz )
+    #TotalDensity = Bulge(z, R) + DarkHaol(z, R) + StellarDisk(z, R) + ISM(z, R)
+    #TotalDensity = Bulge(z, R) + StellarDisk(z, R)
+    TotalDensity = StellarDisk(z, R)
+    #TotalDensity = ISM(z, R) # x
+    #TotalDensity = Bulge(z, R)
+    return TotalDensity

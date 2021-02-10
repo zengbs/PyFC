@@ -10,7 +10,7 @@ def Parameters():
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
   global DensityRatio, Center
-  global Cs, Eta
+  global Cs, Eta, AmbientTemperature
   global UNIT_D, UNIT_V, UNIT_L, UNIT_M, UNIT_P, UNIT_E, UNIT_T
   global Bulge_Rho0, Bulge_a, Bulge_r, Bulge_alpha, Bulge_q
   global Halo_Rho0, Halo_a, Halo_alpha, Halo_beta, Halo_q
@@ -97,7 +97,7 @@ def Parameters():
   Ly /= UNIT_L
   Lz /= UNIT_L
 
-
+  AmbientTemperature = 1e10
 
   # Bulge
   Bulge_Rho0  = 0.427 # M_sun * pc**-3
@@ -111,8 +111,8 @@ def Parameters():
   Bulge_a    /= UNIT_L
   Bulge_r    /= UNIT_L
 
-  Bulge_Rho0 *= Const_SolarMass*Const_pc**3
-  Bulge_Rho0 /= UNIT_M
+  Bulge_Rho0 *= Const_SolarMass*Const_pc**-3
+  Bulge_Rho0 /= UNIT_D
 
   #  Dark halo
   Halo_Rho0   = 0.711 # M_sun * pc**-3
@@ -124,8 +124,8 @@ def Parameters():
   Halo_a     *= Const_kpc
   Halo_a     /= UNIT_L
 
-  Halo_Rho0  *= Const_SolarMass*Const_pc**3
-  Halo_Rho0  /= UNIT_M
+  Halo_Rho0  *= Const_SolarMass*Const_pc**-3
+  Halo_Rho0  /= UNIT_D
 
   # Stellar disk
   Disk_Sigma  = 1905*0.75 # M_sun * pc**-2
@@ -155,10 +155,10 @@ def Parameters():
   ISM_zg     *= Const_kpc
   ISM_zg     /= UNIT_L
 
-  Disk_Sigma *= Const_SolarMass*Const_pc**2
-  Disk_Sigma /= UNIT_M
-  ISM_Sigma  *= Const_SolarMass*Const_pc**2
-  ISM_Sigma  /= UNIT_M
+  Disk_Sigma *= Const_SolarMass*Const_pc**-2
+  Disk_Sigma /= UNIT_D*UNIT_L
+  ISM_Sigma  *= Const_SolarMass*Const_pc**-2
+  ISM_Sigma  /= UNIT_D*UNIT_L
 
   ############################
   ### Numerical parameters ###
@@ -167,12 +167,12 @@ def Parameters():
   GRA_GHOST_SIZE = 2
 
   # Floating-point precision
-  Precision = 'float32'
+  Precision = 'float64'
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 256 
+  Ny = 256 
+  Nz = 256 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
@@ -200,6 +200,6 @@ def Parameters():
   Center = np.array([Lx,Ly,Lz])*0.5
 
   # sound speed
-  Eta = Tem2Eta( Temperature )
+  Eta = Tem2Eta( AmbientTemperature )
   Cs = Eta2Cs( Eta )
   Cs /= UNIT_V

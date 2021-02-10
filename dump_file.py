@@ -100,7 +100,7 @@ sys.stdout.flush()
 #############################
 ####     Dump density    ####
 #############################
-GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Potential = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
+GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
 
 FileName = "UM_IC"
 
@@ -112,14 +112,6 @@ Fluid3D[2] = GasMomY * par.UNIT_D * par.UNIT_V
 Fluid3D[3] = GasMomZ * par.UNIT_D * par.UNIT_V
 Fluid3D[4] = GasEngy * par.UNIT_P
 Fluid3D.tofile(FileName)
-
-#############################
-####     Dump potential   ###
-#############################
-FileName = "ExtPotTable"
-
-Potential *= par.UNIT_V**2
-Potential.tofile(FileName)
 
 
 print("Nx                               = %d" % par.Nx                              )
