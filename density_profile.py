@@ -28,13 +28,15 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
 
 def Bulge(z, R):
     m    = np.sqrt( R**2 + (z/par.Bulge_q)**2 )
-    Rho  = par.Bulge_Rho0 * np.power( m/par.Bulge_a, -par.Bulge_alpha )
+    Rho  = par.Bulge_Rho0
+    Rho *= np.power( m/par.Bulge_a, -par.Bulge_alpha )
     Rho *= np.exp( -( m / par.Bulge_r )**2 )
     return Rho
 
 def DarkHaol(z, R):
     m    = np.sqrt( R**2 + (z/par.Halo_q)**2 )
-    Rho  = par.Halo_Rho0*np.power( m / par.Halo_a, -par.Halo_alpha )
+    Rho  = par.Halo_Rho0
+    Rho *= np.power( m / par.Halo_a, -par.Halo_alpha )
     Rho *= np.power( 1 + m/par.Halo_a, par.Halo_alpha - par.Halo_beta )
     return Rho
 
@@ -55,9 +57,5 @@ def ISM(z, R):
 
 def TotGasDensity():
     x, y, z, r, R = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz )
-    #TotalDensity = Bulge(z, R) + DarkHaol(z, R) + StellarDisk(z, R) + ISM(z, R)
-    #TotalDensity = Bulge(z, R) + StellarDisk(z, R)
-    TotalDensity = StellarDisk(z, R)
-    #TotalDensity = ISM(z, R) # x
-    #TotalDensity = Bulge(z, R)
+    TotalDensity = Bulge(z, R) + DarkHaol(z, R) + StellarDisk(z, R) + ISM(z, R)
     return TotalDensity
