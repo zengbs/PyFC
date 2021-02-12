@@ -16,11 +16,18 @@ def SetIC( FractalDensity, FractalUx, FractalUy, FractalUz ):
     GasRho,     TotPot     = TotPotGasDensity()
     TrunGasRho, TrunTotPot, TrunFractalUx, TrunFractalUy, TrunFractalUz = Truncate(GasRho, TotPot, FractalUx, FractalUy, FractalUz )
 
-    FractalTrunGasRho = np.where(GasRho == TrunGasRho, TrunGasRho*FractalDensity, TrunGasRho )
+    FracTrunGasRho       = np.where( par.PeakGasMassDensity / TrunGasRho > par.FracDensityRatio, TrunGasRho, TrunGasRho*FractalDensity )
 
-    TrunGasPres        = TrunGasRho*par.Eta
+    InsideFracTrunGasRho = np.where( par.PeakGasMassDensity / TrunGasRho > par.FracDensityRatio, False     , True                      )
+ 
+    InsideFracTrunGasRho = np.logical_and( InsideFracTrunGasRho, FracTrunGasRho > 1e-28/par.UNIT_D )
+
+    FracTrunGasRho       = np.where( InsideFracTrunGasRho, FracTrunGasRho, GasRho )
+
+
+    TrunGasPres          = GasRho*par.Eta
 
     # convert primitive to conservative variables
-    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( FractalTrunGasRho, TrunFractalUx, TrunFractalUy, TrunFractalUz, TrunGasPres  )
+    GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( FracTrunGasRho, TrunFractalUx, TrunFractalUy, TrunFractalUz, TrunGasPres  )
 
     return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, TotPot

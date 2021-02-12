@@ -132,20 +132,20 @@ def TotPotGasDensity():
 # **********************************************************************
 def Truncate(GasDensity, Pot, FractalUx, FractalUy, FractalUz ):
 
-    DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/par.DensityRatio, dtype=par.Precision)
+    DensOutSide  = np.full(GasDensity.shape, par.PeakGasMassDensity/par.TrunDensityRatio, dtype=par.Precision)
 
-    FractalUx    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUx)
-    FractalUy    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUy)
-    FractalUz    = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio,         0.0,  FractalUz)
-    GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > par.DensityRatio, DensOutSide, GasDensity)
+    FractalUx    = np.where( par.PeakGasMassDensity / GasDensity > par.TrunDensityRatio,         0.0,  FractalUx)
+    FractalUy    = np.where( par.PeakGasMassDensity / GasDensity > par.TrunDensityRatio,         0.0,  FractalUy)
+    FractalUz    = np.where( par.PeakGasMassDensity / GasDensity > par.TrunDensityRatio,         0.0,  FractalUz)
+    GasDensity   = np.where( par.PeakGasMassDensity / GasDensity > par.TrunDensityRatio, DensOutSide, GasDensity)
 
     # truncate potential
     TotPotCenter     = HaloPotential (True)
     TotPotCenter    += DiskPotential (True)
     TotPotCenter    += BulgePotential(True)
 
-    PotOutside  = TotPotCenter + par.Cs**2*np.log(par.DensityRatio)*np.full(Pot.shape, 1., dtype=par.Precision)
+    PotOutside  = TotPotCenter + par.Cs**2*np.log(par.TrunDensityRatio)*np.full(Pot.shape, 1., dtype=par.Precision)
 
-    Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(par.DensityRatio), PotOutside, Pot)
+    Pot         = np.where( Pot - TotPotCenter > par.Cs**2*np.log(par.TrunDensityRatio), PotOutside, Pot)
 
     return GasDensity, Pot, FractalUx, FractalUy, FractalUz

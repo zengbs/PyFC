@@ -68,14 +68,14 @@ if par.Uxyz_fromfile == None:
 
 if par.dens_fromfile == None:
    FractalDensity = np.array(result1.get())
-else:
+elif par.dens_fromfile == 'off':
    FractalDensity = np.full( [par.Nx, par.Ny, par.Nz ], 1.0, dtype=par.Precision )
 
 if par.Uxyz_fromfile == None:
    FractalUx      = np.array(result2.get())
    FractalUy      = np.array(result3.get())
    FractalUz      = np.array(result4.get())
-else:
+elif par.Uxyz_fromfile == 'off':
    FractalUx      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
    FractalUy      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
    FractalUz      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
@@ -149,7 +149,8 @@ print("UNIT_T                           = %e" % par.UNIT_T                      
 print("UNIT_M                           = %e" % par.UNIT_M                          )
 print("UNIT_P                           = %e" % par.UNIT_P                          )
 print("UNIT_E                           = %e" % par.UNIT_E                          )
-print("DensityRatio                     = %e" % par.DensityRatio                    )
+print("TrunDensityRatio                 = %e" % par.TrunDensityRatio                )
+print("FracDensityRatio                 = %e" % par.TrunDensityRatio                )
 print("PeakElectronNumberDensity        = %e" % par.PeakElectronNumberDensity       )
 print("Temperature                      = %e" % par.Temperature                     )
 print("V_halo                           = %e" % par.V_halo                          )

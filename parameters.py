@@ -9,7 +9,7 @@ def Parameters():
   global dens_kmin, dens_mean, dens_sigma, dens_beta, dens_fromfile
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
-  global DensityRatio, Center
+  global TrunDensityRatio, Center, FracDensityRatio
   global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs, Eta
@@ -71,7 +71,7 @@ def Parameters():
 
   # Fractal parameters for Ux/y/z
   # `None` stands for generating fractal cube by PyFC
-  Uxyz_fromfile = None
+  Uxyz_fromfile = 'off'
   Uxyz_kmin     = 1.0
   Uxyz_mean     = 1.0 / Const_C
   Uxyz_sigma    = 1e5 / Const_C
@@ -95,7 +95,9 @@ def Parameters():
   Lz /= UNIT_L
 
   # density ratio on both sides of the surface of the sphere
-  DensityRatio = 25000.
+  TrunDensityRatio = 45000.
+
+  FracDensityRatio = 0.7*TrunDensityRatio
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
@@ -148,9 +150,9 @@ def Parameters():
   Precision = 'float32'
 
   # Number of cells along x/y/z
-  Nx = 512 
-  Ny = 512 
-  Nz = 512 
+  Nx = 256 
+  Ny = 256 
+  Nz = 256 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:
