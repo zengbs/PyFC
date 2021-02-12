@@ -16,14 +16,13 @@ def SetIC( FractalDensity, FractalUx, FractalUy, FractalUz ):
     GasRho,     TotPot     = TotPotGasDensity()
     TrunGasRho, TrunTotPot, TrunFractalUx, TrunFractalUy, TrunFractalUz = Truncate(GasRho, TotPot, FractalUx, FractalUy, FractalUz )
 
-    FracTrunGasRho       = np.where( par.PeakGasMassDensity / TrunGasRho > par.FracDensityRatio, TrunGasRho, TrunGasRho*FractalDensity )
+    InsideFracTrunGasRho = np.where( par.PeakGasMassDensity / TrunGasRho > par.FracDensityRatio, False, True)
 
-    InsideFracTrunGasRho = np.where( par.PeakGasMassDensity / TrunGasRho > par.FracDensityRatio, False     , True                      )
+    FracTrunGasRho       = np.where( InsideFracTrunGasRho, TrunGasRho*FractalDensity, TrunGasRho )
  
     InsideFracTrunGasRho = np.logical_and( InsideFracTrunGasRho, FracTrunGasRho > 1e-28/par.UNIT_D )
 
     FracTrunGasRho       = np.where( InsideFracTrunGasRho, FracTrunGasRho, GasRho )
-
 
     TrunGasPres          = GasRho*par.Eta
 
