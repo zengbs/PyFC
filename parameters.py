@@ -10,6 +10,7 @@ def Parameters():
   global Uxyz_kmin, Uxyz_mean, Uxyz_sigma, Uxyz_beta, Uxyz_fromfile
   global Precision, GRA_GHOST_SIZE
   global TrunDensityRatio, Center, FracDensityRatio
+  global DensAmplificationFactor, CriticalDens
   global PeakElectronNumberDensity, Temperature, PeakGasMassDensity
   global V_halo, d_halo, DiskMass, a, b, BulgeMass, d_bulge
   global Cs, Eta
@@ -64,7 +65,7 @@ def Parameters():
   # Fractal parameters for density
   # `None` stands for generating fractal cube by PyFC
   dens_fromfile = None
-  dens_kmin     = 6.0
+  dens_kmin     = 24.0
   dens_mean     = 1.0  
   dens_sigma    = np.sqrt(5.0)
   dens_beta     = -5.0/3.0
@@ -95,9 +96,13 @@ def Parameters():
   Lz /= UNIT_L
 
   # density ratio on both sides of the surface of the sphere
-  TrunDensityRatio = 45000.
+  TrunDensityRatio = 28000
 
-  FracDensityRatio = 0.7*TrunDensityRatio
+  FracDensityRatio = 0.1*TrunDensityRatio
+
+  DensAmplificationFactor = 1e4
+
+  CriticalDens = 5e-23
 
   # peak electron number density (cm**-3)
   PeakElectronNumberDensity = 2.
