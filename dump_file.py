@@ -80,10 +80,15 @@ elif par.Uxyz_fromfile == 'off':
    FractalUy      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
    FractalUz      = np.full( FractalDensity.shape, 0.0, dtype=par.Precision )
 
-FractalDensity.tofile("FractalDensity")
-FractalUx.tofile("FractalUx")
-FractalUy.tofile("FractalUy")
-FractalUz.tofile("FractalUz")
+if par.Precision == 'float64':
+     FractalDensity.tofile("FractalDensity_double")
+     FractalUx.tofile("FractalUx_double")
+     FractalUy.tofile("FractalUy_double")
+     FractalUz.tofile("FractalUz_double")
+elif par.Precision == 'float32':
+     FractalUx.tofile("FractalUx_float")
+     FractalUy.tofile("FractalUy_float")
+     FractalUz.tofile("FractalUz_float")
 
 print( "The varience of the fractal density = %e" % np.var (FractalDensity) )
 print( "The     mean of the fractal density = %e" % np.mean(FractalDensity) )

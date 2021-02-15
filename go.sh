@@ -11,11 +11,13 @@ mkdir                      $Folder/$LAST
 python dump_file.py |& tee $Folder/$LAST/log
 conda deactivate
 
-mv UM_IC                   $Folder/$LAST
-mv ExtPotTable             $Folder/$LAST
-mv FractalDensity          $Folder/$LAST
-mv FractalUx               $Folder/$LAST
-mv FractalUy               $Folder/$LAST
-mv FractalUz               $Folder/$LAST
+python double2float.py
+
+mv UM_IC*                  $Folder/$LAST
+mv ExtPotTable*            $Folder/$LAST
+mv FractalDensity*         $Folder/$LAST
+mv FractalUx*              $Folder/$LAST
+mv FractalUy*              $Folder/$LAST
+mv FractalUz*              $Folder/$LAST
 cp *.py                    $Folder/$LAST 
 echo "Done"
