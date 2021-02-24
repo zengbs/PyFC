@@ -40,7 +40,7 @@ def DarkHaol_zR2m(z, R):
     mSqr =  R**2 + (z/par.Halo_q)**2
     return mSqr
 
-def DarkHaol(mSqr):
+def DarkHalo(mSqr):
     Rho  = par.Halo_Rho0
     Rho *= np.power( mSqr / par.Halo_a, -par.Halo_alpha )
     Rho *= np.power( 1 + mSqr/par.Halo_a, par.Halo_alpha - par.Halo_beta )
