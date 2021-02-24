@@ -26,18 +26,24 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
     R         = np.sqrt(X**2+Y**2)
     return X, Y, Z, r, R
 
-def Bulge(z, R):
-    m    = np.sqrt( R**2 + (z/par.Bulge_q)**2 )
+def Bulge_zR2m(z, R):
+    mSqr    = R**2 + (z/par.Bulge_q)**2
+    return mSqr
+
+def Bulge(mSqr):
     Rho  = par.Bulge_Rho0
-    Rho *= np.power( m/par.Bulge_a, -par.Bulge_alpha )
-    Rho *= np.exp( -( m / par.Bulge_r )**2 )
+    Rho *= np.power( np.sqrt(mSqr)/par.Bulge_a, -par.Bulge_alpha )
+    Rho *= np.exp( -mSqr / par.Bulge_r**2 )
     return Rho
 
-def DarkHaol(z, R):
-    m    = np.sqrt( R**2 + (z/par.Halo_q)**2 )
+def DarkHaol_zR2m(z, R):
+    mSqr =  R**2 + (z/par.Halo_q)**2
+    return mSqr
+
+def DarkHaol(mSqr):
     Rho  = par.Halo_Rho0
-    Rho *= np.power( m / par.Halo_a, -par.Halo_alpha )
-    Rho *= np.power( 1 + m/par.Halo_a, par.Halo_alpha - par.Halo_beta )
+    Rho *= np.power( mSqr / par.Halo_a, -par.Halo_alpha )
+    Rho *= np.power( 1 + mSqr/par.Halo_a, par.Halo_alpha - par.Halo_beta )
     return Rho
 
 def StellarDisk(z, R):
