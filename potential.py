@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import quad, tplquad
+from scipy.misc import derivative
 import parameters as par
 import density_profile
 from scipy.special import kn
@@ -30,14 +31,14 @@ def Potential_Spheroidal (R, z, fun, c):
 
 def Check(x):
     if not np.isfinite(x):
-       print("Inf!!!")
+       print(x)
        return True
     if np.isnan(x):
-       print("NaN!!!")
+       print(x)
        return True
 
 
-def Potential_ThickDisk(R, z, Sigma, Zeta):
+def Potential_ThickDisk2(R, z, Sigma, Zeta):
     def OutterIntegral(zp):
         def MediumIntegral( a ):
             def InnerIntegral( Rp ):
@@ -62,6 +63,7 @@ def Potential_ThickDisk(R, z, Sigma, Zeta):
             medium *= quad(InnerIntegral, a, np.inf)[0]
             medium *= -2**1.5*par.NEWTON_G
             return medium
+           
         outter  = quad(MediumIntegral, 0, np.inf)[0]
         outter *= Zeta(zp)
         return outter
@@ -69,29 +71,72 @@ def Potential_ThickDisk(R, z, Sigma, Zeta):
     Pot = quad(OutterIntegral, -np.inf, np.inf)[0]
     return Pot
 
+def Potential_ThickDisk1(R, z, Sigma, Zeta):
+    def OutterIntegral(zp):
+        def MediumIntegral(a):
+            def InnerIntegral(a):
+                def fun(Rp):
+                    fun  = Rp*Sigma(Rp)
+                    fun /= np.sqrt( Rp**2 - a**2 )
+                    return fun
+                return quad(fun, a, np.inf)[0]
+            PlusSqr = np.sqrt( (z-zp)**2 + ( a + R )**2 )
+            MinuSqr = np.sqrt( (z-zp)**2 + ( a - R )**2 )
+            medium  = derivative(InnerIntegral, a, dx=1e-4)
+            if 2*a/( PlusSqr + MinuSqr ) > 1:
+               arg = 1
+            elif 2*a/( PlusSqr + MinuSqr ) < -1:
+               arg = -1
+            else:
+               arg = 2*a/( PlusSqr + MinuSqr )
+            medium *= np.arcsin(arg)
+            medium *= 4*par.NEWTON_G
+            return medium 
+        
+        outter = quad(MediumIntegral, 0, np.inf)[0]
+        outter *= Zeta(zp)
+        return outter
+         
+    Pot = quad(OutterIntegral, -np.inf, np.inf)[0]
+    return Pot
 
-
-def Potential_Disk(R, z):
+def Potential_Disk1(R, z):
     def Zeta(z):
         Zeta  = 0.5*par.Disk_alpha0 / par.Disk_z0 * np.exp( -np.absolute(z)/par.Disk_z0 ) 
         Zeta += 0.5*par.Disk_alpha1 / par.Disk_z1 * np.exp( -np.absolute(z)/par.Disk_z1 ) 
         return Zeta
     def Sigma(R):
         return par.Disk_Sigma * np.exp( -R/par.Disk_Rd )
-    return Potential_ThickDisk(R, z, Sigma, Zeta)
+    return Potential_ThickDisk1(R, z, Sigma, Zeta)
 
-def Potential_ISM(R, z):
+def Potential_ISM1(R, z):
     def Zeta(z):
         return 0.5*par.ISM_Sigma/par.ISM_zg * np.exp(- np.absolute(z)/par.ISM_zg)
     def Sigma(R):
         return np.exp( -R/par.ISM_Rg - par.ISM_Rm / R )
-    return Potential_ThickDisk(R, z, Sigma, Zeta)
+    return Potential_ThickDisk1(R, z, Sigma, Zeta)
+   
+def Potential_Disk2(R, z):
+    def Zeta(z):
+        Zeta  = 0.5*par.Disk_alpha0 / par.Disk_z0 * np.exp( -np.absolute(z)/par.Disk_z0 ) 
+        Zeta += 0.5*par.Disk_alpha1 / par.Disk_z1 * np.exp( -np.absolute(z)/par.Disk_z1 ) 
+        return Zeta
+    def Sigma(R):
+        return par.Disk_Sigma * np.exp( -R/par.Disk_Rd )
+    return Potential_ThickDisk2(R, z, Sigma, Zeta)
+
+def Potential_ISM2(R, z):
+    def Zeta(z):
+        return 0.5*par.ISM_Sigma/par.ISM_zg * np.exp(- np.absolute(z)/par.ISM_zg)
+    def Sigma(R):
+        return np.exp( -R/par.ISM_Rg - par.ISM_Rm / R )
+    return Potential_ThickDisk2(R, z, Sigma, Zeta)
    
 
 par.Parameters()
-#PotBulge    = Potential_Spheroidal(1, 1, density_profile.Bulge   , par.Bulge_q)
-#PotDarkHalo = Potential_Spheroidal(1, 1, density_profile.DarkHalo, par.Halo_q )
-#print(PotBulge, PotDarkHalo)
-PotDisk     = Potential_Disk(10, 1)
-#PotISM      = Potential_ISM(3, 2)
-print(PotDisk)
+PotDisk1     = Potential_Disk1(2, 3)
+PotISM1      = Potential_ISM1(2, 3)
+print(PotDisk1, PotISM1)
+PotDisk2     = Potential_Disk2(2, 3)
+PotISM2      = Potential_ISM2(2, 3)
+print(PotDisk2, PotISM2)
