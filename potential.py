@@ -1,9 +1,18 @@
 import numpy as np
-from scipy.integrate import quad, tplquad
+from scipy.integrate import quad
+from scipy.interpolate import RectBivariateSpline
 from scipy.misc import derivative
 import parameters as par
 import density_profile
 from scipy.special import kn
+
+par.Parameters()
+
+def Check(x):
+    if not np.isfinite(x):
+       return True
+    if np.isnan(x):
+       return True
 
 
 def Potential_Spheroidal (R, z, fun, c):
@@ -29,13 +38,8 @@ def Potential_Spheroidal (R, z, fun, c):
     Pot *= Pot1 - Pot2
     return Pot
 
-def Check(x):
-    if not np.isfinite(x):
-       return True
-    if np.isnan(x):
-       return True
 
-
+# (2.154) and (2.169)
 def Potential_ThickDisk1(R, z, Sigma, Zeta):
     def OutterIntegral(zp):
         def MediumIntegral( a ):
@@ -70,6 +74,7 @@ def Potential_ThickDisk1(R, z, Sigma, Zeta):
     Pot = quad(OutterIntegral, -np.inf, np.inf)[0]
     return Pot
 
+# (2.153a) and (2.169)
 def Potential_ThickDisk2(R, z, Sigma, Zeta):
     def OutterIntegral(zp):
         def MediumIntegral(a):
@@ -100,8 +105,9 @@ def Potential_ThickDisk2(R, z, Sigma, Zeta):
     return Pot
 
 
-from scipy.special import kn
 
+
+# (2.170)
 def Potential_ExponentialDisk(R, z, Sigma, Zeta):
     def OutterIntegral(zp):
         def MediumIntegral(a):
@@ -147,8 +153,54 @@ def Potential_ISM(R, z):
     return Pot
    
 
+def Create1DCoordinateArray(Nx):
+    Idx  = np.arange(Nx)
+    X    = Idx-par.GRA_GHOST_SIZE+0.5
+    X   *= par.delta[0]
+    return X
+
+Nr = int(1.5*par.Nx/2)
+Nz = int(par.Nz/2)
+
+R1D_Uniform  = Create1DCoordinateArray( Nr )
+Z1D_Uniform  = Create1DCoordinateArray( Nz )
+
+Pot2D = np.arange( Nr * Nz ).reshape( Nr, Nz )
+
+for i in range(Nr):
+   for k in range(Nz):
+       Pot2D[i][k] = Potential_Disk(R1D_Uniform[i], Z1D_Uniform[k])
+
+Pot2DClass = RectBivariateSpline( R1D_Uniform, Z1D_Uniform, Pot2D )
+
+X3D, Y3D, Z3D, r3D, R3D = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz)
+
+TargetRegion = np.greater_equal(X3D, 0)
+TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Y3D, 0))
+TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Z3D, 0))
+TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Y3D/X3D, 1))
+
+R1D = np.arange(np.sum(TargetRegion))
+
+idx = 0
+for k in range(par.Nz):
+    for j in range(par.Ny):
+        for i in range(par.Nx):
+            if TargetRegion[i][j][k] == True:
+               R1D[idx] = R3D[i][j][k]
+               idx = idx + 1
 
 
-par.Parameters()
-PotDisk     = Potential_Disk(2, 3)
-PotISM      = Potential_ISM (2, 3)
+Pot2D = Pot2DClass(R1D['R'], Z1D_Uniform, kind='cubic')
+
+Pot3D = np.zeros((par.Nx, par.Ny, par.Nz), dtype=par.Precision)
+
+idx = 0
+for k in range(par.Nz):
+    for j in range(par.Ny):
+        for i in range(par.Nx):
+            if TargetRegion[i][j][k] == True:
+               Pot3D[i][j][k] = Pot2D[idx][k]
+               idx = idx + 1
+
+

@@ -26,19 +26,12 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
     R         = np.sqrt(X**2+Y**2)
     return X, Y, Z, r, R
 
-def Bulge_zR2m(R, z):
-    mSqr    = R**2 + (z/par.Bulge_q)**2
-    return mSqr
 
 def Bulge(mSqr):
     Rho  = par.Bulge_Rho0
     Rho *= np.power( np.sqrt(mSqr)/par.Bulge_a, -par.Bulge_alpha )
     Rho *= np.exp( -mSqr / par.Bulge_r**2 )
     return Rho
-
-def DarkHaol_zR2m(R, z):
-    mSqr =  R**2 + (z/par.Halo_q)**2
-    return mSqr
 
 def DarkHalo(mSqr):
     Rho  = par.Halo_Rho0
