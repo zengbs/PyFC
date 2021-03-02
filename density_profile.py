@@ -12,9 +12,9 @@ import parameters as par
 # output     : 3D array stroing x, y, z, and radial distance
 # **********************************************************************
 def Create3DCoordinateArray(Nx, Ny, Nz):
-    Idx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[1]
-    Jdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[2]
-    Kdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[0]
+    Idx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[0]
+    Jdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[1]
+    Kdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[2]
               
     X         = Idx-par.GRA_GHOST_SIZE+0.5-par.Nx*0.5
     Y         = Jdx-par.GRA_GHOST_SIZE+0.5-par.Ny*0.5
@@ -26,6 +26,27 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
     R         = np.sqrt(X**2+Y**2)
     return X, Y, Z, r, R
 
+#par.Parameters()
+#X, Y, Z, r, R   = Create3DCoordinateArray(3, 3, 3)
+#Idx = np.indices((3,3,3), dtype=par.Precision)[0]
+#Jdx = np.indices((3,3,3), dtype=par.Precision)[1]
+#Kdx = np.indices((3,3,3), dtype=par.Precision)[2]
+#print("Idx------------------------------")
+#for i in range(3):
+# for j in range(3):
+#  for k in range(3):
+#    print("X[%d][%d][%d] = %f" % ( i, j, k, X[i][j][k]))
+#print("Jdx------------------------------")
+#for i in range(3):
+# for j in range(3):
+#  for k in range(3):
+#    print("Y[%d][%d][%d] = %f" % ( i, j, k, Y[i][j][k]))
+#print("Kdx------------------------------")
+#for i in range(3):
+# for j in range(3):
+#  for k in range(3):
+#    print("Z[%d][%d][%d] = %f" % ( i, j, k, Z[i][j][k]))
+#exit(0)
 
 def Bulge(mSqr):
     Rho  = par.Bulge_Rho0

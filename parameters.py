@@ -170,9 +170,9 @@ def Parameters():
   Precision = 'float64'
 
   # Number of cells along x/y/z
-  Nx = 256 
-  Ny = 256 
-  Nz = 256 
+  Nx = 32 
+  Ny = 32 
+  Nz = 32 
   N = np.array([Nx, Ny, Nz])
 
   if Nx % 16 is not 0 or Ny % 16 is not 0 or Nz % 16 is not 0:

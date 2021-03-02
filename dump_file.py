@@ -141,18 +141,6 @@ print("UNIT_T                           = %e" % par.UNIT_T                      
 print("UNIT_M                           = %e" % par.UNIT_M                          )
 print("UNIT_P                           = %e" % par.UNIT_P                          )
 print("UNIT_E                           = %e" % par.UNIT_E                          )
-
-
-
-
-
-
-
-
-
-
-
-
 print("CenterX                          = %e" % par.Center[0]                       )
 print("CenterY                          = %e" % par.Center[1]                       )
 print("CenterZ                          = %e" % par.Center[2]                       )

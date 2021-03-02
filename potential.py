@@ -5,6 +5,7 @@ from scipy.misc import derivative
 import parameters as par
 import density_profile
 from scipy.special import kn
+from density_profile import Create3DCoordinateArray
 
 par.Parameters()
 
@@ -159,48 +160,47 @@ def Create1DCoordinateArray(Nx):
     X   *= par.delta[0]
     return X
 
-Nr = int(1.5*par.Nx/2)
-Nz = int(par.Nz/2)
+def TotPotential():
 
-R1D_Uniform  = Create1DCoordinateArray( Nr )
-Z1D_Uniform  = Create1DCoordinateArray( Nz )
+    Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[0]
+    Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[1]                                                                         
+    Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[2]
+    
+    IJdxSqr = Idx**2 + Jdx**2
 
-Pot2D = np.arange( Nr * Nz ).reshape( Nr, Nz )
+    IJdxSqr_1D, indices = np.unique(IJdxSqr, return_inverse=True) 
 
-for i in range(Nr):
-   for k in range(Nz):
-       Pot2D[i][k] = Potential_Disk(R1D_Uniform[i], Z1D_Uniform[k])
+    R1D = np.sqrt(IJdxSqr_1D)
+    X1D = Idx * delta...
+    Z1D = Kdx
 
-Pot2DClass = RectBivariateSpline( R1D_Uniform, Z1D_Uniform, Pot2D )
-
-X3D, Y3D, Z3D, r3D, R3D = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz)
-
-TargetRegion = np.greater_equal(X3D, 0)
-TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Y3D, 0))
-TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Z3D, 0))
-TargetRegion = np.logical_and(TargetRegion, np.greater_equal(Y3D/X3D, 1))
-
-R1D = np.arange(np.sum(TargetRegion))
-
-idx = 0
-for k in range(par.Nz):
-    for j in range(par.Ny):
-        for i in range(par.Nx):
-            if TargetRegion[i][j][k] == True:
-               R1D[idx] = R3D[i][j][k]
-               idx = idx + 1
+    # potential calculation
+    for i in range(len(X1D)):
+       for k in range(len(Z1D)):
+           Pot2D[i][k] = Potential_Disk( X1D[i], Z1D[k] )
+     
+    Pot2DFun = interp2d( R1D, Z1D, Pot2D, kind='cubic' )
+    
+    # interpolation
+    Pot2D = Pot2DFun(R1D, Z1D)
+   
 
 
-Pot2D = Pot2DClass(R1D['R'], Z1D_Uniform, kind='cubic')
-
-Pot3D = np.zeros((par.Nx, par.Ny, par.Nz), dtype=par.Precision)
-
-idx = 0
-for k in range(par.Nz):
-    for j in range(par.Ny):
-        for i in range(par.Nx):
-            if TargetRegion[i][j][k] == True:
-               Pot3D[i][j][k] = Pot2D[idx][k]
-               idx = idx + 1
-
-
+ 
+    Pot3D = np.zeros((int(par.Nx/2), int(par.Ny/2), int(par.Nz/2)), dtype=par.Precision)
+    
+    idx = 0
+    for k in range(int(par.Nz/2)):
+        for j in range(int(par.Ny/2)):
+            for i in range(int(par.Nx/2)):
+                if TargetRegion[i][j][k] == True:
+                   Pot3D[i][j][k] = Pot2D[idx][k]
+                   Pot3D[j][i][k] = Pot2D[idx][k]
+                   idx = idx + 1
+    
+    
+    Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
+    Pot3D = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
+    Pot3D = np.concatenate((np.flip(Pot3D, axis=0), Pot3D),axis=0)
+  
+    return Pot3D 
