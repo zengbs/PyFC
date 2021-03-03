@@ -170,11 +170,9 @@ def TotPotential():
     Y3D = (Jdx + 0.5)*delta[1]
     Z3D = (Kdx + 0.5)*delta[2]
 
-    X1D = ( Idx[:,0,0] + 0.5 )*delta[0]
-    Y1D = ( Idx[0,:,0] + 0.5 )*delta[1]
-    Z1D = ( Kdx[0,0,:] + 0.5 )*delta[2]
-
-
+    X1D = X3D[:,0,0]
+    Y1D = Y3D[0,:,0]
+    Z1D = Z3D[0,0,:]
     
     IJdxSqr = Idx**2 + Jdx**2
 
