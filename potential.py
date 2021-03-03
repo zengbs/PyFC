@@ -165,14 +165,22 @@ def TotPotential():
     Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[0]
     Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[1]                                                                         
     Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[2]
+
+    X3D = (Idx + 0.5)*delta[0]
+    Y3D = (Jdx + 0.5)*delta[1]
+    Z3D = (Kdx + 0.5)*delta[2]
+
+    X1D = ( Idx[:,0,0] + 0.5 )*delta[0]
+    Y1D = ( Idx[0,:,0] + 0.5 )*delta[1]
+    Z1D = ( Kdx[0,0,:] + 0.5 )*delta[2]
+
+
     
     IJdxSqr = Idx**2 + Jdx**2
 
-    IJdxSqr_1D, indices = np.unique(IJdxSqr, return_inverse=True) 
+    IJdxSqr_1D, index_indices, inverse_indices = np.unique(IJdxSqr, return_index=True, return_inverse=True) 
 
-    R1D = np.sqrt(IJdxSqr_1D)
-    X1D = ( Idx[:,0,0] + 0.5 )*delta[0]
-    Z1D = ( Kdx[0,0,:] + 0.5 )*delta[2]
+    R1D = np.sqrt(X3D**2+Y3D**2)[index_indices]
 
     # potential calculation
     for i in range(len(X1D)):
@@ -185,7 +193,7 @@ def TotPotential():
     Pot2D = Pot2DFun(R1D, Z1D)
    
     # convert 2D -> 3D
-    Pot3D = Pot2D[indices].reshape(int(par.Nx/2),int(par.Ny/2),int(par.Nz/2))
+    Pot3D = Pot2D[inverse_indices].reshape(int(par.Nx/2),int(par.Ny/2),int(par.Nz/2))
    
     # flip 
     Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
