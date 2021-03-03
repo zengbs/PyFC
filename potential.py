@@ -162,43 +162,32 @@ def Create1DCoordinateArray(Nx):
 
 def TotPotential():
 
-    Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[0]
-    Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[1]                                                                         
-    Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)), dtype=par.Precision)[2]
+    Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[0]
+    Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[1]                                                                         
+    Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[2]
     
     IJdxSqr = Idx**2 + Jdx**2
 
     IJdxSqr_1D, indices = np.unique(IJdxSqr, return_inverse=True) 
 
     R1D = np.sqrt(IJdxSqr_1D)
-    X1D = Idx * delta...
-    Z1D = Kdx
+    X1D = ( Idx[:,0,0] + 0.5 )*delta[0]
+    Z1D = ( Kdx[0,0,:] + 0.5 )*delta[2]
 
     # potential calculation
     for i in range(len(X1D)):
        for k in range(len(Z1D)):
            Pot2D[i][k] = Potential_Disk( X1D[i], Z1D[k] )
      
-    Pot2DFun = interp2d( R1D, Z1D, Pot2D, kind='cubic' )
+    Pot2DFun = interp2d( X1D, Z1D, Pot2D, kind='cubic' )
     
     # interpolation
     Pot2D = Pot2DFun(R1D, Z1D)
    
-
-
- 
-    Pot3D = np.zeros((int(par.Nx/2), int(par.Ny/2), int(par.Nz/2)), dtype=par.Precision)
-    
-    idx = 0
-    for k in range(int(par.Nz/2)):
-        for j in range(int(par.Ny/2)):
-            for i in range(int(par.Nx/2)):
-                if TargetRegion[i][j][k] == True:
-                   Pot3D[i][j][k] = Pot2D[idx][k]
-                   Pot3D[j][i][k] = Pot2D[idx][k]
-                   idx = idx + 1
-    
-    
+    # convert 2D -> 3D
+    Pot3D = Pot2D[indices].reshape(int(par.Nx/2),int(par.Ny/2),int(par.Nz/2))
+   
+    # flip 
     Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
     Pot3D = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
     Pot3D = np.concatenate((np.flip(Pot3D, axis=0), Pot3D),axis=0)
