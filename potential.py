@@ -180,7 +180,8 @@ def TotPotential():
 
     IJdxSqr_1D, index_indices, inverse_indices = np.unique(IJdxSqr, return_index=True, return_inverse=True) 
 
-    R1D = np.sqrt(X3D**2+Y3D**2)[index_indices]
+    R1D = np.sqrt(X3D**2+Y3D**2)
+    R1D = R1D.flatten()[index_indices]
 
     # potential calculation
     for i in range(len(X1D)):
