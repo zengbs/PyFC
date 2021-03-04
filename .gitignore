@@ -1,6 +1,6 @@
 *.pyc
-*ExtPotTable
-*UM_IC
+*ExtPotTable*
+*UM_IC*
 .*.swp
 log*
 data/*
