@@ -13,9 +13,9 @@ import parameters as par
 # output     : 3D array stroing x, y, z, and radial distance
 # **********************************************************************
 def Create3DCoordinateArray(Nx, Ny, Nz):
-    Idx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[0]
-    Jdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[1]
-    Kdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[2]
+    Idx       = np.indices((Nx, Ny, Nz))[0]
+    Jdx       = np.indices((Nx, Ny, Nz))[1]
+    Kdx       = np.indices((Nx, Ny, Nz))[2]
               
     X         = Idx+0.5-par.Nx*0.5
     Y         = Jdx+0.5-par.Ny*0.5
@@ -75,8 +75,12 @@ def ISM(R, z):
     #exit(0)
     return Rho
 
+def Miyamoto(R, z):
+     
 
 def TotGasDensity():
     x, y, z, r, R = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz )
-    TotalDensity = Bulge(R, z) + DarkHaol(R, z) + StellarDisk(R, z) + ISM(R, z)
+    mSqrBulge = R**2 + z**2/par.Bulge_q
+    mSqrHalo  = R**2 + z**2/par.Halo_q
+    TotalDensity = Bulge(mSqrBulge) + DarkHalo(mSqrHalo) + StellarDisk(R, z) + ISM(R, z)
     return TotalDensity

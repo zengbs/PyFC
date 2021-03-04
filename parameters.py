@@ -189,11 +189,8 @@ def Parameters():
   re = np.array([  Lx,   Ly,   Lz])
       
   # Cell spacing (normalized by CoreRadius_D)
-  N      = np.array([Nx, Ny, Nz], dtype=Precision)
-  if Precision is 'float32':
-     delta  = (re-le)/N.astype(np.float32)
-  else:
-     delta  = (re-le)/N.astype(np.float64)
+  N      = np.array([Nx, Ny, Nz], dtype='float64')
+  delta  = (re-le)/N.astype(np.float64)
 
 
   # physical coordinate of center of sphere (origin is at corner) (kpc)

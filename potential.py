@@ -5,7 +5,7 @@ from scipy.misc import derivative
 import parameters as par
 import density_profile
 from scipy.special import kn
-from density_profile import Create3DCoordinateArray
+from density_profile import Create3DCoordinateArray, Bulge, DarkHalo
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
@@ -18,29 +18,39 @@ def Check(x):
        return True
 
 
-def Potential_Spheroidal (R, z, fun, c):
-    a0 = 1
-    def phi (mSqr, func):
-        phi = quad(func, 0, mSqr)[0]
+# (2.125b)
+def Potential_Spheroidal (R, z, DensFun, e):
+    a0 = 1 # arbitrary constant
+    def phi (mSqr, dens_func): # (2.117)
+        phi = quad(dens_func, 0, mSqr)[0]
         return phi
 
-    def SecondTerm( tau ):
+    def SecondTerm( tau ): # the last term in (2.125b)
         c0 = np.sqrt( 1 - e**2 )*a0
+         
+        # m^2 = (2.125a)
         mSqr  = R**2 / ( tau + a0**2 )
         mSqr += z**2 / ( tau + c0**2 )
         mSqr *= a0**2
-        integrand  = phi(mSqr, fun)
+        integrand  = phi(mSqr, DensFun)
         integrand /= tau + a0**2
         integrand /= np.sqrt(tau + c0**2)
         return integrand
 
-    e = np.sqrt( 1 - c**2 )
     Pot  =  -2.0*np.pi*par.NEWTON_G * np.sqrt( 1 - e**2 ) / e
-    Pot1 = phi(np.inf, fun)*np.arcsin(e)
+    Pot1 = phi(np.inf, DensFun)*np.arcsin(e)
     Pot2 = 0.5*a0*e*quad(SecondTerm, 0, np.inf)[0]
     Pot *= Pot1 - Pot2
     return Pot
 
+
+def Potential_Bulge(R, z):
+    Pot = Potential_Spheroidal(R, z, Bulge, np.sqrt(1-par.Bulge_q**2))
+    return Pot
+
+def Potential_DarkHalo(R, z):
+    Pot = Potential_Spheroidal(R, z, DarkHalo, np.sqrt(1-par.Halo_q**2))
+    return Pot
 
 # (2.154) and (2.169)
 def Potential_ThickDisk1(R, z, Sigma, Zeta):
@@ -134,6 +144,7 @@ def Potential_ExponentialDisk(R, z, Sigma, Zeta):
     Pot *= -4*par.NEWTON_G*par.Disk_Sigma/par.Disk_Rd
     return Pot
 
+# (2.210)
 def Potential_Disk(R, z):
     def Zeta(z):
         Zeta  = 0.5*par.Disk_alpha0 / par.Disk_z0 * np.exp( -np.absolute(z)/par.Disk_z0 ) 
@@ -144,7 +155,7 @@ def Potential_Disk(R, z):
     Pot = Potential_ExponentialDisk(R, z, Sigma, Zeta)
     return Pot
 
-
+# (2.211)
 def Potential_ISM(R, z):
     def Zeta(z):
         return 0.5*par.ISM_Sigma/par.ISM_zg * np.exp(- np.absolute(z)/par.ISM_zg)
@@ -155,7 +166,7 @@ def Potential_ISM(R, z):
        Pot = Potential_ThickDisk1(R, z, Sigma, Zeta)
     return Pot
 
-
+# (2.69a)
 def Potential_Miyamoto(R, z):
     b = 1
     a = 2
@@ -173,7 +184,7 @@ def TotPotential():
 
     Idx_Extended = np.indices((int(1.5*Nx/2),int(1.5*Ny/2),int(1.5*Nz/2)))[0]
     Idx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[0]
-    Jdx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[1]                                                                         
+    Jdx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[1]
     Kdx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[2]
 
     X3D_Extended = (Idx_Extended+0.5)*par.delta[0]
@@ -197,7 +208,12 @@ def TotPotential():
     # potential calculation
     for i in range(len(X1D_Extended)):
        for k in range(len(Z1D)):
-           Pot2D_Extended[i][k] = Potential_Miyamoto( X1D_Extended[i], Z1D[k] )
+           Pot2D_Extended[i][k]  = Potential_Disk    ( X1D_Extended[i], Z1D[k] )
+           Pot2D_Extended[i][k] += Potential_ISM     ( X1D_Extended[i], Z1D[k] )
+           Pot2D_Extended[i][k] += Potential_Bulge   ( X1D_Extended[i], Z1D[k] )
+           Pot2D_Extended[i][k] += Potential_DarkHalo( X1D_Extended[i], Z1D[k] )
+       print("i=%03d/%03d" % (i, len(X1D_Extended)))
+       sys.stdout.flush()
      
     # interpolation
     Pot2DFun = interp2d( Z1D, X1D_Extended, Pot2D_Extended, kind='cubic' )
@@ -216,7 +232,7 @@ def TotPotential():
     Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
     Pot3D = np.concatenate((np.flip(Pot3D, axis=0), Pot3D),axis=0)
     Pot3D_up = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
-    print(Pot3D_up.shape)
+
     #############################################################
     if __name__ == '__main__':
 
