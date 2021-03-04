@@ -16,6 +16,7 @@ def Parameters():
   global Halo_Rho0, Halo_a, Halo_alpha, Halo_beta, Halo_q
   global Disk_Sigma, Disk_Rd, Disk_z0, Disk_z1, Disk_alpha0, Disk_alpha1
   global ISM_Sigma, ISM_Rg, ISM_Rm, ISM_zg
+  global Miyamoto_a, Miyamoto_b, Miyamoto_M
 
   ##########################
   ###    Unit (cgs)      ###
@@ -98,6 +99,15 @@ def Parameters():
   Lz /= UNIT_L
 
   AmbientTemperature = 1e10
+
+  # Miyamoto
+  Miyamoto_a           = 1
+  Miyamoto_b           = 2
+  Miyamoto_M           = 1e3
+
+  Miyamoto_a          /= UNIT_L 
+  Miyamoto_b          /= UNIT_L
+  Miyamoto_M          /= UNIT_M
 
   # Bulge
   Bulge_Rho0  = 0.427 # M_sun * pc**-3

@@ -76,11 +76,18 @@ def ISM(R, z):
     return Rho
 
 def Miyamoto(R, z):
-     
+    Temp = np.sqrt(z**2 + par.Miyamoto_b**2)
+    Rho  = par.Miyamoto_b**2 * par.Miyamoto_M
+    Rho /= 4 * np.pi
+    Rho *= par.Miyamoto_a*R**2 + ( par.Miyamoto_a + 3*Temp )*( par.Miyamoto_a + Temp )**2
+    Rho /= np.power( R**2 + ( par.Miyamoto_a + Temp )**2, 2.5 )
+    Rho /= np.power( Temp , 3)
+    return Rho
 
 def TotGasDensity():
     x, y, z, r, R = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz )
-    mSqrBulge = R**2 + z**2/par.Bulge_q
-    mSqrHalo  = R**2 + z**2/par.Halo_q
-    TotalDensity = Bulge(mSqrBulge) + DarkHalo(mSqrHalo) + StellarDisk(R, z) + ISM(R, z)
+    #mSqrBulge = R**2 + z**2/par.Bulge_q
+    #mSqrHalo  = R**2 + z**2/par.Halo_q
+    #TotalDensity = Bulge(mSqrBulge) + DarkHalo(mSqrHalo) + StellarDisk(R, z) + ISM(R, z)
+    TotalDensity = Miyamoto(R, z)
     return TotalDensity

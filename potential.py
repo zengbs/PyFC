@@ -8,6 +8,7 @@ from scipy.special import kn
 from density_profile import Create3DCoordinateArray, Bulge, DarkHalo
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import sys
 
 par.Parameters()
 
@@ -168,13 +169,9 @@ def Potential_ISM(R, z):
 
 # (2.69a)
 def Potential_Miyamoto(R, z):
-    b = 1
-    a = 2
-    NEWTON_G = 1
-    M = 1e3
-    Temp = np.sqrt(z**2 + b**2)
-    Pot = np.power(R**2 + ( a + Temp )**2, -0.5)
-    return -Pot*NEWTON_G*M
+    Temp = np.sqrt(z**2 + par.Miyamoto_b**2)
+    Pot = np.power(R**2 + ( par.Miyamoto_a + Temp )**2, -0.5)
+    return -Pot*par.NEWTON_G*par.Miyamoto_M
 
 
 def TotPotential():
@@ -208,10 +205,11 @@ def TotPotential():
     # potential calculation
     for i in range(len(X1D_Extended)):
        for k in range(len(Z1D)):
-           Pot2D_Extended[i][k]  = Potential_Disk    ( X1D_Extended[i], Z1D[k] )
-           Pot2D_Extended[i][k] += Potential_ISM     ( X1D_Extended[i], Z1D[k] )
-           Pot2D_Extended[i][k] += Potential_Bulge   ( X1D_Extended[i], Z1D[k] )
-           Pot2D_Extended[i][k] += Potential_DarkHalo( X1D_Extended[i], Z1D[k] )
+           Pot2D_Extended[i][k]  = Potential_Miyamoto ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k]  = Potential_Disk    ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k] += Potential_ISM     ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k] += Potential_Bulge   ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k] += Potential_DarkHalo( X1D_Extended[i], Z1D[k] )
        print("i=%03d/%03d" % (i, len(X1D_Extended)))
        sys.stdout.flush()
      
