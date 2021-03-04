@@ -247,32 +247,33 @@ def TotPotential():
      
     return Pot3D_up, Pot3D_down
 
-fig1 = plt.figure()
-
-Pot3D_up, Pot3D_down = TotPotential()
-
-Nx=par.Nx
-Ny=par.Ny
-
-pos = plt.imshow(Pot3D_up[:,int(Ny/3),:], norm=LogNorm(), cmap='nipy_spectral')
-fig1.colorbar(pos)
-fig1.savefig('image_up.png')
-
-fig2 = plt.figure()
-pos = plt.imshow(Pot3D_down[:,int(Ny/3),:], norm=LogNorm(), cmap='nipy_spectral')
-fig2.colorbar(pos)
-fig2.savefig('image_down.png')
-
-
-#// profile
-f, ax = plt.subplots(1,1)
- 
-f.subplots_adjust( hspace=0.05, wspace=0.35 )
-f.set_size_inches( 7, 5 ) 
- 
-ax.plot(Pot3D_up  [:,int(par.Ny/3),int(par.Nz/3)])
-ax.plot(Pot3D_down[:,int(par.Ny/3),int(par.Nz/3)])
-
-print(np.amax(np.absolute(1-np.divide(Pot3D_up,Pot3D_down)),axis=2))
-
-f.savefig('profile.png')
+if __name__ == '__main__':
+  fig1 = plt.figure()
+  
+  Pot3D_up, Pot3D_down = TotPotential()
+  
+  Nx=par.Nx
+  Ny=par.Ny
+  
+  pos = plt.imshow(Pot3D_up[:,:,int(Ny/3)], norm=LogNorm(), cmap='nipy_spectral')
+  fig1.colorbar(pos)
+  fig1.savefig('image_up.png')
+  
+  fig2 = plt.figure()
+  pos = plt.imshow(Pot3D_down[:,:,int(Ny/3)], norm=LogNorm(), cmap='nipy_spectral')
+  fig2.colorbar(pos)
+  fig2.savefig('image_down.png')
+  
+  
+  #// profile
+  f, ax = plt.subplots(1,1)
+   
+  f.subplots_adjust( hspace=0.05, wspace=0.35 )
+  f.set_size_inches( 7, 5 ) 
+   
+  ax.plot(Pot3D_up  [:,int(par.Ny/3),int(par.Nz/3)])
+  ax.plot(Pot3D_down[:,int(par.Ny/3),int(par.Nz/3)])
+  
+  print(np.amax(np.absolute(1-np.divide(Pot3D_up,Pot3D_down)),axis=2))
+  
+  f.savefig('profile.png')
