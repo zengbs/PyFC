@@ -206,10 +206,10 @@ def TotPotential():
     for i in range(len(X1D_Extended)):
        for k in range(len(Z1D)):
            Pot2D_Extended[i][k]  = Potential_Miyamoto ( X1D_Extended[i], Z1D[k] )
-           #Pot2D_Extended[i][k]  = Potential_Disk    ( X1D_Extended[i], Z1D[k] )
-           #Pot2D_Extended[i][k] += Potential_ISM     ( X1D_Extended[i], Z1D[k] )
-           #Pot2D_Extended[i][k] += Potential_Bulge   ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k]  = Potential_Bulge   ( X1D_Extended[i], Z1D[k] )
            #Pot2D_Extended[i][k] += Potential_DarkHalo( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k] += Potential_Disk    ( X1D_Extended[i], Z1D[k] )
+           #Pot2D_Extended[i][k] += Potential_ISM     ( X1D_Extended[i], Z1D[k] )
        print("i=%03d/%03d" % (i, len(X1D_Extended)))
        sys.stdout.flush()
      

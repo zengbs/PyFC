@@ -177,7 +177,7 @@ def Parameters():
   GRA_GHOST_SIZE = 2
 
   # Floating-point precision
-  Precision = 'float64'
+  Precision = 'float32'
 
   # Number of cells along x/y/z
   Nx = 256 
