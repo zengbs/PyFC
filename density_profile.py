@@ -8,6 +8,7 @@ import parameters as par
 #              (2) y-coordinate
 #              (3) z-coordinate
 #              (4) the distance between cell itself and center
+#              (5) 
 # input      : None
 # output     : 3D array stroing x, y, z, and radial distance
 # **********************************************************************
@@ -16,9 +17,9 @@ def Create3DCoordinateArray(Nx, Ny, Nz):
     Jdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[1]
     Kdx       = np.indices((Nx, Ny, Nz), dtype=par.Precision)[2]
               
-    X         = Idx-par.GRA_GHOST_SIZE+0.5-par.Nx*0.5
-    Y         = Jdx-par.GRA_GHOST_SIZE+0.5-par.Ny*0.5
-    Z         = Kdx-par.GRA_GHOST_SIZE+0.5-par.Nz*0.5
+    X         = Idx+0.5-par.Nx*0.5
+    Y         = Jdx+0.5-par.Ny*0.5
+    Z         = Kdx+0.5-par.Nz*0.5
     X        *= par.delta[0]
     Y        *= par.delta[1]
     Z        *= par.delta[2]

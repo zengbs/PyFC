@@ -100,9 +100,13 @@ sys.stdout.flush()
 #############################
 ####     Dump density    ####
 #############################
-GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
+GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Pot = SetIC( FractalDensity, FractalUx, FractalUy, FractalUz )
 
-FileName = "UM_IC"
+
+if par.Precision == 'float64':
+   FileName = "UM_IC_double"
+elif par.Precision == 'float32':
+   FileName = "UM_IC_single"
 
 Fluid3D = np.zeros((5, par.Nx, par.Ny, par.Nz),dtype=par.Precision)
 
@@ -112,6 +116,15 @@ Fluid3D[2] = GasMomY * par.UNIT_D * par.UNIT_V
 Fluid3D[3] = GasMomZ * par.UNIT_D * par.UNIT_V
 Fluid3D[4] = GasEngy * par.UNIT_P
 Fluid3D.tofile(FileName)
+
+if par.Precision == 'float64':
+   FileName = "ExtPotTable_double"
+elif par.Precision == 'float32':
+   FileName = "ExtPotTable_float"
+
+Potential *= par.UNIT_V**2
+Potential.tofile(FileName)
+
 
 
 print("Nx                               = %d" % par.Nx                              )

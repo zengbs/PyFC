@@ -15,9 +15,11 @@ def SetIC( FractalDensity, FractalUx, FractalUy, FractalUz ):
 
     GasRho     = TotGasDensity()
 
+    Pot        = TotPotential()
+
     GasPres    = GasRho*par.Eta
 
     # convert primitive to conservative variables
     GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( GasRho, 0.0, 0.0, 0.0, GasPres  )
 
-    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy
+    return GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy, Pot

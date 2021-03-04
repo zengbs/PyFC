@@ -163,19 +163,18 @@ def Potential_Miyamoto(R, z):
     M = 1e3
     Temp = np.sqrt(z**2 + b**2)
     Pot = np.power(R**2 + ( a + Temp )**2, -0.5)
-    return Pot*NEWTON_G*M
+    return -Pot*NEWTON_G*M
 
-def Create1DCoordinateArray(Nx):
-    Idx  = np.arange(Nx)
-    X    = Idx-par.GRA_GHOST_SIZE+0.5
-    X   *= par.delta[0]
-    return X
 
 def TotPotential():
-    Idx_Extended = np.indices((int(1.5*par.Nx/2),int(1.5*par.Ny/2),int(1.5*par.Nz/2)))[0]
-    Idx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[0]
-    Jdx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[1]                                                                         
-    Kdx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[2]
+    Nx = par.Nx + 2*par.GRA_GHOST_SIZE
+    Ny = par.Ny + 2*par.GRA_GHOST_SIZE
+    Nz = par.Nz + 2*par.GRA_GHOST_SIZE
+
+    Idx_Extended = np.indices((int(1.5*Nx/2),int(1.5*Ny/2),int(1.5*Nz/2)))[0]
+    Idx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[0]
+    Jdx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[1]                                                                         
+    Kdx          = np.indices((int(    Nx/2),int(    Ny/2),int(    Nz/2)))[2]
 
     X3D_Extended = (Idx_Extended+0.5)*par.delta[0]
     X3D          = (Idx         +0.5)*par.delta[0]
@@ -206,10 +205,10 @@ def TotPotential():
     # Pot2D.shape = (128,5839)
 
     # convert 2D -> 3D
-    Pot3D = np.zeros((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))
+    Pot3D = np.zeros((int(Nx/2),int(Ny/2),int(Nz/2)))
 
     for k in range(0,len(Z1D)):
-      Pot3D[k,:,:] = Pot2D[:,k][inverse_indices].reshape(int(par.Nx/2),int(par.Ny/2))
+      Pot3D[k,:,:] = Pot2D[:,k][inverse_indices].reshape(int(Nx/2),int(Ny/2))
 
     
 
@@ -217,12 +216,9 @@ def TotPotential():
     Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
     Pot3D = np.concatenate((np.flip(Pot3D, axis=0), Pot3D),axis=0)
     Pot3D_up = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
-
+    print(Pot3D_up.shape)
     #############################################################
     if __name__ == '__main__':
-      Nx = par.Nx
-      Ny = par.Ny
-      Nz = par.Nz
 
       Idx = np.indices((int(Nx),int(Ny),int(Nz)))[1]
       Jdx = np.indices((int(Nx),int(Ny),int(Nz)))[2]                                                                         
@@ -255,15 +251,16 @@ if __name__ == '__main__':
   
   Pot3D_up, Pot3D_down = TotPotential()
   
-  Nx=par.Nx
-  Ny=par.Ny
+  Nx = par.Nx + par.GRA_GHOST_SIZE
+  Ny = par.Ny + par.GRA_GHOST_SIZE
+  Nz = par.Nz + par.GRA_GHOST_SIZE
   
-  pos = plt.imshow(Pot3D_up[:,:,int(Ny/3)], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D_up[:,:,int(Nz/3)], norm=LogNorm(), cmap='nipy_spectral')
   fig1.colorbar(pos)
   fig1.savefig('image_up.png')
   
   fig2 = plt.figure()
-  pos = plt.imshow(Pot3D_down[:,:,int(Ny/3)], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D_down[:,:,int(Nz/3)], norm=LogNorm(), cmap='nipy_spectral')
   fig2.colorbar(pos)
   fig2.savefig('image_down.png')
   
@@ -274,8 +271,8 @@ if __name__ == '__main__':
   f.subplots_adjust( hspace=0.05, wspace=0.35 )
   f.set_size_inches( 7, 5 ) 
    
-  ax.plot(Pot3D_up  [:,int(par.Ny/3),int(par.Nz/3)])
-  ax.plot(Pot3D_down[:,int(par.Ny/3),int(par.Nz/3)])
+  ax.plot(Pot3D_up  [:,int(Ny/3),int(Nz/3)])
+  ax.plot(Pot3D_down[:,int(Ny/3),int(Nz/3)])
   
   print(np.amax(np.absolute(1-np.divide(Pot3D_up,Pot3D_down)),axis=2))
   
