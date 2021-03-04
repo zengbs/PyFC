@@ -174,9 +174,9 @@ def Create1DCoordinateArray(Nx):
 def TotPotential(up):
 
     if up:
-      Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[1]
-      Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[2]                                                                         
-      Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[0]
+      Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[0]
+      Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[1]                                                                         
+      Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[2]
 
       delta = [0.1]*3
 
@@ -187,17 +187,17 @@ def TotPotential(up):
       Y3D = Jdx*delta[1]
       Z3D = Kdx*delta[2]
 
-      X1D = X3D[0,:,0]
-      Y1D = Y3D[0,0,:]
-      Z1D = Z3D[:,0,0]
+      X1D = X3D[:,0,0]
+      Y1D = Y3D[0,:,0]
+      Z1D = Z3D[0,0,:]
 
-      IJdxSqr = (Idx**2 + Jdx**2)[0,:,:]
+      IJdxSqr = (Idx**2 + Jdx**2)[:,:,0]
       # IJdxSqr.shape = (128,128)
 
       IJdxSqr_1D, index_indices, inverse_indices = np.unique(IJdxSqr, return_index=True, return_inverse=True) 
       # IJdxSqr_1D.shape = (5839,)
    
-      R1D = np.sqrt(X3D**2+Y3D**2)
+      R1D = np.sqrt(Y3D**2+Z3D**2)
       R1D = R1D.flatten()[index_indices]
       # R1D.shape = (5839,)
       Pot2D = np.zeros((len(X1D), len(Z1D)))
@@ -261,7 +261,7 @@ Pot3D = TotPotential(up)
 Nx=par.Nx
 Ny=par.Ny
 if up:
-  pos = plt.imshow(Pot3D[int(Nx/2),:,:], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D[int(Nx/4),:,:], norm=LogNorm(), cmap='nipy_spectral')
   fig.colorbar(pos)
   fig.savefig('image_up.png')
 else:
