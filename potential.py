@@ -172,7 +172,6 @@ def Create1DCoordinateArray(Nx):
     return X
 
 def TotPotential():
-
     Idx_Extended = np.indices((int(1.5*par.Nx/2),int(1.5*par.Ny/2),int(1.5*par.Nz/2)))[0]
     Idx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[0]
     Jdx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[1]                                                                         
@@ -220,34 +219,38 @@ def TotPotential():
     Pot3D_up = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
 
     #############################################################
-    Nx = par.Nx
-    Ny = par.Ny
-    Nz = par.Nz
+    if __name__ == '__main__':
+      Nx = par.Nx
+      Ny = par.Ny
+      Nz = par.Nz
 
-    Idx = np.indices((int(Nx),int(Ny),int(Nz)))[1]
-    Jdx = np.indices((int(Nx),int(Ny),int(Nz)))[2]                                                                         
-    Kdx = np.indices((int(Nx),int(Ny),int(Nz)))[0]
+      Idx = np.indices((int(Nx),int(Ny),int(Nz)))[1]
+      Jdx = np.indices((int(Nx),int(Ny),int(Nz)))[2]                                                                         
+      Kdx = np.indices((int(Nx),int(Ny),int(Nz)))[0]
 
-    X3D = (Idx + 0.5)*par.delta[0]
-    Y3D = (Jdx + 0.5)*par.delta[1]
-    Z3D = (Kdx + 0.5)*par.delta[2]
+      X3D = (Idx + 0.5)*par.delta[0]
+      Y3D = (Jdx + 0.5)*par.delta[1]
+      Z3D = (Kdx + 0.5)*par.delta[2]
    
-    CenterX = (X3D[0][0][0]+X3D[ 0][-1][ 0])*0.5
-    CenterY = (Y3D[0][0][0]+Y3D[ 0][ 0][-1])*0.5
-    CenterZ = (Z3D[0][0][0]+Z3D[-1][ 0][ 0])*0.5
+      CenterX = (X3D[0][0][0]+X3D[ 0][-1][ 0])*0.5
+      CenterY = (Y3D[0][0][0]+Y3D[ 0][ 0][-1])*0.5
+      CenterZ = (Z3D[0][0][0]+Z3D[-1][ 0][ 0])*0.5
 
-    X3D -= CenterX
-    Y3D -= CenterY
-    Z3D -= CenterZ
+      X3D -= CenterX
+      Y3D -= CenterY
+      Z3D -= CenterZ
  
-    R3D = np.sqrt(X3D**2+Y3D**2)
+      R3D = np.sqrt(X3D**2+Y3D**2)
 
-    Pot3D_down = Potential_Miyamoto( R3D, Z3D )
+      Pot3D_down = Potential_Miyamoto( R3D, Z3D )
 
-     
-    return Pot3D_up, Pot3D_down
+       
+      return Pot3D_up, Pot3D_down
+    else:
+      return Pot3D_up
 
 if __name__ == '__main__':
+
   fig1 = plt.figure()
   
   Pot3D_up, Pot3D_down = TotPotential()
