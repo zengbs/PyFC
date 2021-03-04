@@ -174,22 +174,25 @@ def Create1DCoordinateArray(Nx):
 def TotPotential(up):
 
     if up:
-      Idx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[0]
-      Jdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[1]                                                                         
-      Kdx = np.indices((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))[2]
+      Idx_Extended = np.indices((int(1.5*par.Nx/2),int(1.5*par.Ny/2),int(1.5*par.Nz/2)))[0]
+      Idx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[0]
+      Jdx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[1]                                                                         
+      Kdx          = np.indices((int(    par.Nx/2),int(    par.Ny/2),int(    par.Nz/2)))[2]
 
       delta = [0.1]*3
 
       #X3D = (Idx + 0.5)*delta[0]
       #Y3D = (Jdx + 0.5)*delta[1]
       #Z3D = (Kdx + 0.5)*delta[2]
-      X3D = Idx*delta[0]
-      Y3D = Jdx*delta[1]
-      Z3D = Kdx*delta[2]
+      X3D_Extended = Idx_Extended*delta[0]
+      X3D          = Idx         *delta[0]
+      Y3D          = Jdx         *delta[1]
+      Z3D          = Kdx         *delta[2]
 
-      X1D = X3D[:,0,0]
-      Y1D = Y3D[0,:,0]
-      Z1D = Z3D[0,0,:]
+      X1D_Extended = X3D_Extended[:,0,0]
+      X1D          = X3D         [:,0,0]
+      Y1D          = Y3D         [0,:,0]
+      Z1D          = Z3D         [0,0,:]
 
       IJdxSqr = (Idx**2 + Jdx**2)[:,:,0]
       # IJdxSqr.shape = (128,128)
@@ -200,30 +203,29 @@ def TotPotential(up):
       R1D = np.sqrt(Y3D**2+Z3D**2)
       R1D = R1D.flatten()[index_indices]
       # R1D.shape = (5839,)
-      Pot2D = np.zeros((len(X1D), len(Z1D)))
+      Pot2D_Extended = np.zeros((len(X1D_Extended), len(Z1D)))
 
       # potential calculation
-      for i in range(len(X1D)):
+      for i in range(len(X1D_Extended)):
          for k in range(len(Z1D)):
-             Pot2D[i][k] = Potential_Miyamoto( X1D[i], Z1D[k] )
+             Pot2D_Extended[i][k] = Potential_Miyamoto( X1D_Extended[i], Z1D[k] )
        
-      
       # interpolation
-      Pot2DFun = interp2d( X1D, Z1D, Pot2D, kind='cubic' )
-      Pot2D = Pot2DFun(R1D, Z1D)
+      Pot2DFun = interp2d( Z1D, X1D_Extended, Pot2D_Extended, kind='cubic' )
+      Pot2D = Pot2DFun(Z1D, R1D)
       # Pot2D.shape = (128,5839)
 
       # convert 2D -> 3D
       Pot3D = np.zeros((int(par.Nx/2),int(par.Ny/2),int(par.Nz/2)))
 
       for k in range(0,len(Z1D)):
-        Pot3D[:,:,k] = Pot2D[k,:][inverse_indices].reshape(int(par.Nx/2),int(par.Ny/2))
+        Pot3D[:,:,k] = Pot2D[:,k][inverse_indices].reshape(int(par.Nx/2),int(par.Ny/2))
 
 
       # flip 
-      Pot3D = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
       Pot3D = np.concatenate((np.flip(Pot3D, axis=2), Pot3D),axis=2)
       Pot3D = np.concatenate((np.flip(Pot3D, axis=0), Pot3D),axis=0)
+      Pot3D = np.concatenate((np.flip(Pot3D, axis=1), Pot3D),axis=1)
 
     else:
       Nx = par.Nx
@@ -256,15 +258,15 @@ def TotPotential(up):
     return Pot3D 
 
 fig = plt.figure()
-up = False
+up = True
 Pot3D = TotPotential(up)
 Nx=par.Nx
 Ny=par.Ny
 if up:
-  pos = plt.imshow(Pot3D[int(Nx/6),:,:], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(np.rot90(Pot3D[:,int(Ny/2),:]), norm=LogNorm(), cmap='nipy_spectral')
   fig.colorbar(pos)
   fig.savefig('image_up.png')
 else:
-  pos = plt.imshow(Pot3D[:,int(Ny/6),:], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D[:,int(Ny/2),:], norm=LogNorm(), cmap='nipy_spectral')
   fig.colorbar(pos)
   fig.savefig('image_down.png')
