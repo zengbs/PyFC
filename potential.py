@@ -256,15 +256,15 @@ def TotPotential(up):
     return Pot3D 
 
 fig = plt.figure()
-up = True
+up = False
 Pot3D = TotPotential(up)
 Nx=par.Nx
 Ny=par.Ny
 if up:
-  pos = plt.imshow(Pot3D[int(Nx/4),:,:], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D[int(Nx/6),:,:], norm=LogNorm(), cmap='nipy_spectral')
   fig.colorbar(pos)
   fig.savefig('image_up.png')
 else:
-  pos = plt.imshow(Pot3D[:,int(Ny/2),:], norm=LogNorm(), cmap='nipy_spectral')
+  pos = plt.imshow(Pot3D[:,int(Ny/6),:], norm=LogNorm(), cmap='nipy_spectral')
   fig.colorbar(pos)
   fig.savefig('image_down.png')
