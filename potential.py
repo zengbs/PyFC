@@ -258,9 +258,13 @@ def TotPotential(up):
 fig = plt.figure()
 up = True
 Pot3D = TotPotential(up)
+Nx=par.Nx
+Ny=par.Ny
 if up:
   pos = plt.imshow(Pot3D[int(Nx/2),:,:], norm=LogNorm(), cmap='nipy_spectral')
+  fig.colorbar(pos)
+  fig.savefig('image_up.png')
 else:
   pos = plt.imshow(Pot3D[:,int(Ny/2),:], norm=LogNorm(), cmap='nipy_spectral')
-fig.colorbar(pos)
-fig.savefig('image.png')
+  fig.colorbar(pos)
+  fig.savefig('image_down.png')
