@@ -180,13 +180,10 @@ def TotPotential(up):
 
     delta = [0.1]*3
 
-    #X3D = (Idx + 0.5)*delta[0]
-    #Y3D = (Jdx + 0.5)*delta[1]
-    #Z3D = (Kdx + 0.5)*delta[2]
-    X3D_Extended = (Idx_Extended+0.5)*delta[0]
-    X3D          = (Idx         +0.5)*delta[0]
-    Y3D          = (Jdx         +0.5)*delta[1]
-    Z3D          = (Kdx         +0.5)*delta[2]
+    X3D_Extended = (Idx_Extended+0.5)*par.delta[0]
+    X3D          = (Idx         +0.5)*par.delta[0]
+    Y3D          = (Jdx         +0.5)*par.delta[1]
+    Z3D          = (Kdx         +0.5)*par.delta[2]
 
     X1D_Extended = X3D_Extended[:,0,0]
     X1D          = X3D         [:,0,0]
@@ -194,14 +191,11 @@ def TotPotential(up):
     Z1D          = Z3D         [0,0,:]
 
     IJdxSqr = (Idx**2 + Jdx**2)[:,:,0]
-    # IJdxSqr.shape = (128,128)
 
     IJdxSqr_1D, index_indices, inverse_indices = np.unique(IJdxSqr, return_index=True, return_inverse=True) 
-    # IJdxSqr_1D.shape = (5839,)
    
     R1D = np.sqrt(Y3D**2+Z3D**2)
     R1D = R1D.flatten()[index_indices]
-    # R1D.shape = (5839,)
     Pot2D_Extended = np.zeros((len(X1D_Extended), len(Z1D)))
 
     # potential calculation
@@ -235,11 +229,9 @@ def TotPotential(up):
     #Jdx = np.indices((int(Nx),int(Ny),int(Nz)))[2]                                                                         
     #Kdx = np.indices((int(Nx),int(Ny),int(Nz)))[0]
 
-    #delta = [0.1]*3
-
-    #X3D = (Idx + 0.5)*delta[0]
-    #Y3D = (Jdx + 0.5)*delta[1]
-    #Z3D = (Kdx + 0.5)*delta[2]
+    #X3D = (Idx + 0.5)*par.delta[0]
+    #Y3D = (Jdx + 0.5)*par.delta[1]
+    #Z3D = (Kdx + 0.5)*par.delta[2]
    
     #CenterX = (X3D[0][0][0]+X3D[ 0][-1][ 0])*0.5
     #CenterY = (Y3D[0][0][0]+Y3D[ 0][ 0][-1])*0.5
