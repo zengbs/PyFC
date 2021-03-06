@@ -19,13 +19,6 @@ def SetIC( FractalDensity, FractalUx, FractalUy, FractalUz ):
     print("Computing gas density ... done !!")
     sys.stdout.flush()
 
-    print("Computing potential ...")
-    sys.stdout.flush()
-    Pot        = TotPotential()
-    print("Computing potential ... done !!")
-    sys.stdout.flush()
-
-    GasPres    = GasRho*par.Eta
 
     # convert primitive to conservative variables
     GasDens,   GasMomX,  GasMomY,  GasMomZ,  GasEngy = Pri2Con( GasRho, 0.0, 0.0, 0.0, GasPres  )

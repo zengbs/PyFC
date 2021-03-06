@@ -86,11 +86,11 @@ def Miyamoto(R, z):
 
 def TotGasDensity():
     x, y, z, r, R = Create3DCoordinateArray(par.Nx, par.Ny, par.Nz )
-    #mSqrBulge = R**2 + z**2/par.Bulge_q
-    #mSqrHalo  = R**2 + z**2/par.Halo_q
+    mSqrBulge = R**2 + z**2/par.Bulge_q
+    mSqrHalo  = R**2 + z**2/par.Halo_q
     #TotalDensity  = Bulge(mSqrBulge) 
     #TotalDensity += DarkHalo(mSqrHalo) 
-    #TotalDensity += StellarDisk(R, z) 
+    TotalDensity = StellarDisk(R, z) 
     #TotalDensity += ISM(R, z)
-    TotalDensity = Miyamoto(R, z)
+    #TotalDensity = Miyamoto(R, z)
     return TotalDensity
