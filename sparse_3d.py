@@ -4,9 +4,10 @@ import numpy as np
 J = I = K = 5
 
 def n2ijk(n):
+    # n=IJk+Ij+i
     k = int(( n - ( n%(I*J) ) ) / (I*J))
     i = int((n - k*I*J)%I)
-    j = int((n - I*J*k - i)%I)
+    j = int((n - I*J*k - i)/I)
     return i, j, k
 
 # n = 0,...,I*J-1
@@ -22,7 +23,7 @@ for m in range(I*J*K):
   for n in range(I*J*K):
   # swipe entire domain but excluding boundary
       i, j, k = n2ijk(n)
-      if abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
+      if   abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
          sparse[m][n] = -6
       elif abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
          sparse[m][n] = 1
