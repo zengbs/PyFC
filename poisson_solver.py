@@ -1,45 +1,28 @@
 import numpy as np
 
 
-# Poisson solver with periodic boundary condition
 
 def PoissonSolver(source, Lx, Ly, Lz, Nx, Ny, Nz):
-#def PoissonSolver(source, Lx, Ly, Lz, Nx, Ny, Nz):
-    I           = np.indices((Nx, Ny, Nz))[0]/Lx
-    J           = np.indices((Nx, Ny, Nz))[1]/Ly
-    K           = np.indices((Nx, Ny, Nz))[2]/Lz
 
-    # change 0 to -1 to avoid division by zero, 
-    I           = np.where(I==0, -1, I)
-    J           = np.where(J==0, -1, J)
-    K           = np.where(K==0, -1, K)
-
-    answer_FFT  = np.fft.fftn(source)
-
-    # do not take into account the zero terms, which lead to division by zero
-    answer_FFT  = np.where(np.logical_and(I==-1,J==-1,K==-1), 0, answer_FFT/(I**2 + J**2 + K**2))
-
-    answer_FFT /= 4*np.pi**2
-
-    answer      = np.fft.ifftn(answer_FFT)
-
-    return answer
+    return potential
 
 # exact solution:
-
 def ExactSolution(Lx, Ly, Lz, Nx, Ny, Nz):
 
-    delta_x     = Lx/Nx
+    delta_x     = Lx/Nx 
     delta_y     = Ly/Ny
     delta_z     = Lz/Nz
 
-    x           = np.indices((int(Nx), int(Ny), int(Nz)))[0]*delta_x
-    y           = np.indices((int(Nx), int(Ny), int(Nz)))[1]*delta_y
-    z           = np.indices((int(Nx), int(Ny), int(Nz)))[2]*delta_z
+    x           = (np.indices((int(Nx), int(Ny), int(Nz)))[0] - Nx/2 + 0.5)*delta_x
+    y           = (np.indices((int(Nx), int(Ny), int(Nz)))[1] - Ny/2 + 0.5)*delta_y
+    z           = (np.indices((int(Nx), int(Ny), int(Nz)))[2] - Nz/2 + 0.5)*delta_z
 
-    source = 2*np.exp(x+y+z)*( z*y*(1-y)*(1-z) + x*z*(1-x)*(1-z) + x*y*(1-x)*(1-y) )
-  
-    potential = np.exp(-(x+y+z))*x*y*z*(1-x)*(1-y)*(1-z)
+    r           = np.sqrt(x**2+y**2+z**2)
+
+    source      = 1
+    source     /= r * np.power( 1 + r, 3 )
+
+    potential   = -1/(2*(1+r))
 
     return potential, source
 
@@ -49,12 +32,39 @@ if __name__ == '__main__':
     Ly = 1.0
     Lz = 1.0
 
-    Nx = 256
-    Ny = 256
-    Nz = 256
+    Nx = 128 
+    Ny = 128 
+    Nz = 128 
 
     AnalyticalPotential, Source = ExactSolution(Lx, Ly, Lz, Nx, Ny, Nz)
 
     NumericalPotential = PoissonSolver(Source, Lx, Ly, Lz, Nx, Ny, Nz)
 
-    print(np.max(1-AnalyticalPotential/NumericalPotential))      
+ 
+
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import LogNorm
+
+    fig1 = plt.figure()
+    pos = plt.imshow(np.real(AnalyticalPotential[:,:,int(Nz/2)]), norm=None, cmap='nipy_spectral')
+    fig1.colorbar(pos)
+    fig1.savefig('analytical.png')
+     
+    fig2 = plt.figure()
+    pos = plt.imshow(np.real(NumericalPotential[:,:,int(Ny/2)]), norm=None, cmap='nipy_spectral')
+    fig2.colorbar(pos)
+    fig2.savefig('numerical.png')
+     
+     
+    ##// profile
+    #f, ax = plt.subplots(1,1)
+    # 
+    #f.subplots_adjust( hspace=0.05, wspace=0.35 )
+    #f.set_size_inches( 7, 5 ) 
+    # 
+    #ax.plot(Pot3D_up  [:,int(Ny/3),int(Nz/3)])
+    #ax.plot(Pot3D_down[:,int(Ny/3),int(Nz/3)])
+    # 
+    #print(np.amax(np.absolute(1-np.divide(Pot3D_up,Pot3D_down)),axis=2))
+    # 
+    #f.savefig('profile.png')
