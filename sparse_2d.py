@@ -7,6 +7,9 @@ def ij2n(i,j):
     return i+j*I
 
 def n2ij(n):
+    # n = 0,...,I*J-1
+    # i = 0,...,I-1
+    # j = 0,...,J-1
     i = n%I
     j = int((n-i)/J)
     return i, j
