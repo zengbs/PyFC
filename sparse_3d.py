@@ -1,7 +1,7 @@
 import numpy as np
 
 # domain size but excluding boundary
-J = I = K = 6
+J = I = K = 7
 
 def n2ijk(n):
     # n=IJk+Ij+i
@@ -37,8 +37,8 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      # surface
-      if    i==0   and 1<=j<=J-2 and 1<=k<=K-2:
+      # 4 surfaces
+      elif  i==0   and 1<=j<=J-2 and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -50,7 +50,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==I-1 and 1<=j<=J-2 and 1<=k<=K-2:
+      elif  i==I-1 and 1<=j<=J-2 and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -62,7 +62,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==0   and 1<=k<=K-2:
+      elif  1<=i<=I-2 and    j==0   and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -74,7 +74,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==J-1 and 1<=k<=K-2:
+      elif 1<=i<=I-2 and    j==J-1 and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -86,7 +86,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and 1<=j<=J-2 and    k==0  :
+      elif 1<=i<=I-2 and 1<=j<=J-2 and    k==0  :
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -98,7 +98,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and 1<=j<=J-2 and    k==K-1:
+      elif 1<=i<=I-2 and 1<=j<=J-2 and    k==K-1:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -112,8 +112,8 @@ for m in range(I*J*K):
 
 
 
-      # line
-      if    i==0   and    j==0   and 1<=k<=K-2:
+      # 12 lines
+      elif    i==0   and    j==0   and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -125,7 +125,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==0   and 1<=j<=J-2 and    k==0  :
+      elif    i==0   and 1<=j<=J-2 and    k==0  :
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -137,7 +137,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==0   and    k==0  :
+      elif 1<=i<=I-2 and    j==0   and    k==0  :
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -149,7 +149,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==I-1 and    j==J-1 and 1<=k<=K-2:
+      elif    i==I-1 and    j==J-1 and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -161,7 +161,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==I-1 and 1<=j<=J-2 and    k==K-1:
+      elif    i==I-1 and 1<=j<=J-2 and    k==K-1:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -173,7 +173,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==J-1 and    k==K-1:
+      elif 1<=i<=I-2 and    j==J-1 and    k==K-1:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -185,7 +185,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==0   and    j==J-1 and 1<=k<=K-2:
+      elif    i==0   and    j==J-1 and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -197,7 +197,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==0   and 1<=j<=J-2 and    k==K-1:
+      elif    i==0   and 1<=j<=J-2 and    k==K-1:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -209,7 +209,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==0   and    k==K-1:
+      elif 1<=i<=I-2 and    j==0   and    k==K-1:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -221,7 +221,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==I-1 and    j==0   and 1<=k<=K-2:
+      elif    i==I-1 and    j==0   and 1<=k<=K-2:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -233,7 +233,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==I-1 and 1<=j<=J-2 and    k==0  :
+      elif    i==I-1 and 1<=j<=J-2 and    k==0  :
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -245,7 +245,7 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if 1<=i<=I-2 and    j==J-1 and    k==0  :
+      elif 1<=i<=I-2 and    j==J-1 and    k==0  :
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 1
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -258,8 +258,8 @@ for m in range(I*J*K):
             sparse[m][n] = 0
 
 
-      # point
-      if    i==0   and    j==0   and    k==0  :
+      # 8 points
+      else:
          if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
             sparse[m][n] = 2
          elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
@@ -271,89 +271,6 @@ for m in range(I*J*K):
          else:
             sparse[m][n] = 0
 
-      if    i==0   and    j==0   and    k==K-1:
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==0   and    j==J-1 and    k==0  :
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==I-1 and    j==0   and    k==0  :
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==0   and    j==J-1 and    k==K-1:
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==I-1 and    j==0   and    k==K-1:
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==I-1 and    j==J-1 and    k==0  :
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
-
-      if    i==I-1 and    j==J-1 and    k==K-1:
-         if   abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-            sparse[m][n] = 2
-         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-            sparse[m][n] = -6
-         else:
-            sparse[m][n] = 0
 
 
 
