@@ -1,7 +1,7 @@
 import numpy as np
 
 # domain size but excluding boundary
-J = I = K = 5
+J = I = K = 7
 
 def n2ijk(n):
     # n=IJk+Ij+i
@@ -23,17 +23,82 @@ for m in range(I*J*K):
   for n in range(I*J*K):
   # swipe entire domain but excluding boundary
       i, j, k = n2ijk(n)
-      if   abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-         sparse[m][n] = -6
-      elif abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
-         sparse[m][n] = 1
-      elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
-         sparse[m][n] = 1
-      elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
-         sparse[m][n] = 1
-      else:
-         sparse[m][n] = 0
 
+      if 1<=i<=I-2 and 1<=j<=J-2 and 1<=k<=K-2:
+         if   abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
+            sparse[m][n] = -6
+         elif abs(i-mask_i)==1 and abs(j-mask_j)==0 and abs(k-mask_k)==0:
+            sparse[m][n] = 1
+         elif abs(i-mask_i)==0 and abs(j-mask_j)==1 and abs(k-mask_k)==0:
+            sparse[m][n] = 1
+         elif abs(i-mask_i)==0 and abs(j-mask_j)==0 and abs(k-mask_k)==1:
+            sparse[m][n] = 1
+         else:
+            sparse[m][n] = 0
+
+      # surface
+      if    i==0   and 1<=j<=J-2 and 1<=k<=K-2:
+            sparse[m][n] = 
+      if    i==I-1 and 1<=j<=J-2 and 1<=k<=K-2:
+            sparse[m][n] = 
+
+      if 1<=i<=I-2 and    j==0   and 1<=k<=K-2:
+            sparse[m][n] = 
+      if 1<=i<=I-2 and    j==J-1 and 1<=k<=K-2:
+            sparse[m][n] = 
+
+      if 1<=i<=I-2 and 1<=j<=J-2 and    k==0  :
+            sparse[m][n] = 
+      if 1<=i<=I-2 and 1<=j<=J-2 and    k==K-1:
+            sparse[m][n] = 
+
+
+      # line
+      if    i==0   and    j==0   and 1<=k<=K-2:
+            sparse[m][n] = 
+      if    i==0   and 1<=j<=J-2 and    k==0  :
+            sparse[m][n] = 
+      if 1<=i<=I-2 and    j==0   and    k==0  :
+            sparse[m][n] = 
+
+      if    i==I-1 and    j==J-1 and 1<=k<=K-2:
+            sparse[m][n] = 
+      if    i==I-1 and 1<=j<=J-2 and    k==K-1:
+            sparse[m][n] = 
+      if 1<=i<=I-2 and    j==J-1 and    k==K-1:
+            sparse[m][n] = 
+
+      if    i==0   and    j==J-1 and 1<=k<=K-2:
+            sparse[m][n] = 
+      if    i==0   and 1<=j<=J-2 and    k==K-1:
+            sparse[m][n] = 
+      if 1<=i<=I-2 and    j==0   and    k==K-1:
+            sparse[m][n] = 
+
+      if    i==I-1 and    j==0   and 1<=k<=K-2:
+            sparse[m][n] = 
+      if    i==I-1 and 1<=j<=J-2 and    k==0  :
+            sparse[m][n] = 
+      if 1<=i<=I-2 and    j==J-1 and    k==0  :
+            sparse[m][n] = 
+
+      # point
+      if    i==0   and    j==0   and    k==0  :
+            sparse[m][n] = 
+      if    i==0   and    j==0   and    k==K-1:
+            sparse[m][n] = 
+      if    i==0   and    j==J-1 and    k==0  :
+            sparse[m][n] = 
+      if    i==I-1 and    j==0   and    k==0  :
+            sparse[m][n] = 
+      if    i==0   and    j==J-1 and    k==K-1:
+            sparse[m][n] = 
+      if    i==I-1 and    j==0   and    k==K-1:
+            sparse[m][n] = 
+      if    i==I-1 and    j==J-1 and    k==0  :
+            sparse[m][n] = 
+      if    i==I-1 and    j==J-1 and    k==K-1:
+            sparse[m][n] = 
 
 
 # plot 2D sparse matrx of 2D domain
